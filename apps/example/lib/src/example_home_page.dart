@@ -18,6 +18,7 @@ class ExampleHomePage extends StatefulWidget {
 class _ExampleHomePageState extends State<ExampleHomePage> {
   late final TextEditingController _emailController;
   late final TextEditingController _searchController;
+  var _carouselIndex = 0;
   var _selectedTabIndex = 0;
   var _selectedNavigationIndex = 0;
   var _selectedPage = 6;
@@ -205,6 +206,96 @@ class _ExampleHomePageState extends State<ExampleHomePage> {
                           tone: AppTextTone.muted,
                         ),
                       ],
+                    ),
+                  ],
+                ),
+              ),
+              _ShowcaseSection(
+                title: 'Feedback',
+                description:
+                    'Alerts and progress indicators handle product status without dropping down to raw Material styling.',
+                child: VStack(
+                  spacing: spacing.md,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    AppAlert.info(
+                      title: 'Registry sync ready',
+                      description:
+                          'FluxUI can generate package-backed components into your workspace with the current registry settings.',
+                      action: AppButton.ghost(
+                        text: 'Review',
+                        onPressed: () {},
+                      ),
+                    ),
+                    AppAlert.success(
+                      title: 'Release pipeline is healthy',
+                      description:
+                          'Tests, golden snapshots, and example verification all completed before publish.',
+                    ),
+                    AppCard.muted(
+                      child: VStack(
+                        spacing: spacing.md,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const <Widget>[
+                          AppProgress(
+                            value: 0.72,
+                            label: 'Component rollout',
+                            description:
+                                'The next release is bundling feedback and display primitives.',
+                          ),
+                          AppProgress.circular(
+                            value: 0.88,
+                            label: 'Docs sync',
+                            description:
+                                'API examples and showcase content are almost aligned.',
+                            size: AppProgressSize.sm,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              _ShowcaseSection(
+                title: 'Display',
+                description:
+                    'AppCarousel gives FluxUI a reusable hero-style content surface with built-in paging, controls, and indicators.',
+                child: VStack(
+                  spacing: spacing.xs,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    AppCarousel(
+                      height: 260,
+                      onChanged: (next) {
+                        setState(() {
+                          _carouselIndex = next;
+                        });
+                      },
+                      children: const <Widget>[
+                        _ExampleCarouselSlide(
+                          title: 'Ship faster with local ownership',
+                          description:
+                              'Use the package directly or generate editable components into product codebases.',
+                          eyebrow: 'Flux add',
+                        ),
+                        _ExampleCarouselSlide(
+                          title: 'Keep tokens and widgets aligned',
+                          description:
+                              'Shared theme extensions keep app surfaces visually consistent as the component set grows.',
+                          eyebrow: 'Theme layer',
+                        ),
+                        _ExampleCarouselSlide(
+                          title: 'Review changes visually before release',
+                          description:
+                              'The example app and golden suite catch styling drift before it reaches production.',
+                          eyebrow: 'Visual QA',
+                        ),
+                      ],
+                    ),
+                    AppText.body(
+                      'Current slide: ${_carouselIndex + 1} of 3',
+                      variant: AppTextVariant.bodySmall,
+                      tone: AppTextTone.muted,
                     ),
                   ],
                 ),
@@ -430,6 +521,83 @@ class _ColorSwatch extends StatelessWidget {
             ),
         AppText.label(label, tone: AppTextTone.muted),
       ],
+    );
+  }
+}
+
+class _ExampleCarouselSlide extends StatelessWidget {
+  const _ExampleCarouselSlide({
+    required this.title,
+    required this.description,
+    required this.eyebrow,
+  });
+
+  final String title;
+  final String description;
+  final String eyebrow;
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = context.appSpacing;
+    final colors = context.appColors;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: <Color>[
+            Color.lerp(colors.primaryContainer, colors.surface, 0.2)!,
+            Color.lerp(colors.secondaryContainer, colors.surface, 0.08)!,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(spacing.xl),
+        child: VStack(
+          spacing: spacing.md,
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            AppText.label(
+              eyebrow,
+              tone: AppTextTone.primary,
+            )
+                .paddingSymmetric(
+                  horizontal: spacing.sm,
+                  vertical: spacing.xs,
+                )
+                .background(
+                  colors.primaryContainer,
+                  radius: context.appRadius.pill,
+                ),
+            AppText.display(
+              title,
+              variant: AppTextVariant.displaySmall,
+            ),
+            AppText.body(
+              description,
+              tone: AppTextTone.muted,
+              style: const TextStyle(height: 1.45),
+            ),
+            const Spacer(),
+            Row(
+              children: <Widget>[
+                Icon(
+                  Icons.rocket_launch_outlined,
+                  size: context.appSizes.iconSm,
+                  color: colors.primary,
+                ),
+                SizedBox(width: spacing.xs),
+                const AppText.label(
+                  'FluxUI release preview',
+                  tone: AppTextTone.primary,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

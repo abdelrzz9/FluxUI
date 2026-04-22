@@ -30,7 +30,7 @@ Future<void> _pumpGoldenScene(
   required Brightness brightness,
 }) async {
   tester.view.devicePixelRatio = 1;
-  tester.view.physicalSize = const Size(1000, 1440);
+  tester.view.physicalSize = const Size(1000, 1960);
   addTearDown(tester.view.resetDevicePixelRatio);
   addTearDown(tester.view.resetPhysicalSize);
 
@@ -48,7 +48,7 @@ Future<void> _pumpGoldenScene(
             key: _sceneKey,
             child: SizedBox(
               width: 960,
-              height: 1380,
+              height: 1900,
               child: ColoredBox(
                 color: theme.scaffoldBackgroundColor,
                 child: Padding(
@@ -197,6 +197,73 @@ class _GoldenShowcase extends StatelessWidget {
             Expanded(
               child: AppCard.outlined(
                 child: VStack(
+                  spacing: spacing.md,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const AppText.title('Feedback'),
+                    AppAlert.info(
+                      title: 'Registry sync ready',
+                      description:
+                          'FluxUI can generate package-backed components into your workspace.',
+                      action: AppButton.ghost(
+                        text: 'Review',
+                        onPressed: () {},
+                      ),
+                    ),
+                    const AppProgress(
+                      value: 0.72,
+                      label: 'Component rollout',
+                      description:
+                          'The next release is bundling feedback and display primitives.',
+                    ),
+                    const AppProgress.circular(
+                      value: 0.88,
+                      label: 'Docs sync',
+                      description:
+                          'API examples and showcase content are almost aligned.',
+                      size: AppProgressSize.sm,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: AppCard.muted(
+                child: VStack(
+                  spacing: spacing.md,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const AppText.title('Display'),
+                    AppCarousel(
+                      height: 240,
+                      onChanged: (_) {},
+                      children: const <Widget>[
+                        _GoldenCarouselSlide(
+                          title: 'Local ownership',
+                          description:
+                              'Generate editable FluxUI components into product codebases.',
+                        ),
+                        _GoldenCarouselSlide(
+                          title: 'Token alignment',
+                          description:
+                              'Keep package widgets and generated code visually consistent.',
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        HStack(
+          spacing: spacing.lg,
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Expanded(
+              child: AppCard.outlined(
+                child: VStack(
                   spacing: spacing.sm,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
@@ -272,6 +339,78 @@ class _GoldenShowcase extends StatelessWidget {
           ],
         ),
       ],
+    );
+  }
+}
+
+class _GoldenCarouselSlide extends StatelessWidget {
+  const _GoldenCarouselSlide({
+    required this.title,
+    required this.description,
+  });
+
+  final String title;
+  final String description;
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = context.appSpacing;
+    final colors = context.appColors;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: <Color>[
+            Color.lerp(colors.primaryContainer, colors.surface, 0.2)!,
+            Color.lerp(colors.secondaryContainer, colors.surface, 0.08)!,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(spacing.xl),
+        child: VStack(
+          spacing: spacing.md,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            AppText.label(
+              'Release preview',
+              tone: AppTextTone.primary,
+            )
+                .paddingSymmetric(
+                  horizontal: spacing.sm,
+                  vertical: spacing.xs,
+                )
+                .background(
+                  colors.primaryContainer,
+                  radius: context.appRadius.pill,
+                ),
+            AppText.title(
+              title,
+              variant: AppTextVariant.titleLarge,
+            ),
+            AppText.body(
+              description,
+              tone: AppTextTone.muted,
+            ),
+            Row(
+              children: <Widget>[
+                Icon(
+                  Icons.rocket_launch_outlined,
+                  size: context.appSizes.iconSm,
+                  color: colors.primary,
+                ),
+                SizedBox(width: spacing.xs),
+                const AppText.label(
+                  'FluxUI ship flow',
+                  tone: AppTextTone.primary,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
