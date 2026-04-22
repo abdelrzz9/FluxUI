@@ -27,7 +27,7 @@ class _ExampleAppState extends State<ExampleApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'flutter_ui example',
+      title: 'FluxUI example',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),

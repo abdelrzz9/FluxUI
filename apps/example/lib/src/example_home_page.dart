@@ -18,6 +18,13 @@ class ExampleHomePage extends StatefulWidget {
 class _ExampleHomePageState extends State<ExampleHomePage> {
   late final TextEditingController _emailController;
   late final TextEditingController _searchController;
+  var _selectedTabIndex = 0;
+  var _selectedNavigationIndex = 0;
+  var _selectedPage = 6;
+  var _notificationsEnabled = true;
+  var _includeCliTemplates = true;
+  var _selectedRegistry = 'core';
+  var _otpValue = '';
 
   @override
   void initState() {
@@ -37,16 +44,10 @@ class _ExampleHomePageState extends State<ExampleHomePage> {
   Widget build(BuildContext context) {
     final spacing = context.appSpacing;
     final colors = context.appColors;
-    final responsiveColumns = context.responsive<int>(
-      compact: 1,
-      medium: 2,
-      expanded: 2,
-      large: 3,
-    );
 
     return Scaffold(
       appBar: AppBar(
-        title: const AppText.title('flutter_ui'),
+        title: const AppText.title('FluxUI'),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(spacing.lg),
@@ -104,7 +105,7 @@ class _ExampleHomePageState extends State<ExampleHomePage> {
               _ShowcaseSection(
                 title: 'Inputs',
                 description:
-                    'AppTextField is theme-backed and stays minimal enough to copy into product apps.',
+                    'Text fields, comboboxes, and OTP entry all pull spacing, radius, and color from the same token source.',
                 child: VStack(
                   spacing: spacing.md,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -121,7 +122,131 @@ class _ExampleHomePageState extends State<ExampleHomePage> {
                       helperText: 'Synced from your design system settings',
                       prefixIcon: const Icon(Icons.mail_outline),
                     ),
+                    AppCombobox(
+                      labelText: 'Registry',
+                      value: _selectedRegistry,
+                      helperText:
+                          'Choose where FluxUI components should be generated from.',
+                      options: _registryOptions,
+                      onChanged: (next) {
+                        setState(() {
+                          _selectedRegistry = next;
+                        });
+                      },
+                    ),
+                    VStack(
+                      spacing: spacing.xs,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        const AppText.label('Verification code'),
+                        AppOtpField(
+                          length: 6,
+                          onChanged: (value) {
+                            setState(() {
+                              _otpValue = value;
+                            });
+                          },
+                        ),
+                        AppText.body(
+                          _otpValue.isEmpty
+                              ? 'Paste a 6-character code to verify your workspace.'
+                              : 'Current code: $_otpValue',
+                          variant: AppTextVariant.bodySmall,
+                          tone: AppTextTone.muted,
+                        ),
+                      ],
+                    ),
                   ],
+                ),
+              ),
+              _ShowcaseSection(
+                title: 'Navigation',
+                description:
+                    'Tabs, navigation menus, and pagination all stay controlled from app state while sharing the same FluxUI tokens.',
+                child: VStack(
+                  spacing: spacing.md,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    AppTabs(
+                      items: _releaseTabs,
+                      selectedIndex: _selectedTabIndex,
+                      showPanel: true,
+                      onChanged: (next) {
+                        setState(() {
+                          _selectedTabIndex = next;
+                        });
+                      },
+                    ),
+                    AppNavigationMenu(
+                      items: _navigationMenuItems,
+                      selectedIndex: _selectedNavigationIndex,
+                      onChanged: (next) {
+                        setState(() {
+                          _selectedNavigationIndex = next;
+                        });
+                      },
+                    ),
+                    VStack(
+                      spacing: spacing.xs,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        AppPagination(
+                          currentPage: _selectedPage,
+                          totalPages: 18,
+                          onPageChanged: (next) {
+                            setState(() {
+                              _selectedPage = next;
+                            });
+                          },
+                        ),
+                        AppText.body(
+                          'Current release page: $_selectedPage',
+                          variant: AppTextVariant.bodySmall,
+                          tone: AppTextTone.muted,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              _ShowcaseSection(
+                title: 'Selection',
+                description:
+                    'Switches and checkboxes expose product state cleanly without falling back to raw Material defaults.',
+                child: AppCard.muted(
+                  child: VStack(
+                    spacing: spacing.sm,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      AppSwitch(
+                        value: _notificationsEnabled,
+                        label: 'Release notifications',
+                        description:
+                            'Send a heads-up when FluxUI ships new primitives or breaking changes.',
+                        onChanged: (next) {
+                          setState(() {
+                            _notificationsEnabled = next;
+                          });
+                        },
+                      ),
+                      Divider(
+                        height: spacing.md,
+                        thickness: 1,
+                        color: colors.border,
+                      ),
+                      AppCheckbox(
+                        value: _includeCliTemplates,
+                        label: 'Include CLI templates',
+                        description:
+                            'Keep `flux add` templates aligned with the package components you install.',
+                        onChanged: (next) {
+                          setState(() {
+                            _includeCliTemplates = next ?? false;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
               _ShowcaseSection(
@@ -170,10 +295,10 @@ class _ExampleHomePageState extends State<ExampleHomePage> {
                 ),
               ),
               _ShowcaseSection(
-                title: 'Responsive cards',
+                title: 'Roadmap',
                 description:
-                    'The example app uses the responsive helpers to shift from a single column to a denser grid.',
-                child: _ResponsiveCardGrid(columns: responsiveColumns),
+                    'GitHub-inspired roadmap items keep FluxUI planning views readable while staying fully theme-driven.',
+                child: const _FluxRoadmapList(),
               ),
             ],
           ).center(),
@@ -212,7 +337,7 @@ class _HeroBanner extends StatelessWidget {
                   spacing: spacing.sm,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: const <Widget>[
-                    AppText.display('Composable Flutter UI'),
+                    AppText.display('FluxUI'),
                     AppText.body(
                       'Package-driven theme, copy-pasteable components, and a CLI that turns primitives into local code.',
                       tone: AppTextTone.muted,
@@ -309,46 +434,149 @@ class _ColorSwatch extends StatelessWidget {
   }
 }
 
-class _ResponsiveCardGrid extends StatelessWidget {
-  const _ResponsiveCardGrid({
-    required this.columns,
-  });
-
-  final int columns;
+class _FluxRoadmapList extends StatelessWidget {
+  const _FluxRoadmapList();
 
   @override
   Widget build(BuildContext context) {
-    final spacing = context.appSpacing;
-    final items = List<int>.generate(6, (index) => index);
-
-    return Wrap(
-      spacing: spacing.md,
-      runSpacing: spacing.md,
-      children: items.map((index) {
-        final width = (context.screenWidth -
-                (spacing.lg * 2) -
-                (spacing.md * (columns - 1))) /
-            columns;
-
-        return AppCard.outlined(
-          width: width.clamp(220, 360),
-          child: VStack(
-            spacing: spacing.sm,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              AppText.title('Component ${index + 1}'),
-              const AppText.body(
-                'Local generation keeps this code editable inside the consuming app.',
-                tone: AppTextTone.muted,
+    return AppCard.outlined(
+      padding: EdgeInsets.zero,
+      child: Column(
+        children: _roadmapEntries
+            .map(
+              (entry) => AppRoadmapItem(
+                title: entry.title,
+                kindLabel: 'Task',
+                categoryLabel: 'component',
+                issueNumber: entry.issueNumber,
+                owner: 'abdelrzz9',
+                activityLabel: entry.activityLabel,
+                state: entry.state,
+                isHighlighted: entry.isHighlighted,
+                showDivider: entry != _roadmapEntries.last,
               ),
-              AppButton.ghost(
-                text: 'Inspect',
-                onPressed: () {},
-              ),
-            ],
-          ),
-        );
-      }).toList(),
+            )
+            .toList(),
+      ),
     );
   }
 }
+
+class _RoadmapEntry {
+  const _RoadmapEntry({
+    required this.title,
+    required this.issueNumber,
+    required this.activityLabel,
+    required this.state,
+    this.isHighlighted = false,
+  });
+
+  final String title;
+  final int issueNumber;
+  final String activityLabel;
+  final AppRoadmapItemState state;
+  final bool isHighlighted;
+}
+
+const List<_RoadmapEntry> _roadmapEntries = <_RoadmapEntry>[
+  _RoadmapEntry(
+    title: 'Implement AppPagination component',
+    issueNumber: 16,
+    activityLabel: 'shipped in the component package',
+    state: AppRoadmapItemState.completed,
+  ),
+  _RoadmapEntry(
+    title: 'Implement AppTabs component',
+    issueNumber: 14,
+    activityLabel: 'shipped with controlled panel support',
+    state: AppRoadmapItemState.completed,
+  ),
+  _RoadmapEntry(
+    title: 'Implement AppNavigationMenu component',
+    issueNumber: 12,
+    activityLabel: 'shipped with trigger and panel content',
+    state: AppRoadmapItemState.completed,
+  ),
+  _RoadmapEntry(
+    title: 'Implement AppSwitch component',
+    issueNumber: 11,
+    activityLabel: 'shipped with labeled control rows',
+    state: AppRoadmapItemState.completed,
+    isHighlighted: true,
+  ),
+  _RoadmapEntry(
+    title: 'Implement AppCombobox component',
+    issueNumber: 10,
+    activityLabel: 'shipped with searchable option sheets',
+    state: AppRoadmapItemState.completed,
+  ),
+  _RoadmapEntry(
+    title: 'Implement AppOtpField and AppCheckbox components',
+    issueNumber: 9,
+    activityLabel: 'shipped for verification and settings flows',
+    state: AppRoadmapItemState.completed,
+  ),
+];
+
+const List<AppComboboxOption> _registryOptions = <AppComboboxOption>[
+  AppComboboxOption(
+    value: 'core',
+    label: 'Core registry',
+    description: 'Stable, production-ready FluxUI components.',
+  ),
+  AppComboboxOption(
+    value: 'labs',
+    label: 'Labs registry',
+    description: 'Preview components that are still evolving.',
+  ),
+  AppComboboxOption(
+    value: 'internal',
+    label: 'Internal registry',
+    description: 'Workspace-only components layered on top of FluxUI.',
+  ),
+];
+
+const List<AppTabItem> _releaseTabs = <AppTabItem>[
+  AppTabItem(
+    label: 'Overview',
+    icon: Icons.dashboard_customize_outlined,
+    description:
+        'Track the package surface, example coverage, and release status from a single control.',
+  ),
+  AppTabItem(
+    label: 'Components',
+    icon: Icons.widgets_outlined,
+    badgeLabel: '7',
+    description:
+        'Pagination, tabs, navigation menu, switch, combobox, OTP, and checkbox now ship together.',
+  ),
+  AppTabItem(
+    label: 'CLI',
+    icon: Icons.terminal_rounded,
+    description:
+        'Keep package APIs and generated templates aligned as the component surface grows.',
+  ),
+];
+
+const List<AppNavigationMenuItem> _navigationMenuItems =
+    <AppNavigationMenuItem>[
+  AppNavigationMenuItem(
+    label: 'Docs',
+    icon: Icons.menu_book_outlined,
+    description:
+        'Read installation, theming, and package usage guidance before adding components.',
+  ),
+  AppNavigationMenuItem(
+    label: 'Registry',
+    icon: Icons.inventory_2_outlined,
+    badgeLabel: 'new',
+    description:
+        'Review package-backed and CLI-backed component entries before generating code.',
+  ),
+  AppNavigationMenuItem(
+    label: 'Releases',
+    icon: Icons.rocket_launch_outlined,
+    description:
+        'Check recent component additions and upcoming migration notes for FluxUI updates.',
+  ),
+];

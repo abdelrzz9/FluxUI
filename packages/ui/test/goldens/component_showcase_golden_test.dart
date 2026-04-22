@@ -30,7 +30,7 @@ Future<void> _pumpGoldenScene(
   required Brightness brightness,
 }) async {
   tester.view.devicePixelRatio = 1;
-  tester.view.physicalSize = const Size(960, 760);
+  tester.view.physicalSize = const Size(1000, 1440);
   addTearDown(tester.view.resetDevicePixelRatio);
   addTearDown(tester.view.resetPhysicalSize);
 
@@ -47,13 +47,13 @@ Future<void> _pumpGoldenScene(
           child: RepaintBoundary(
             key: _sceneKey,
             child: SizedBox(
-              width: 920,
-              height: 720,
+              width: 960,
+              height: 1380,
               child: ColoredBox(
                 color: theme.scaffoldBackgroundColor,
                 child: Padding(
                   padding: const EdgeInsets.all(24),
-                  child: _GoldenShowcase(theme: theme),
+                  child: const _GoldenShowcase(),
                 ),
               ),
             ),
@@ -67,16 +67,11 @@ Future<void> _pumpGoldenScene(
 }
 
 class _GoldenShowcase extends StatelessWidget {
-  const _GoldenShowcase({
-    required this.theme,
-  });
-
-  final ThemeData theme;
+  const _GoldenShowcase();
 
   @override
   Widget build(BuildContext context) {
     final spacing = context.appSpacing;
-    final colors = context.appColors;
 
     return VStack(
       spacing: spacing.lg,
@@ -87,7 +82,7 @@ class _GoldenShowcase extends StatelessWidget {
             spacing: spacing.md,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              const AppText.display('flutter_ui'),
+              const AppText.display('FluxUI'),
               const AppText.body(
                 'Golden coverage for the public component surface.',
                 tone: AppTextTone.muted,
@@ -120,9 +115,24 @@ class _GoldenShowcase extends StatelessWidget {
                       labelText: 'Email',
                       hintText: 'design@flutter-ui.dev',
                     ),
-                    const AppTextField.filled(
-                      labelText: 'Workspace',
-                      initialValue: 'Design systems',
+                    AppCombobox(
+                      labelText: 'Registry',
+                      value: 'core',
+                      options: const <AppComboboxOption>[
+                        AppComboboxOption(
+                          value: 'core',
+                          label: 'Core registry',
+                        ),
+                        AppComboboxOption(
+                          value: 'labs',
+                          label: 'Labs registry',
+                        ),
+                      ],
+                      onChanged: (_) {},
+                    ),
+                    const AppOtpField(
+                      length: 4,
+                      initialValue: '4827',
                     ),
                   ],
                 ),
@@ -134,27 +144,44 @@ class _GoldenShowcase extends StatelessWidget {
                   spacing: spacing.md,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    const AppText.title('Layout'),
-                    HStack(
-                      spacing: spacing.sm,
-                      children: <Widget>[
-                        _Swatch(
-                          color: colors.primary,
-                          label: 'Primary',
+                    const AppText.title('Navigation'),
+                    AppTabs(
+                      selectedIndex: 1,
+                      showPanel: true,
+                      onChanged: (_) {},
+                      items: const <AppTabItem>[
+                        AppTabItem(
+                          label: 'Overview',
+                          description: 'Release dashboard and package health.',
                         ),
-                        _Swatch(
-                          color: colors.secondaryContainer,
-                          label: 'Secondary',
-                        ),
-                        _Swatch(
-                          color: colors.surfaceMuted,
-                          label: 'Muted',
+                        AppTabItem(
+                          label: 'Components',
+                          badgeLabel: '7',
+                          description:
+                              'New FluxUI primitives shipping together.',
                         ),
                       ],
                     ),
-                    const AppText.body(
-                      'Gap, HStack, and VStack keep composition readable.',
-                      tone: AppTextTone.muted,
+                    AppNavigationMenu(
+                      selectedIndex: 0,
+                      onChanged: (_) {},
+                      items: const <AppNavigationMenuItem>[
+                        AppNavigationMenuItem(
+                          label: 'Docs',
+                          description: 'Install and theme the package quickly.',
+                        ),
+                        AppNavigationMenuItem(
+                          label: 'Registry',
+                          badgeLabel: 'new',
+                          description:
+                              'Inspect package and CLI component entries.',
+                        ),
+                      ],
+                    ),
+                    AppPagination(
+                      currentPage: 6,
+                      totalPages: 12,
+                      onPageChanged: (_) {},
                     ),
                   ],
                 ),
@@ -162,37 +189,88 @@ class _GoldenShowcase extends StatelessWidget {
             ),
           ],
         ),
-      ],
-    );
-  }
-}
-
-class _Swatch extends StatelessWidget {
-  const _Swatch({
-    required this.color,
-    required this.label,
-  });
-
-  final Color color;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    final spacing = context.appSpacing;
-
-    return VStack(
-      spacing: spacing.xs,
-      children: <Widget>[
-        const SizedBox(width: 64, height: 64)
-            .background(
-              color,
-              radius: context.appRadius.md,
-            )
-            .border(
-              color: context.appColors.border,
-              radius: context.appRadius.md,
+        HStack(
+          spacing: spacing.lg,
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Expanded(
+              child: AppCard.outlined(
+                child: VStack(
+                  spacing: spacing.sm,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const AppText.title('Selection'),
+                    AppSwitch(
+                      value: true,
+                      label: 'Release notifications',
+                      description: 'Notify the team when FluxUI ships updates.',
+                      onChanged: (_) {},
+                    ),
+                    Divider(
+                      height: spacing.md,
+                      thickness: 1,
+                      color: context.appColors.border,
+                    ),
+                    AppCheckbox(
+                      value: true,
+                      label: 'Include CLI templates',
+                      description:
+                          'Keep generated templates aligned with the package.',
+                      onChanged: (_) {},
+                    ),
+                  ],
+                ),
+              ),
             ),
-        AppText.label(label, tone: AppTextTone.muted),
+            Expanded(
+              child: AppCard.muted(
+                child: VStack(
+                  spacing: spacing.md,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const AppText.title('Roadmap'),
+                    AppCard.outlined(
+                      padding: EdgeInsets.zero,
+                      child: Column(
+                        children: const <Widget>[
+                          AppRoadmapItem(
+                            title: 'Implement AppPagination component',
+                            categoryLabel: 'component',
+                            issueNumber: 16,
+                            owner: 'abdelrzz9',
+                            activityLabel: 'shipped in the component package',
+                            state: AppRoadmapItemState.completed,
+                          ),
+                          AppRoadmapItem(
+                            title: 'Implement AppTabs component',
+                            categoryLabel: 'component',
+                            issueNumber: 14,
+                            owner: 'abdelrzz9',
+                            activityLabel:
+                                'shipped with controlled panel support',
+                            state: AppRoadmapItemState.completed,
+                            isHighlighted: true,
+                          ),
+                          AppRoadmapItem(
+                            title: 'Implement AppNavigationMenu component',
+                            categoryLabel: 'component',
+                            issueNumber: 12,
+                            owner: 'abdelrzz9',
+                            activityLabel:
+                                'shipped with trigger and panel content',
+                            state: AppRoadmapItemState.completed,
+                            showDivider: false,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }
