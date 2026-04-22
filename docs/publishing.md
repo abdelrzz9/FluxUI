@@ -15,18 +15,19 @@ independently:
 3. Run:
 
 ```bash
-melos bootstrap
-melos run format:check
-melos run analyze
-melos run test
-melos run test:goldens
+dart pub get
+dart run melos bootstrap
+dart run melos run format:check
+dart run melos run analyze
+dart run melos run test
+dart run melos run test:goldens
 ```
 
 4. Run dry-run publish checks:
 
 ```bash
-melos run publish:dry-run:flutter
-melos run publish:dry-run:cli
+dart run melos run publish:dry-run:flutter
+dart run melos run publish:dry-run:cli
 ```
 
 5. Verify package metadata:
@@ -57,4 +58,3 @@ The repository includes:
 
 The CI workflow checks formatting, analysis, and tests. The publish dry-run
 workflow is intended as a final gate before tagging a release.
-

@@ -1,0 +1,10 @@
+name: fluxui_workspace
+publish_to: none
+description: Workspace configuration for the FluxUI monorepo.
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+dev_dependencies:
+  melos: ^3.4.0
+

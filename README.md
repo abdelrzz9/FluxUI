@@ -100,17 +100,17 @@ A live showcase app used for:
 ### Bootstrap the workspace
 
 ```bash
-dart pub global activate melos
-melos bootstrap
+dart pub get
+dart run melos bootstrap
 ```
 
 ### Validate the repo
 
 ```bash
-melos run format:check
-melos run analyze
-melos run test
-melos run test:goldens
+dart run melos run format:check
+dart run melos run analyze
+dart run melos run test
+dart run melos run test:goldens
 ```
 
 ### Run the example app

@@ -12,10 +12,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_ui_tokens:
-    version: ^0.1.0
-  flutter_ui_utils:
-    version: ^0.1.0
+  flutter_ui_tokens: ^0.1.0
+  flutter_ui_utils: ^0.1.0
 
 dev_dependencies:
   flutter_test:

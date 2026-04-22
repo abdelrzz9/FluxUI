@@ -7,6 +7,7 @@
 **/build/
 **/coverage/
 **/pubspec.lock
+!/pubspec.lock
 **/ios/Pods/
 **/ios/.symlinks/
 **/macos/Pods/
@@ -19,4 +20,4 @@
 **/android/app/release/
 .idea/
 .vscode/
-
+*.iml

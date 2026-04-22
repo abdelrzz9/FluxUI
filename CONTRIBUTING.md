@@ -5,22 +5,22 @@
 1. Bootstrap the workspace:
 
 ```bash
-dart pub global activate melos
-melos bootstrap
+dart pub get
+dart run melos bootstrap
 ```
 
 2. Validate formatting, analysis, and tests:
 
 ```bash
-melos run format:check
-melos run analyze
-melos run test
+dart run melos run format:check
+dart run melos run analyze
+dart run melos run test
 ```
 
 3. Update goldens when a visual change is intentional:
 
 ```bash
-melos run test:update-goldens
+dart run melos run test:update-goldens
 ```
 
 ## Package boundaries
@@ -47,4 +47,3 @@ Keep business logic out of all of these packages.
 - Goldens updated if visuals changed
 - Public exports remain intentional
 - Docs updated if the package surface changed
-
