@@ -1,0 +1,25 @@
+name: flutter_ui_system
+
+packages:
+  - packages/**
+  - apps/**
+  - tools/**
+
+command:
+  bootstrap:
+    environment:
+      sdk: ">=3.4.0 <4.0.0"
+      flutter: ">=3.24.0"
+
+scripts:
+  get: melos bootstrap
+  analyze: melos exec -- flutter analyze
+  test: melos exec --dir-exists=test -- flutter test
+  test:goldens: melos exec --scope=flutter_ui -- flutter test test/goldens
+  test:update-goldens: melos exec --scope=flutter_ui -- flutter test test/goldens --update-goldens
+  format: melos exec -- dart format .
+  format:check: melos exec -- dart format --output=none --set-exit-if-changed .
+  clean: melos exec -- flutter clean
+  publish:dry-run:flutter: melos exec --scope=flutter_ui_tokens --scope=flutter_ui_utils --scope=flutter_ui -- flutter pub publish --dry-run
+  publish:dry-run:cli: melos exec --scope=flutter_ui_cli -- dart pub publish --dry-run
+

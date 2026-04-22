@@ -1,0 +1,35 @@
+name: publish-dry-run
+
+on:
+  workflow_dispatch:
+
+jobs:
+  dry-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.24.0
+          channel: stable
+          cache: true
+
+      - name: Activate Melos
+        run: dart pub global activate melos
+
+      - name: Add pub cache to PATH
+        run: echo "$HOME/.pub-cache/bin" >> "$GITHUB_PATH"
+
+      - name: Bootstrap workspace
+        run: melos bootstrap
+
+      - name: Flutter package dry-run publish
+        run: melos run publish:dry-run:flutter
+
+      - name: CLI dry-run publish
+        run: melos run publish:dry-run:cli
+

@@ -1,0 +1,6 @@
+dependency_overrides:
+  flutter_ui_tokens:
+    path: ../tokens
+  flutter_ui_utils:
+    path: ../utils
+
