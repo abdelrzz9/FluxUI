@@ -1,3 +1,8 @@
+import 'dart:convert';
+import 'dart:io' as io;
+
+import 'package:path/path.dart' as p;
+
 final class ComponentDefinition {
   const ComponentDefinition({
     required this.id,
@@ -21,7 +26,7 @@ final class ComponentDefinition {
 final class ComponentRegistry {
   ComponentRegistry._();
 
-  static const Map<String, ComponentDefinition> definitions =
+  static final Map<String, ComponentDefinition> definitions =
       <String, ComponentDefinition>{
     'button': ComponentDefinition(
       id: 'button',
@@ -34,7 +39,7 @@ final class ComponentRegistry {
       ],
       description:
           'Primary action button with variants, sizes, and loading state.',
-      template: _buttonTemplate,
+      template: _buttonTemplate(),
     ),
     'card': ComponentDefinition(
       id: 'card',
@@ -116,7 +121,54 @@ final class ComponentRegistry {
   }
 }
 
-const String _buttonTemplate = r'''
+String _buttonTemplate() => _loadTemplate(
+  'button.dart',
+  fallback: _buttonTemplateFallback,
+);
+
+String _loadTemplate(
+  String fileName, {
+  required String fallback,
+}) {
+  final templateFile = io.File(
+    p.join(_packageRootDirectory.path, 'templates', fileName),
+  );
+
+  if (templateFile.existsSync()) {
+    return templateFile.readAsStringSync();
+  }
+
+  return fallback;
+}
+
+io.Directory _resolvePackageRootDirectory() {
+  final packageConfigPath = io.Platform.packageConfig;
+  if (packageConfigPath == null || packageConfigPath.isEmpty) {
+    return io.Directory.current;
+  }
+
+  final packageConfigUri = Uri.parse(packageConfigPath);
+  final packageConfigFile = packageConfigUri.scheme.isEmpty
+      ? io.File(packageConfigPath)
+      : io.File.fromUri(packageConfigUri);
+  final packageConfig = jsonDecode(
+    packageConfigFile.readAsStringSync(),
+  ) as Map<String, dynamic>;
+  final packages = (packageConfig['packages'] as List<dynamic>? ?? const <dynamic>[])
+      .cast<Map<String, dynamic>>();
+  final package = packages.firstWhere(
+    (entry) => entry['name'] == 'flutter_ui_cli',
+    orElse: () => <String, dynamic>{},
+  );
+
+  final rootUriValue = package['rootUri'] as String? ?? '.';
+  final rootUri = Uri.parse(rootUriValue);
+  return io.Directory.fromUri(packageConfigFile.uri.resolveUri(rootUri));
+}
+
+final io.Directory _packageRootDirectory = _resolvePackageRootDirectory();
+
+const String _buttonTemplateFallback = r'''
 import 'package:flutter/material.dart';
 
 import '../../core/flutter_ui.dart';
