@@ -7,20 +7,35 @@ on:
       - main
       - master
 
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  FLUTTER_CHANNEL: stable
+  FLUTTER_VERSION: 3.41.5
+
 jobs:
-  validate:
+  format:
+    name: Format
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+        uses: flutter-actions/setup-flutter@v4
         with:
-          flutter-version: 3.41.5
-          channel: stable
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          version: ${{ env.FLUTTER_VERSION }}
           cache: true
+          cache-sdk: true
+          cache-key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
 
       - name: Install workspace dependencies
         run: dart pub get
@@ -31,8 +46,115 @@ jobs:
       - name: Check formatting
         run: dart run melos run format:check
 
-      - name: Analyze packages
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: flutter-actions/setup-flutter@v4
+        with:
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+          cache-sdk: true
+          cache-key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+
+      - name: Install workspace dependencies
+        run: dart pub get
+
+      - name: Bootstrap workspace
+        run: dart run melos bootstrap
+
+      - name: Run Flutter analyze
         run: dart run melos run analyze
+
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: flutter-actions/setup-flutter@v4
+        with:
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+          cache-sdk: true
+          cache-key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+
+      - name: Install workspace dependencies
+        run: dart pub get
+
+      - name: Bootstrap workspace
+        run: dart run melos bootstrap
+
+      - name: Run Dart analyze
+        run: dart run melos run typecheck
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: flutter-actions/setup-flutter@v4
+        with:
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+          cache-sdk: true
+          cache-key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+
+      - name: Install workspace dependencies
+        run: dart pub get
+
+      - name: Bootstrap workspace
+        run: dart run melos bootstrap
 
       - name: Run tests
         run: dart run melos run test
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs:
+      - format
+      - lint
+      - analyze
+      - test
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: flutter-actions/setup-flutter@v4
+        with:
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+          cache-sdk: true
+          cache-key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+
+      - name: Install workspace dependencies
+        run: dart pub get
+
+      - name: Bootstrap workspace
+        run: dart run melos bootstrap
+
+      - name: Build Flux CLI
+        run: dart run melos run build
