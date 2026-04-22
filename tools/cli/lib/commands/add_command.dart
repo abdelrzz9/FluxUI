@@ -176,7 +176,8 @@ ${parser.usage}
   }
 
   FlutterUiConfig _loadOrCreateConfig(io.Directory projectDirectory) {
-    final file = io.File(p.join(projectDirectory.path, FlutterUiConfig.fileName));
+    final file =
+        io.File(p.join(projectDirectory.path, FlutterUiConfig.fileName));
     if (file.existsSync()) {
       return FlutterUiConfig.loadFromProject(projectDirectory);
     }
@@ -234,7 +235,8 @@ ${parser.usage}
       return selected;
     }
 
-    stdoutSink.writeln('Unable to resolve `$selection` inside `${projectDirectory.path}`.');
+    stdoutSink.writeln(
+        'Unable to resolve `$selection` inside `${projectDirectory.path}`.');
     return null;
   }
 

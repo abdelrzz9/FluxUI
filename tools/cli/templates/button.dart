@@ -30,9 +30,9 @@ class AppButton extends StatelessWidget {
     this.borderRadius,
     this.semanticLabel,
   }) : assert(
-         (text != null) != (child != null),
-         'Provide either text or child.',
-       );
+          (text != null) != (child != null),
+          'Provide either text or child.',
+        );
 
   const AppButton.primary({
     super.key,
@@ -46,11 +46,11 @@ class AppButton extends StatelessWidget {
     this.expand = false,
     this.borderRadius,
     this.semanticLabel,
-  }) : variant = AppButtonVariant.primary,
-       assert(
-         (text != null) != (child != null),
-         'Provide either text or child.',
-       );
+  })  : variant = AppButtonVariant.primary,
+        assert(
+          (text != null) != (child != null),
+          'Provide either text or child.',
+        );
 
   const AppButton.secondary({
     super.key,
@@ -64,11 +64,11 @@ class AppButton extends StatelessWidget {
     this.expand = false,
     this.borderRadius,
     this.semanticLabel,
-  }) : variant = AppButtonVariant.secondary,
-       assert(
-         (text != null) != (child != null),
-         'Provide either text or child.',
-       );
+  })  : variant = AppButtonVariant.secondary,
+        assert(
+          (text != null) != (child != null),
+          'Provide either text or child.',
+        );
 
   const AppButton.outline({
     super.key,
@@ -82,11 +82,11 @@ class AppButton extends StatelessWidget {
     this.expand = false,
     this.borderRadius,
     this.semanticLabel,
-  }) : variant = AppButtonVariant.outline,
-       assert(
-         (text != null) != (child != null),
-         'Provide either text or child.',
-       );
+  })  : variant = AppButtonVariant.outline,
+        assert(
+          (text != null) != (child != null),
+          'Provide either text or child.',
+        );
 
   const AppButton.ghost({
     super.key,
@@ -100,11 +100,11 @@ class AppButton extends StatelessWidget {
     this.expand = false,
     this.borderRadius,
     this.semanticLabel,
-  }) : variant = AppButtonVariant.ghost,
-       assert(
-         (text != null) != (child != null),
-         'Provide either text or child.',
-       );
+  })  : variant = AppButtonVariant.ghost,
+        assert(
+          (text != null) != (child != null),
+          'Provide either text or child.',
+        );
 
   final AppButtonVariant variant;
   final AppButtonSize size;
@@ -165,13 +165,12 @@ class AppButton extends StatelessWidget {
               decoration: BoxDecoration(
                 color: visualStyle.backgroundColor,
                 borderRadius: shapeRadius,
-                border:
-                    visualStyle.borderColor == null
-                        ? null
-                        : Border.all(
-                          color: visualStyle.borderColor!,
-                          width: borderWidth,
-                        ),
+                border: visualStyle.borderColor == null
+                    ? null
+                    : Border.all(
+                        color: visualStyle.borderColor!,
+                        width: borderWidth,
+                      ),
               ),
               child: InkWell(
                 onTap: _isEnabled ? onPressed : null,
@@ -240,8 +239,7 @@ class _AppButtonContent extends StatelessWidget {
       if (isLoading || leading != null) SizedBox(width: gap),
       DefaultTextStyle(
         style: labelStyle,
-        child:
-            child ??
+        child: child ??
             Text(
               text!,
               textAlign: TextAlign.center,
@@ -297,22 +295,22 @@ class _AppButtonVisualStyle {
 
     return switch (variant) {
       AppButtonVariant.primary => _AppButtonVisualStyle(
-        backgroundColor: colors.primary,
-        foregroundColor: colors.onPrimary,
-      ),
+          backgroundColor: colors.primary,
+          foregroundColor: colors.onPrimary,
+        ),
       AppButtonVariant.secondary => _AppButtonVisualStyle(
-        backgroundColor: colors.secondaryContainer,
-        foregroundColor: colors.onSecondaryContainer,
-      ),
+          backgroundColor: colors.secondaryContainer,
+          foregroundColor: colors.onSecondaryContainer,
+        ),
       AppButtonVariant.outline => _AppButtonVisualStyle(
-        backgroundColor: colors.surface,
-        foregroundColor: colors.onSurface,
-        borderColor: colors.borderStrong,
-      ),
+          backgroundColor: colors.surface,
+          foregroundColor: colors.onSurface,
+          borderColor: colors.borderStrong,
+        ),
       AppButtonVariant.ghost => _AppButtonVisualStyle(
-        backgroundColor: null,
-        foregroundColor: colors.onSurface,
-      ),
+          backgroundColor: null,
+          foregroundColor: colors.onSurface,
+        ),
     };
   }
 }
@@ -344,29 +342,29 @@ class _AppButtonSizeStyle {
 
     return switch (size) {
       AppButtonSize.sm => _AppButtonSizeStyle(
-        height: sizes.controlSm,
-        horizontalPadding: spacing.sm,
-        verticalPadding: spacing.xs,
-        gap: spacing.xs,
-        iconSize: sizes.iconSm,
-        labelStyle: typography.labelMedium,
-      ),
+          height: sizes.controlSm,
+          horizontalPadding: spacing.sm,
+          verticalPadding: spacing.xs,
+          gap: spacing.xs,
+          iconSize: sizes.iconSm,
+          labelStyle: typography.labelMedium,
+        ),
       AppButtonSize.md => _AppButtonSizeStyle(
-        height: sizes.controlMd,
-        horizontalPadding: spacing.md,
-        verticalPadding: spacing.sm,
-        gap: spacing.xs,
-        iconSize: sizes.iconMd,
-        labelStyle: typography.labelLarge,
-      ),
+          height: sizes.controlMd,
+          horizontalPadding: spacing.md,
+          verticalPadding: spacing.sm,
+          gap: spacing.xs,
+          iconSize: sizes.iconMd,
+          labelStyle: typography.labelLarge,
+        ),
       AppButtonSize.lg => _AppButtonSizeStyle(
-        height: sizes.controlLg,
-        horizontalPadding: spacing.lg,
-        verticalPadding: spacing.md,
-        gap: spacing.sm,
-        iconSize: sizes.iconLg,
-        labelStyle: typography.titleSmall,
-      ),
+          height: sizes.controlLg,
+          horizontalPadding: spacing.lg,
+          verticalPadding: spacing.md,
+          gap: spacing.sm,
+          iconSize: sizes.iconLg,
+          labelStyle: typography.titleSmall,
+        ),
     };
   }
 }

@@ -122,9 +122,9 @@ final class ComponentRegistry {
 }
 
 String _buttonTemplate() => _loadTemplate(
-  'button.dart',
-  fallback: _buttonTemplateFallback,
-);
+      'button.dart',
+      fallback: _buttonTemplateFallback,
+    );
 
 String _loadTemplate(
   String fileName, {
@@ -154,8 +154,9 @@ io.Directory _resolvePackageRootDirectory() {
   final packageConfig = jsonDecode(
     packageConfigFile.readAsStringSync(),
   ) as Map<String, dynamic>;
-  final packages = (packageConfig['packages'] as List<dynamic>? ?? const <dynamic>[])
-      .cast<Map<String, dynamic>>();
+  final packages =
+      (packageConfig['packages'] as List<dynamic>? ?? const <dynamic>[])
+          .cast<Map<String, dynamic>>();
   final package = packages.firstWhere(
     (entry) => entry['name'] == 'flutter_ui_cli',
     orElse: () => <String, dynamic>{},
