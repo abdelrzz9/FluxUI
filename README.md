@@ -1,21 +1,21 @@
 # FluxUI
 
-FluxUI is a production-grade Flutter UI ecosystem for teams that want both:
+FluxUI is a Flutter UI monorepo built around two workflows:
 
-- a reusable package-based design system
-- a shadcn-style copy-paste workflow for local ownership
+- reusable packages for tokens, theme, and components
+- a shadcn-style copy-paste CLI for local ownership inside app codebases
 
-It is built as a monorepo with strongly typed tokens, theme extensions,
-composable widgets, developer-friendly extensions, a local component generator,
-and an example app that acts as a living showcase.
+The repository contains typed design tokens, a theme layer built on
+`ThemeExtension`, composable widgets, fluent extensions, a CLI, and an example
+app.
 
 ## Philosophy
 
 - Design tokens are the source of truth.
-- UI components stay stateless and composable where possible.
-- Styling comes from the theme system, not local hardcoded values.
-- Package usage and copy-paste ownership both remain first-class workflows.
-- The code should stay readable enough to customize inside product apps.
+- Components stay stateless and composable where possible.
+- Styling comes from theme tokens, not local hardcoded values.
+- Package consumption and copy-paste ownership are both first-class.
+- Generated code stays readable enough to customize in product apps.
 
 ## Monorepo Structure
 
@@ -38,28 +38,19 @@ root/
 
 ### `packages/tokens`
 
-Immutable design tokens for:
-
-- spacing
-- radius
-- sizes
-- motion
-- semantic colors
-- typography
+Typed immutable design tokens for spacing, radius, sizes, motion, semantic
+colors, and typography.
 
 ### `packages/utils`
 
-Shared helpers and extensions for:
-
-- fluent widget composition
-- responsive helpers
-- context utilities
+Shared utilities for fluent widget composition, context helpers, and responsive
+value resolution.
 
 ### `packages/ui`
 
-The main UI system package that includes:
+The main UI package that ships:
 
-- `ThemeData` factories backed by `ThemeExtension`
+- `AppTheme`
 - `AppText`
 - `AppButton`
 - `AppCard`
@@ -70,50 +61,51 @@ The main UI system package that includes:
 
 ### `tools/cli`
 
-A developer-first CLI for:
+The CLI layer for copy-paste ownership.
 
-- initializing a local UI workspace in a Flutter app
-- copying editable component files into the consuming app
-- keeping generated local components compatible with package exports
+Current state:
+
+- `flux add ...` is the preferred component install command
+- `flutter_ui init`, `flutter_ui list`, and `flutter_ui add ...` still exist for
+  local workspace bootstrapping and compatibility
 
 ### `apps/example`
 
-A live showcase app used for:
-
-- visual review
-- public API validation
-- regression coverage
+A live showcase app used for visual review, API validation, and regression
+coverage.
 
 ## Current Capabilities
 
-- typed design token system with light and dark defaults
-- token-backed theme layer using `ThemeExtension`
+- strongly typed token system with light and dark defaults
+- token-backed theme layer using `ThemeData` and `ThemeExtension`
 - fluent APIs such as `Text("Hello").padding(16).center()`
-- responsive helpers and breakpoint-based value resolution
-- component variants and sizing for buttons and text fields
-- stateless reusable primitives for layout and content
-- local code generation through `flutter_ui init` and `flutter_ui add ...`
+- responsive helpers and breakpoint-aware value selection
+- reusable stateless primitives for text, buttons, cards, inputs, and layout
+- file-backed CLI templates, starting with the button component
 - widget tests and golden tests for the UI package
+- split CI jobs for format, lint, Dart analysis, tests, and build
 
-## Quick Start
-
-### Bootstrap the workspace
+## Workspace Setup
 
 ```bash
 dart pub get
 dart run melos bootstrap
 ```
 
-### Validate the repo
+## Validate the Repo
 
 ```bash
 dart run melos run format:check
 dart run melos run analyze
+dart run melos run typecheck
 dart run melos run test
 dart run melos run test:goldens
+dart run melos run build
 ```
 
-### Run the example app
+`build` currently compiles the `flux` CLI executable.
+
+## Run the Example App
 
 ```bash
 cd apps/example
@@ -122,25 +114,31 @@ flutter run
 
 ## CLI Workflow
 
-Initialize a local workspace inside a Flutter app:
+Initialize a local UI workspace inside a Flutter app:
 
 ```bash
 dart run tools/cli/bin/flutter_ui.dart init
 ```
 
-List available components:
+List available registered components:
 
 ```bash
 dart run tools/cli/bin/flutter_ui.dart list
 ```
 
-Copy local editable components into the app:
+Add components with the newer Flux-style command:
+
+```bash
+dart run tools/cli/bin/flux.dart add button
+```
+
+The legacy add command is still available:
 
 ```bash
 dart run tools/cli/bin/flutter_ui.dart add button text-field h-stack
 ```
 
-See the full guide in [docs/cli.md](docs/cli.md).
+See [docs/cli.md](docs/cli.md) for the full CLI guide.
 
 ## Documentation
 
@@ -154,10 +152,10 @@ See the full guide in [docs/cli.md](docs/cli.md).
 FluxUI includes:
 
 - Melos workspace scripts
-- CI workflow for formatting, analysis, and tests
-- publish dry-run workflow
-- widget test coverage
-- golden baselines for the UI package
+- split GitHub Actions CI jobs for `format`, `lint`, `analyze`, `test`, and
+  `build`
+- a publish dry-run workflow
+- widget and golden test coverage in the UI package
 
 ## Repository
 
@@ -166,4 +164,3 @@ GitHub: `https://github.com/abdelrzz9/FluxUI`
 ## License
 
 FluxUI is released under the MIT License. See [LICENSE](LICENSE).
-

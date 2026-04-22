@@ -1,11 +1,37 @@
 # CLI Guide
 
-The `flutter_ui` CLI creates a local workspace inside a Flutter app and copies
-editable component files into that app.
+FluxUI currently ships two CLI entry points:
 
-## Commands
+- `flux` for the new developer-facing add flow
+- `flutter_ui` for workspace bootstrap, compatibility, and the older command set
 
-### Initialize
+The command surface is intentionally documented as it exists today, not as the
+future end state.
+
+## Current Commands
+
+### Preferred add flow
+
+```bash
+dart run tools/cli/bin/flux.dart add button
+```
+
+You can add more than one component in a single call:
+
+```bash
+dart run tools/cli/bin/flux.dart add button card
+```
+
+`flux add` will:
+
+- resolve component aliases
+- resolve registered dependencies such as `gap` for stack layouts
+- create folders when needed
+- copy component template files into the target app
+- update generated bridge and index files
+- prompt before overwriting an existing file
+
+### Workspace initialization
 
 ```bash
 dart run tools/cli/bin/flutter_ui.dart init
@@ -18,9 +44,8 @@ This writes:
 - `lib/ui/components/index.dart`
 - `lib/ui/index.dart`
 
-The generated `core/flutter_ui.dart` file bridges back to the package exports.
-When you copy a local component, the bridge automatically hides the package
-version of that symbol to avoid export conflicts.
+The generated `core/flutter_ui.dart` file bridges back to the package exports
+and hides package symbols when a local copied component exists.
 
 ### List available components
 
@@ -28,21 +53,16 @@ version of that symbol to avoid export conflicts.
 dart run tools/cli/bin/flutter_ui.dart list
 ```
 
-### Copy components into your app
+### Compatibility add flow
 
 ```bash
 dart run tools/cli/bin/flutter_ui.dart add button text-field h-stack
 ```
 
-The CLI will:
+Use this if you need the existing initialized workspace flow. The long-term
+direction is `flux add`, but both surfaces currently exist.
 
-- resolve component aliases
-- install dependencies such as `gap` for stack layouts
-- generate local component files under `lib/ui/components`
-- update `lib/ui/components/index.dart`
-- update `lib/ui/core/flutter_ui.dart` to hide package duplicates
-
-## Local import pattern
+## Local Import Pattern
 
 After initialization, import your local workspace instead of the package
 directly:
@@ -54,9 +74,10 @@ import 'package:your_app/ui/index.dart';
 That gives you:
 
 - package theme tokens and extensions
-- any copied local components you want to customize
+- generated local components under `lib/ui/components`
+- a single local export surface for future customization
 
-## Current component registry
+## Current Component Registry
 
 - `button`
 - `card`
@@ -65,3 +86,9 @@ That gives you:
 - `gap`
 - `h-stack`
 - `v-stack`
+
+## Notes
+
+- The first file-backed CLI template is `button`.
+- `flux` currently focuses on `add`; `init` and `list` still live under the
+  `flutter_ui` executable.
