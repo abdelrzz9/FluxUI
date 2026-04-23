@@ -6,8 +6,7 @@ independently:
 - `packages/tokens`
 - `packages/utils`
 - `packages/ui`
-- `tools/cli` (implementation)
-- `packages/cli` (workspace entrypoint facade)
+- `packages/cli` (official CLI entrypoint package)
 
 ## Release Checklist
 

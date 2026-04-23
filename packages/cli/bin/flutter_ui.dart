@@ -1,11 +1,8 @@
 import 'dart:io';
 
+import 'package:flutter_ui_cli/flutter_ui_cli.dart';
+
 Future<void> main(List<String> arguments) async {
-  final scriptUri = Platform.script.resolve('../../../tools/cli/bin/flutter_ui.dart');
-  final result = await Process.start(
-    Platform.resolvedExecutable,
-    <String>[scriptUri.toFilePath(), ...arguments],
-    mode: ProcessStartMode.inheritStdio,
-  );
-  exitCode = await result.exitCode;
+  final cli = FlutterUiCli();
+  exitCode = await cli.run(arguments);
 }

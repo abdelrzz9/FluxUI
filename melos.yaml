@@ -13,6 +13,7 @@ command:
 
 scripts:
   get: dart run melos bootstrap
+  check:architecture: dart run tools/check_architecture.dart
   analyze: dart run melos exec -- flutter analyze
   typecheck: dart run melos exec -- dart analyze
   test: dart run melos exec --dir-exists=test -- flutter test

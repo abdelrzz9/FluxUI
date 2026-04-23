@@ -96,6 +96,7 @@ dart run melos bootstrap
 
 ```bash
 dart run melos run format:check
+dart run melos run check:architecture
 dart run melos run analyze
 dart run melos run typecheck
 dart run melos run test
@@ -145,6 +146,7 @@ See [docs/cli.md](docs/cli.md) for the full CLI guide.
 - [CLI guide](packages/ui/content/docs/cli.md)
 - [Publishing guide](packages/ui/content/docs/publishing.md)
 - [GitHub issues roadmap](packages/ui/content/docs/github_issues_roadmap.md)
+- [Dev branch workflow](docs/dev_branch_workflow.md)
 - [Contributing guide](CONTRIBUTING.md)
 
 ## Quality and Release
