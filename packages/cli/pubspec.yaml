@@ -1,0 +1,11 @@
+name: fluxui_cli_runner
+publish_to: none
+description: Package-level CLI entrypoints for the FluxUI workspace architecture.
+version: 0.1.0
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+dependencies:
+  flutter_ui_cli:
+    path: ../../tools/cli

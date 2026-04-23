@@ -23,13 +23,13 @@ app.
 root/
 ├── apps/
 │   └── example/
-├── docs/
 ├── packages/
+│   ├── cli/
 │   ├── tokens/
 │   ├── ui/
+│   │   └── content/docs/
 │   └── utils/
-├── tools/
-│   └── cli/
+├── docs/ (compatibility pointers)
 ├── melos.yaml
 └── README.md
 ```
@@ -59,7 +59,7 @@ The main UI package that ships:
 - `HStack`
 - `VStack`
 
-### `tools/cli`
+### `packages/cli`
 
 The CLI layer for copy-paste ownership.
 
@@ -117,34 +117,34 @@ flutter run
 Initialize a local UI workspace inside a Flutter app:
 
 ```bash
-dart run tools/cli/bin/flutter_ui.dart init
+dart run packages/cli/bin/flutter_ui.dart init
 ```
 
 List available registered components:
 
 ```bash
-dart run tools/cli/bin/flutter_ui.dart list
+dart run packages/cli/bin/flutter_ui.dart list
 ```
 
 Add components with the newer Flux-style command:
 
 ```bash
-dart run tools/cli/bin/flux.dart add button
+dart run packages/cli/bin/flux.dart add button
 ```
 
 The legacy add command is still available:
 
 ```bash
-dart run tools/cli/bin/flutter_ui.dart add button text-field h-stack
+dart run packages/cli/bin/flutter_ui.dart add button text-field h-stack
 ```
 
 See [docs/cli.md](docs/cli.md) for the full CLI guide.
 
 ## Documentation
 
-- [CLI guide](docs/cli.md)
-- [Publishing guide](docs/publishing.md)
-- [GitHub issues roadmap](docs/github_issues_roadmap.md)
+- [CLI guide](packages/ui/content/docs/cli.md)
+- [Publishing guide](packages/ui/content/docs/publishing.md)
+- [GitHub issues roadmap](packages/ui/content/docs/github_issues_roadmap.md)
 - [Contributing guide](CONTRIBUTING.md)
 
 ## Quality and Release
