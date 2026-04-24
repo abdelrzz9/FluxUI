@@ -186,7 +186,12 @@ ${parser.usage}
   }
 
   ComponentDefinition? _resolveComponent(String rawName) {
-    return ComponentRegistry.resolve(rawName);
+    final direct = ComponentRegistry.resolve(rawName);
+    if (direct != null) {
+      return direct;
+    }
+
+    return _closestComponentMatch(rawName);
   }
 
   void _visitDefinition(
@@ -251,6 +256,86 @@ ${parser.usage}
     }
 
     return _resolveComponent(selection);
+  }
+
+  ComponentDefinition? _closestComponentMatch(String rawName) {
+    final normalized = rawName.trim().toLowerCase();
+    if (normalized.isEmpty) {
+      return null;
+    }
+
+    ComponentDefinition? bestMatch;
+    var bestDistance = 1 << 30;
+    var ambiguous = false;
+
+    for (final definition in ComponentRegistry.available()) {
+      final candidates = <String>[definition.id, ...definition.aliases];
+      for (final candidate in candidates) {
+        final distance = _levenshteinDistance(normalized, candidate);
+        if (distance < bestDistance) {
+          bestDistance = distance;
+          bestMatch = definition;
+          ambiguous = false;
+        } else if (distance == bestDistance &&
+            bestMatch != null &&
+            bestMatch.id != definition.id) {
+          ambiguous = true;
+        }
+      }
+    }
+
+    final maxDistance = normalized.length <= 4 ? 1 : 2;
+    if (bestMatch == null || ambiguous || bestDistance > maxDistance) {
+      return null;
+    }
+
+    stdoutSink.writeln(
+      'Component `$rawName` was not found. Did you mean `${bestMatch.id}`? Installing it...',
+    );
+    return bestMatch;
+  }
+
+  int _levenshteinDistance(String left, String right) {
+    if (left == right) {
+      return 0;
+    }
+    if (left.isEmpty) {
+      return right.length;
+    }
+    if (right.isEmpty) {
+      return left.length;
+    }
+
+    var previous = List<int>.generate(right.length + 1, (index) => index);
+
+    for (var i = 0; i < left.length; i++) {
+      final current = List<int>.filled(right.length + 1, 0);
+      current[0] = i + 1;
+
+      for (var j = 0; j < right.length; j++) {
+        final substitutionCost = left[i] == right[j] ? 0 : 1;
+        current[j + 1] = _min3(
+          current[j] + 1,
+          previous[j + 1] + 1,
+          previous[j] + substitutionCost,
+        );
+      }
+
+      previous = current;
+    }
+
+    return previous[right.length];
+  }
+
+  int _min3(int a, int b, int c) {
+    var result = a;
+    if (b < result) {
+      result = b;
+    }
+    if (c < result) {
+      result = c;
+    }
+    return result;
   }
 
   bool _confirmOverwrite(String relativePath) {
