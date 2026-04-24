@@ -1,35 +1,34 @@
 # FluxUI
 
-FluxUI is a Flutter UI monorepo built around two workflows:
+FluxUI is a Flutter UI monorepo for building and distributing a token-driven
+design system with two consumption models:
 
-- reusable packages for tokens, theme, and components
-- a shadcn-style copy-paste CLI for local ownership inside app codebases
+- reusable Dart/Flutter packages
+- a local ownership CLI that copies editable components into app codebases
 
-The repository contains typed design tokens, a theme layer built on
-`ThemeExtension`, composable widgets, fluent extensions, a CLI, and an example
-app.
+The repository currently contains typed design tokens, shared utilities, a UI
+package, a CLI package, an example app, and CI/release workflows for a
+production-oriented `dev` branch workflow.
 
-## Philosophy
-
-- Design tokens are the source of truth.
-- Components stay stateless and composable where possible.
-- Styling comes from theme tokens, not local hardcoded values.
-- Package consumption and copy-paste ownership are both first-class.
-- Generated code stays readable enough to customize in product apps.
-
-## Monorepo Structure
+## Current Repository Structure
 
 ```text
-root/
+.
 ├── apps/
 │   └── example/
+├── docs/
+│   ├── cli.md
+│   ├── dev_branch_workflow.md
+│   ├── github_issues_roadmap.md
+│   └── publishing.md
 ├── packages/
 │   ├── cli/
 │   ├── tokens/
 │   ├── ui/
 │   │   └── content/docs/
 │   └── utils/
-├── docs/ (compatibility pointers)
+├── tools/
+│   └── check_architecture.dart
 ├── melos.yaml
 └── README.md
 ```
@@ -38,65 +37,161 @@ root/
 
 ### `packages/tokens`
 
-Typed immutable design tokens for spacing, radius, sizes, motion, semantic
-colors, and typography.
+`flutter_ui_tokens` contains the typed token layer:
+
+- color tokens
+- spacing tokens
+- radius tokens
+- size tokens
+- motion tokens
+- typography tokens
+- aggregated design tokens
 
 ### `packages/utils`
 
-Shared utilities for fluent widget composition, context helpers, and responsive
-value resolution.
+`flutter_ui_utils` contains shared Flutter helpers:
+
+- widget extensions
+- numeric spacing helpers
+- context extensions
+- responsive breakpoints and responsive values
 
 ### `packages/ui`
 
-The main UI package that ships:
+`flutter_ui` is the main UI package. It exports:
 
-- `AppTheme`
-- `AppText`
+- theme APIs: `AppTheme`, `AppThemeTokens`
+- core widgets: `AppText`
+- extensions from `flutter_ui_utils`
+- tokens from `flutter_ui_tokens`
+- UI components across:
+  - buttons
+  - cards
+  - display
+  - feedback
+  - inputs
+  - layouts
+  - navigation
+  - roadmap
+  - selection
+
+Concrete widgets in the package currently include:
+
 - `AppButton`
 - `AppCard`
+- `AppCarousel`
+- `AppAlert`
+- `AppProgress`
 - `AppTextField`
+- `AppCombobox`
+- `AppOtpField`
 - `Gap`
 - `HStack`
 - `VStack`
+- `AppNavigationMenu`
+- `AppPagination`
+- `AppTabs`
+- `AppRoadmapItem`
+- `AppCheckbox`
+- `AppSwitch`
 
 ### `packages/cli`
 
-The CLI layer for copy-paste ownership.
+`flutter_ui_cli` provides two executable entry points:
 
-Current state:
+- `flux`: preferred component install flow
+- `flutter_ui`: workspace initialization, compatibility commands, and listing
 
-- `flux add ...` is the preferred component install command
-- `flutter_ui init`, `flutter_ui list`, and `flutter_ui add ...` still exist for
-  local workspace bootstrapping and compatibility
+The CLI package is present in the repo and built in CI, but `packages/cli`
+currently has `publish_to: none`, so treat it as repository-managed tooling
+until that changes.
 
 ### `apps/example`
 
-A live showcase app used for visual review, API validation, and regression
-coverage.
+`flutter_ui_example` is the local showcase app for package validation and manual
+UI review.
 
-## Current Capabilities
+## CLI Status
 
-- strongly typed token system with light and dark defaults
-- token-backed theme layer using `ThemeData` and `ThemeExtension`
-- fluent APIs such as `Text("Hello").padding(16).center()`
-- responsive helpers and breakpoint-aware value selection
-- reusable stateless primitives for text, buttons, cards, inputs, and layout
-- file-backed CLI templates, starting with the button component
-- widget tests and golden tests for the UI package
-- split CI jobs for format, lint, Dart analysis, tests, and build
+FluxUI currently supports two real workflows.
 
-## Workspace Setup
+### Preferred add flow
+
+Use `flux add` to copy editable components into a Flutter app:
+
+```bash
+dart run packages/cli/bin/flux.dart add button
+dart run packages/cli/bin/flux.dart add button card
+```
+
+Current registry entries are:
+
+- `button`
+- `card`
+- `text`
+- `text-field`
+- `gap`
+- `h-stack`
+- `v-stack`
+
+`flux add` resolves aliases, installs dependencies such as `gap` for stack
+layouts, writes component files into the target app, and refreshes generated
+bridge/index files.
+
+### Workspace bootstrap flow
+
+Use `flutter_ui` when you want the local workspace scaffold:
+
+```bash
+dart run packages/cli/bin/flutter_ui.dart init
+dart run packages/cli/bin/flutter_ui.dart list
+dart run packages/cli/bin/flutter_ui.dart add button text-field h-stack
+```
+
+`flutter_ui init` creates:
+
+- `flutter_ui.json`
+- `lib/ui/core/flutter_ui.dart`
+- `lib/ui/components/index.dart`
+- `lib/ui/index.dart`
+
+After initialization, app code should import its local workspace export:
+
+```dart
+import 'package:your_app/ui/index.dart';
+```
+
+## Requirements
+
+- Dart SDK `>=3.4.0 <4.0.0`
+- Flutter `>=3.24.0`
+
+CI is currently pinned to Flutter stable `3.41.5` in
+[`./.github/workflows/ci.yml`](.github/workflows/ci.yml).
+
+## Local Setup
+
+Install workspace dependencies:
 
 ```bash
 dart pub get
 dart run melos bootstrap
 ```
 
-## Validate the Repo
+Run the example app:
 
 ```bash
-dart run melos run format:check
+cd apps/example
+flutter run
+```
+
+## Validation Commands
+
+Run the full workspace checks before opening or merging a PR:
+
+```bash
 dart run melos run check:architecture
+dart run melos run format:check
 dart run melos run analyze
 dart run melos run typecheck
 dart run melos run test
@@ -104,65 +199,70 @@ dart run melos run test:goldens
 dart run melos run build
 ```
 
-`build` currently compiles the `flux` CLI executable.
+Notes:
 
-## Run the Example App
+- `check:architecture` verifies required monorepo paths exist.
+- `test:goldens` only targets the `flutter_ui` package.
+- `build` currently builds the `flux` CLI executable from `packages/cli/tool/build.dart`.
 
-```bash
-cd apps/example
-flutter run
-```
+## CI and Release Gates
 
-## CLI Workflow
+The repository includes:
 
-Initialize a local UI workspace inside a Flutter app:
+- [CI workflow](.github/workflows/ci.yml)
+- [Publish dry-run workflow](.github/workflows/publish_dry_run.yml)
 
-```bash
-dart run packages/cli/bin/flutter_ui.dart init
-```
+Current CI behavior:
 
-List available registered components:
+- runs on every pull request
+- runs on pushes to `main` and `master`
+- splits checks into `format`, `lint`, `analyze`, `test`, and `build`
 
-```bash
-dart run packages/cli/bin/flutter_ui.dart list
-```
-
-Add components with the newer Flux-style command:
+Dry-run publishing is manual through `workflow_dispatch` and runs:
 
 ```bash
-dart run packages/cli/bin/flux.dart add button
+dart run melos run publish:dry-run:flutter
+dart run melos run publish:dry-run:cli
 ```
 
-The legacy add command is still available:
+## `dev` Branch Workflow
 
-```bash
-dart run packages/cli/bin/flutter_ui.dart add button text-field h-stack
-```
+This repo is set up to use `dev` as the integration branch for production-ready
+work.
 
-See [docs/cli.md](docs/cli.md) for the full CLI guide.
+- `main`: stable branch for releasable code
+- `dev`: active integration branch
+- `feature/*`: short-lived branches created from `dev`
+
+Recommended flow:
+
+1. Branch from `dev`.
+2. Make focused changes.
+3. Run the validation commands locally.
+4. Open a PR into `dev`.
+5. Merge to `dev` only after the PR checks pass.
+6. Promote `dev` to `main` through a stabilization PR when the branch is ready
+   to release.
+
+Important nuance: the current GitHub Actions workflow validates all pull
+requests, but direct push CI is configured for `main` and `master`, not `dev`.
+For real production discipline on `dev`, use PR-based validation and avoid
+direct pushes.
 
 ## Documentation
 
 - [CLI guide](packages/ui/content/docs/cli.md)
 - [Publishing guide](packages/ui/content/docs/publishing.md)
+- [Introduction](packages/ui/content/docs/introduction.mdx)
+- [Architecture migration notes](packages/ui/content/docs/architecture_migration.md)
 - [GitHub issues roadmap](packages/ui/content/docs/github_issues_roadmap.md)
 - [Dev branch workflow](docs/dev_branch_workflow.md)
 - [Contributing guide](CONTRIBUTING.md)
 
-## Quality and Release
-
-FluxUI includes:
-
-- Melos workspace scripts
-- split GitHub Actions CI jobs for `format`, `lint`, `analyze`, `test`, and
-  `build`
-- a publish dry-run workflow
-- widget and golden test coverage in the UI package
-
 ## Repository
 
-GitHub: `https://github.com/abdelrzz9/FluxUI`
+- GitHub: `https://github.com/abdelrzz9/FluxUI`
 
 ## License
 
-FluxUI is released under the MIT License. See [LICENSE](LICENSE).
+MIT. See [LICENSE](LICENSE).
