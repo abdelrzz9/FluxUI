@@ -1,193 +1,122 @@
 # FluxUI
 
-FluxUI is a Flutter UI monorepo for building and distributing a token-driven
-design system with two consumption models:
+A token-driven Flutter UI system delivered as a Melos monorepo.
 
-- reusable Dart/Flutter packages
-- a local ownership CLI that copies editable components into app codebases
+Two consumption models:
+- **Package** — add `flutter_ui` to your `pubspec.yaml` and use widgets directly.
+- **Local ownership** — use the `flux` CLI to copy editable component files into your app (shadcn/ui style).
 
-The repository currently contains typed design tokens, shared utilities, a UI
-package, a CLI package, an example app, and CI/release workflows for a
-production-oriented `dev` branch workflow.
+---
 
-## Current Repository Structure
+## Repository structure
 
-```text
-.
+```
+FluxUI/
 ├── apps/
-│   └── example/
+│   └── example/          # showcase app (manual review + golden tests)
 ├── docs/
-│   ├── cli.md
+│   ├── cli.md            # CLI command reference
 │   ├── dev_branch_workflow.md
-│   ├── github_issues_roadmap.md
-│   └── publishing.md
+│   ├── publishing.md
+│   └── roadmap.md
 ├── packages/
-│   ├── cli/
-│   ├── tokens/
-│   ├── ui/
-│   │   └── content/docs/
-│   └── utils/
+│   ├── tokens/           # flutter_ui_tokens — typed design tokens
+│   ├── utils/            # flutter_ui_utils  — extensions & helpers
+│   ├── ui/               # flutter_ui        — theme + 18 widgets
+│   └── cli/              # flutter_ui_cli    — component copy tool
 ├── tools/
 │   └── check_architecture.dart
-├── melos.yaml
-└── README.md
+└── melos.yaml
 ```
+
+Dependency direction (strict):
+
+```
+tokens  ──►  utils  ──►  ui  ◄──  apps/example
+                              cli  (standalone, no Flutter dep)
+```
+
+---
 
 ## Packages
 
-### `packages/tokens`
+### `packages/tokens` — `flutter_ui_tokens`
 
-`flutter_ui_tokens` contains the typed token layer:
+Immutable, strongly typed design tokens with `lerp` support.
 
-- color tokens
-- spacing tokens
-- radius tokens
-- size tokens
-- motion tokens
-- typography tokens
-- aggregated design tokens
+| Token class | Covers |
+|-------------|--------|
+| `AppColorTokens` | Primary, secondary, surface, status, border |
+| `AppSpacingTokens` | Scale `xxxs` → `x5l` |
+| `AppRadiusTokens` | Corner radius scale |
+| `AppSizeTokens` | Icon and control heights |
+| `AppMotionTokens` | Animation durations |
+| `AppTypographyTokens` | Full Material 3 text scale |
+| `AppDesignTokens` | Aggregate with `.light` and `.dark` constants |
 
-### `packages/utils`
+### `packages/utils` — `flutter_ui_utils`
 
-`flutter_ui_utils` contains shared Flutter helpers:
+Shared Flutter helpers: `BuildContext` extensions, widget fluent API, numeric shorthands, `AppBreakpoints`, `AppResponsiveValue<T>`.
 
-- widget extensions
-- numeric spacing helpers
-- context extensions
-- responsive breakpoints and responsive values
+### `packages/ui` — `flutter_ui`
 
-### `packages/ui`
+Theme integration and 18 production-ready widgets:
 
-`flutter_ui` is the main UI package. It exports:
+| Category | Widgets |
+|----------|---------|
+| Buttons | `AppButton` (4 variants · 3 sizes · loading) |
+| Cards | `AppCard` (surface · outline · muted) |
+| Display | `AppCarousel` |
+| Feedback | `AppAlert` · `AppProgress` |
+| Inputs | `AppTextField` · `AppCombobox` · `AppOtpField` |
+| Layouts | `Gap` · `HStack` · `VStack` |
+| Navigation | `AppNavigationMenu` · `AppPagination` · `AppTabs` |
+| Roadmap | `AppRoadmapItem` |
+| Selection | `AppCheckbox` · `AppSwitch` |
+| Typography | `AppText` |
 
-- theme APIs: `AppTheme`, `AppThemeTokens`
-- core widgets: `AppText`
-- extensions from `flutter_ui_utils`
-- tokens from `flutter_ui_tokens`
-- UI components across:
-  - buttons
-  - cards
-  - display
-  - feedback
-  - inputs
-  - layouts
-  - navigation
-  - roadmap
-  - selection
+Theme API: `AppTheme.light()` / `AppTheme.dark()` / `AppTheme.custom(tokens, brightness)`.
 
-Concrete widgets in the package currently include:
+### `packages/cli` — `flutter_ui_cli`
 
-- `AppButton`
-- `AppCard`
-- `AppCarousel`
-- `AppAlert`
-- `AppProgress`
-- `AppTextField`
-- `AppCombobox`
-- `AppOtpField`
-- `Gap`
-- `HStack`
-- `VStack`
-- `AppNavigationMenu`
-- `AppPagination`
-- `AppTabs`
-- `AppRoadmapItem`
-- `AppCheckbox`
-- `AppSwitch`
+Two entry points:
 
-### `packages/cli`
+| Binary | Commands |
+|--------|---------|
+| `flux` | `add` |
+| `flutter_ui` | `init` · `add` · `list` |
 
-`flutter_ui_cli` provides two executable entry points:
+`publish_to: none` — run directly from the monorepo. See [docs/cli.md](docs/cli.md).
 
-- `flux`: preferred component install flow
-- `flutter_ui`: workspace initialization, compatibility commands, and listing
-
-The CLI package is present in the repo and built in CI, but `packages/cli`
-currently has `publish_to: none`, so treat it as repository-managed tooling
-until that changes.
-
-### `apps/example`
-
-`flutter_ui_example` is the local showcase app for package validation and manual
-UI review.
-
-## CLI Status
-
-FluxUI currently supports two real workflows.
-
-### Preferred add flow
-
-Use `flux add` to copy editable components into a Flutter app:
-
-```bash
-dart run packages/cli/bin/flux.dart add button
-dart run packages/cli/bin/flux.dart add button card
-```
-
-Current registry entries are:
-
-- `button`
-- `card`
-- `text`
-- `text-field`
-- `gap`
-- `h-stack`
-- `v-stack`
-
-`flux add` resolves aliases, installs dependencies such as `gap` for stack
-layouts, writes component files into the target app, and refreshes generated
-bridge/index files.
-
-### Workspace bootstrap flow
-
-Use `flutter_ui` when you want the local workspace scaffold:
-
-```bash
-dart run packages/cli/bin/flutter_ui.dart init
-dart run packages/cli/bin/flutter_ui.dart list
-dart run packages/cli/bin/flutter_ui.dart add button text-field h-stack
-```
-
-`flutter_ui init` creates:
-
-- `flutter_ui.json`
-- `lib/ui/core/flutter_ui.dart`
-- `lib/ui/components/index.dart`
-- `lib/ui/index.dart`
-
-After initialization, app code should import its local workspace export:
-
-```dart
-import 'package:your_app/ui/index.dart';
-```
+---
 
 ## Requirements
 
-- Dart SDK `>=3.4.0 <4.0.0`
-- Flutter `>=3.24.0`
+| Requirement | Version |
+|-------------|---------|
+| Dart SDK | `>=3.4.0 <4.0.0` |
+| Flutter | `>=3.24.0` |
 
-CI is currently pinned to Flutter stable `3.41.5` in
-[`./.github/workflows/ci.yml`](.github/workflows/ci.yml).
+CI pins Flutter stable `3.41.5`.
 
-## Local Setup
+---
 
-Install workspace dependencies:
+## Local setup
 
 ```bash
+# 1. Install workspace dependencies
 dart pub get
 dart run melos bootstrap
+
+# 2. Run the example app
+cd apps/example && flutter run
 ```
 
-Run the example app:
+---
 
-```bash
-cd apps/example
-flutter run
-```
+## Validation
 
-## Validation Commands
-
-Run the full workspace checks before opening or merging a PR:
+Run before opening or merging any PR:
 
 ```bash
 dart run melos run check:architecture
@@ -199,70 +128,36 @@ dart run melos run test:goldens
 dart run melos run build
 ```
 
-Notes:
+---
 
-- `check:architecture` verifies required monorepo paths exist.
-- `test:goldens` only targets the `flutter_ui` package.
-- `build` currently builds the `flux` CLI executable from `packages/cli/tool/build.dart`.
+## Branch workflow
 
-## CI and Release Gates
+| Branch | Role |
+|--------|------|
+| `main` | Stable · tagged releases |
+| `dev` | Integration · all PRs merge here |
+| `feature/*` | Short-lived · branch from `dev` |
 
-The repository includes:
+See [docs/dev_branch_workflow.md](docs/dev_branch_workflow.md).
 
-- [CI workflow](.github/workflows/ci.yml)
-- [Publish dry-run workflow](.github/workflows/publish_dry_run.yml)
-
-Current CI behavior:
-
-- runs on every pull request
-- runs on pushes to `main` and `master`
-- splits checks into `format`, `lint`, `analyze`, `test`, and `build`
-
-Dry-run publishing is manual through `workflow_dispatch` and runs:
-
-```bash
-dart run melos run publish:dry-run:flutter
-dart run melos run publish:dry-run:cli
-```
-
-## `dev` Branch Workflow
-
-This repo is set up to use `dev` as the integration branch for production-ready
-work.
-
-- `main`: stable branch for releasable code
-- `dev`: active integration branch
-- `feature/*`: short-lived branches created from `dev`
-
-Recommended flow:
-
-1. Branch from `dev`.
-2. Make focused changes.
-3. Run the validation commands locally.
-4. Open a PR into `dev`.
-5. Merge to `dev` only after the PR checks pass.
-6. Promote `dev` to `main` through a stabilization PR when the branch is ready
-   to release.
-
-Important nuance: the current GitHub Actions workflow validates all pull
-requests, but direct push CI is configured for `main` and `master`, not `dev`.
-For real production discipline on `dev`, use PR-based validation and avoid
-direct pushes.
+---
 
 ## Documentation
 
-- [CLI guide](packages/ui/content/docs/cli.md)
-- [Publishing guide](packages/ui/content/docs/publishing.md)
-- [Introduction](packages/ui/content/docs/introduction.mdx)
-- [Architecture migration notes](packages/ui/content/docs/architecture_migration.md)
-- [GitHub issues roadmap](packages/ui/content/docs/github_issues_roadmap.md)
-- [Dev branch workflow](docs/dev_branch_workflow.md)
-- [Contributing guide](CONTRIBUTING.md)
+| File | Contents |
+|------|----------|
+| [docs/cli.md](docs/cli.md) | Full CLI command reference |
+| [docs/publishing.md](docs/publishing.md) | Release checklist |
+| [docs/roadmap.md](docs/roadmap.md) | GitHub issues roadmap |
+| [docs/dev_branch_workflow.md](docs/dev_branch_workflow.md) | Branch strategy |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Contribution guide |
+| [packages/tokens/README.md](packages/tokens/README.md) | Tokens package |
+| [packages/utils/README.md](packages/utils/README.md) | Utils package |
+| [packages/ui/README.md](packages/ui/README.md) | UI package |
+| [packages/cli/README.md](packages/cli/README.md) | CLI package |
 
-## Repository
-
-- GitHub: `https://github.com/abdelrzz9/FluxUI`
+---
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+MIT — see [LICENSE](LICENSE).

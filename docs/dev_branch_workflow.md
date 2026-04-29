@@ -1,26 +1,45 @@
-# Dev Branch Workflow
+# Branch Workflow
 
-This repository uses a branch model for safe refactors and release quality.
+FluxUI uses a three-tier branch strategy.
 
 ## Branches
 
-- `main`: stable branch for releasable code
-- `dev`: integration branch for ongoing feature and architecture work
-- `feature/*`: short-lived feature branches
+| Branch | Purpose |
+|--------|---------|
+| `main` | Stable, releasable. Tagged releases come from here. |
+| `dev` | Integration branch. All feature work merges here first. |
+| `feature/*` | Short-lived. Branch from `dev`, merge back to `dev`. |
 
-## Flow
+## Day-to-day flow
 
-1. Create branch from `dev`:
-   - `feature/<topic>`
-2. Open PR into `dev`.
-3. Ensure CI is green:
-   - format, lint, analyze, tests, build, architecture check
-4. Merge into `dev`.
-5. Periodically promote `dev` to `main` through a stabilization PR.
+```bash
+git checkout dev
+git pull origin dev
+git checkout -b feature/my-topic
+
+# ... make changes ...
+
+dart run melos run format:check
+dart run melos run analyze
+dart run melos run test
+
+git push origin feature/my-topic
+# Open PR into dev
+```
 
 ## Rules
 
-- Large refactors must land in `dev` first.
-- Keep PRs focused and documented.
-- Update docs when structure or commands change.
-- Do not bypass CI for architecture or CLI migrations.
+- Never push directly to `main`.
+- Keep PRs small and focused — one concern per PR.
+- Run the full validation suite locally before requesting review.
+- Update docs when public API or CLI commands change.
+- Promote `dev` → `main` through a stabilization PR when a release is ready.
+
+## CI gates
+
+Every PR and every push to `main`, `master`, and `dev` runs:
+- format check
+- Flutter analyze
+- Dart analyze
+- tests
+- build (CLI executable)
