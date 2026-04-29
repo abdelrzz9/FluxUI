@@ -54,7 +54,8 @@ void main() {
         expect(code, 0);
         expect(stderr.toString(), isEmpty);
         expect(
-          File(p.join(project.path, 'lib/ui/components/buttons/app_button.dart'))
+          File(p.join(
+                  project.path, 'lib/ui/components/buttons/app_button.dart'))
               .existsSync(),
           isTrue,
         );

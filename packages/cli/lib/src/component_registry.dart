@@ -99,6 +99,112 @@ final class ComponentRegistry {
       description: 'Vertical stack that inserts gaps between children.',
       template: _vStackTemplate,
     ),
+    'alert': ComponentDefinition(
+      id: 'alert',
+      aliases: <String>['app_alert'],
+      outputPath: 'feedback/app_alert.dart',
+      dependencies: <String>['text', 'v-stack'],
+      publicSymbols: <String>['AppAlert', 'AppAlertVariant'],
+      description:
+          'Alert banner with info, success, warning, danger, and neutral variants.',
+      template: _alertTemplate,
+    ),
+    'carousel': ComponentDefinition(
+      id: 'carousel',
+      aliases: <String>['app_carousel', 'slider'],
+      outputPath: 'display/app_carousel.dart',
+      dependencies: <String>['card'],
+      publicSymbols: <String>['AppCarousel'],
+      description: 'Paginated carousel with optional controls and indicators.',
+      template: _carouselTemplate,
+    ),
+    'checkbox': ComponentDefinition(
+      id: 'checkbox',
+      aliases: <String>['app_checkbox'],
+      outputPath: 'selection/app_checkbox.dart',
+      dependencies: <String>['text', 'v-stack'],
+      publicSymbols: <String>['AppCheckbox'],
+      description: 'Checkbox control with optional label and description.',
+      template: _checkboxTemplate,
+    ),
+    'combobox': ComponentDefinition(
+      id: 'combobox',
+      aliases: <String>['app_combobox', 'select', 'dropdown'],
+      outputPath: 'inputs/app_combobox.dart',
+      dependencies: <String>['card', 'text', 'text-field', 'v-stack'],
+      publicSymbols: <String>['AppCombobox', 'AppComboboxOption'],
+      description: 'Searchable bottom-sheet select with typed options.',
+      template: _comboboxTemplate,
+    ),
+    'navigation-menu': ComponentDefinition(
+      id: 'navigation-menu',
+      aliases: <String>['nav-menu', 'app_navigation_menu'],
+      outputPath: 'navigation/app_navigation_menu.dart',
+      dependencies: <String>['card', 'text', 'v-stack'],
+      publicSymbols: <String>['AppNavigationMenu', 'AppNavigationMenuItem'],
+      description: 'Horizontal tab-style navigation menu with panel content.',
+      template: _navigationMenuTemplate,
+    ),
+    'otp-field': ComponentDefinition(
+      id: 'otp-field',
+      aliases: <String>['otp', 'app_otp_field'],
+      outputPath: 'inputs/app_otp_field.dart',
+      dependencies: <String>[],
+      publicSymbols: <String>['AppOtpField'],
+      description:
+          'One-time-password input with per-digit cells and paste support.',
+      template: _otpFieldTemplate,
+    ),
+    'pagination': ComponentDefinition(
+      id: 'pagination',
+      aliases: <String>['app_pagination', 'pages'],
+      outputPath: 'navigation/app_pagination.dart',
+      dependencies: <String>['text'],
+      publicSymbols: <String>['AppPagination'],
+      description: 'Numeric page controls with ellipsis and sibling range.',
+      template: _paginationTemplate,
+    ),
+    'progress': ComponentDefinition(
+      id: 'progress',
+      aliases: <String>['app_progress', 'progressbar'],
+      outputPath: 'feedback/app_progress.dart',
+      dependencies: <String>['text', 'v-stack'],
+      publicSymbols: <String>[
+        'AppProgress',
+        'AppProgressVariant',
+        'AppProgressSize'
+      ],
+      description:
+          'Linear and circular progress indicators with label and size variants.',
+      template: _progressTemplate,
+    ),
+    'roadmap-item': ComponentDefinition(
+      id: 'roadmap-item',
+      aliases: <String>['roadmap', 'app_roadmap_item'],
+      outputPath: 'roadmap/app_roadmap_item.dart',
+      dependencies: <String>['text'],
+      publicSymbols: <String>['AppRoadmapItem', 'AppRoadmapItemState'],
+      description: 'Roadmap row with state icon, kind badge, and metadata.',
+      template: _roadmapItemTemplate,
+    ),
+    'switch': ComponentDefinition(
+      id: 'switch',
+      aliases: <String>['app_switch', 'toggle'],
+      outputPath: 'selection/app_switch.dart',
+      dependencies: <String>['text', 'v-stack'],
+      publicSymbols: <String>['AppSwitch'],
+      description: 'Toggle switch with optional label and description.',
+      template: _switchTemplate,
+    ),
+    'tabs': ComponentDefinition(
+      id: 'tabs',
+      aliases: <String>['app_tabs'],
+      outputPath: 'navigation/app_tabs.dart',
+      dependencies: <String>['card', 'text', 'v-stack'],
+      publicSymbols: <String>['AppTabs', 'AppTabItem'],
+      description: 'Tab bar with optional panel content and badge support.',
+      template: _tabsTemplate,
+    ),
   };
 
   static ComponentDefinition? resolve(String rawName) {
@@ -1296,6 +1402,2404 @@ class VStack extends StatelessWidget {
 
         return Gap.vertical(spacing);
       },
+    );
+  }
+}
+''';
+
+const String _alertTemplate = r'''
+import 'package:flutter/material.dart';
+import '../../core/flutter_ui.dart';
+import '../layouts/v_stack.dart';
+import '../typography/app_text.dart';
+
+enum AppAlertVariant {
+  info,
+  success,
+  warning,
+  danger,
+  neutral,
+}
+
+class AppAlert extends StatelessWidget {
+  const AppAlert({
+    super.key,
+    required this.title,
+    this.description,
+    this.action,
+    this.child,
+    this.icon,
+    this.variant = AppAlertVariant.info,
+  });
+
+  const AppAlert.info({
+    super.key,
+    required this.title,
+    this.description,
+    this.action,
+    this.child,
+    this.icon,
+  }) : variant = AppAlertVariant.info;
+
+  const AppAlert.success({
+    super.key,
+    required this.title,
+    this.description,
+    this.action,
+    this.child,
+    this.icon,
+  }) : variant = AppAlertVariant.success;
+
+  const AppAlert.warning({
+    super.key,
+    required this.title,
+    this.description,
+    this.action,
+    this.child,
+    this.icon,
+  }) : variant = AppAlertVariant.warning;
+
+  const AppAlert.danger({
+    super.key,
+    required this.title,
+    this.description,
+    this.action,
+    this.child,
+    this.icon,
+  }) : variant = AppAlertVariant.danger;
+
+  const AppAlert.neutral({
+    super.key,
+    required this.title,
+    this.description,
+    this.action,
+    this.child,
+    this.icon,
+  }) : variant = AppAlertVariant.neutral;
+
+  final String title;
+  final String? description;
+  final Widget? action;
+  final Widget? child;
+  final IconData? icon;
+  final AppAlertVariant variant;
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = context.appSpacing;
+    final colors = context.appColors;
+    final style = _AppAlertStyle.resolve(colors, variant);
+    final radius = BorderRadius.circular(context.appRadius.lg);
+    final borderWidth = spacing.xxxs / 2;
+    final resolvedIcon = icon ?? style.icon;
+
+    return Material(
+      color: Colors.transparent,
+      child: Ink(
+        decoration: BoxDecoration(
+          color: style.background,
+          borderRadius: radius,
+          border: Border.all(
+            color: style.border,
+            width: borderWidth,
+          ),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(spacing.md),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  color: style.iconBackground,
+                  shape: BoxShape.circle,
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(spacing.xs),
+                  child: Icon(
+                    resolvedIcon,
+                    size: context.appSizes.iconSm,
+                    color: style.foreground,
+                  ),
+                ),
+              ),
+              SizedBox(width: spacing.md),
+              Expanded(
+                child: VStack(
+                  spacing: spacing.xs,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    AppText.title(
+                      title,
+                      variant: AppTextVariant.titleMedium,
+                      color: colors.onSurface,
+                    ),
+                    if (description != null)
+                      AppText.body(
+                        description!,
+                        tone: AppTextTone.muted,
+                      ),
+                    if (child != null) child!,
+                  ],
+                ),
+              ),
+              if (action != null) ...[
+                SizedBox(width: spacing.md),
+                action!,
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AppAlertStyle {
+  const _AppAlertStyle({
+    required this.foreground,
+    required this.background,
+    required this.iconBackground,
+    required this.border,
+    required this.icon,
+  });
+
+  final Color foreground;
+  final Color background;
+  final Color iconBackground;
+  final Color border;
+  final IconData icon;
+
+  static _AppAlertStyle resolve(
+    AppColorTokens colors,
+    AppAlertVariant variant,
+  ) {
+    return switch (variant) {
+      AppAlertVariant.info => _AppAlertStyle(
+          foreground: colors.info,
+          background: Color.lerp(colors.surface, colors.info, 0.08)!,
+          iconBackground: Color.lerp(colors.surface, colors.info, 0.16)!,
+          border: Color.lerp(colors.borderStrong, colors.info, 0.32)!,
+          icon: Icons.info_outline_rounded,
+        ),
+      AppAlertVariant.success => _AppAlertStyle(
+          foreground: colors.success,
+          background: Color.lerp(colors.surface, colors.success, 0.08)!,
+          iconBackground: Color.lerp(colors.surface, colors.success, 0.16)!,
+          border: Color.lerp(colors.borderStrong, colors.success, 0.32)!,
+          icon: Icons.check_circle_outline_rounded,
+        ),
+      AppAlertVariant.warning => _AppAlertStyle(
+          foreground: colors.warning,
+          background: Color.lerp(colors.surface, colors.warning, 0.08)!,
+          iconBackground: Color.lerp(colors.surface, colors.warning, 0.16)!,
+          border: Color.lerp(colors.borderStrong, colors.warning, 0.32)!,
+          icon: Icons.warning_amber_rounded,
+        ),
+      AppAlertVariant.danger => _AppAlertStyle(
+          foreground: colors.error,
+          background: Color.lerp(colors.surface, colors.error, 0.08)!,
+          iconBackground: Color.lerp(colors.surface, colors.error, 0.16)!,
+          border: Color.lerp(colors.borderStrong, colors.error, 0.32)!,
+          icon: Icons.error_outline_rounded,
+        ),
+      AppAlertVariant.neutral => _AppAlertStyle(
+          foreground: colors.secondary,
+          background: colors.surfaceMuted,
+          iconBackground:
+              Color.lerp(colors.surface, colors.secondaryContainer, 0.72)!,
+          border: colors.borderStrong,
+          icon: Icons.notifications_none_rounded,
+        ),
+    };
+  }
+}
+''';
+
+const String _carouselTemplate = r'''
+import 'package:flutter/material.dart';
+import '../../core/flutter_ui.dart';
+import '../cards/app_card.dart';
+
+class AppCarousel extends StatefulWidget {
+  const AppCarousel({
+    super.key,
+    required this.children,
+    this.height = 280,
+    this.initialIndex = 0,
+    this.onChanged,
+    this.showControls = true,
+    this.showIndicators = true,
+    this.viewportFraction = 1,
+  })  : assert(children.length > 0, 'children must not be empty.'),
+        assert(
+          initialIndex >= 0 && initialIndex < children.length,
+          'initialIndex must stay within the child range.',
+        ),
+        assert(viewportFraction > 0,
+            'viewportFraction must be greater than zero.');
+
+  final List<Widget> children;
+  final double height;
+  final int initialIndex;
+  final ValueChanged<int>? onChanged;
+  final bool showControls;
+  final bool showIndicators;
+  final double viewportFraction;
+
+  @override
+  State<AppCarousel> createState() => _AppCarouselState();
+}
+
+class _AppCarouselState extends State<AppCarousel> {
+  late final PageController _pageController;
+  late int _currentIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex;
+    _pageController = PageController(
+      initialPage: widget.initialIndex,
+      viewportFraction: widget.viewportFraction,
+    );
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = context.appSpacing;
+
+    return AppCard.outlined(
+      padding: EdgeInsets.zero,
+      clipBehavior: Clip.antiAlias,
+      child: SizedBox(
+        height: widget.height,
+        child: Stack(
+          children: <Widget>[
+            PageView.builder(
+              controller: _pageController,
+              itemCount: widget.children.length,
+              onPageChanged: _handlePageChanged,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: EdgeInsets.all(
+                      widget.viewportFraction < 1 ? spacing.xs : 0),
+                  child: widget.children[index],
+                );
+              },
+            ),
+            if (widget.showControls && widget.children.length > 1) ...[
+              Positioned(
+                left: spacing.sm,
+                top: 0,
+                bottom: 0,
+                child: _AppCarouselControl(
+                  icon: Icons.chevron_left_rounded,
+                  semanticLabel: 'Previous slide',
+                  enabled: _currentIndex > 0,
+                  onTap: _currentIndex > 0
+                      ? () => _animateTo(_currentIndex - 1)
+                      : null,
+                ),
+              ),
+              Positioned(
+                right: spacing.sm,
+                top: 0,
+                bottom: 0,
+                child: _AppCarouselControl(
+                  icon: Icons.chevron_right_rounded,
+                  semanticLabel: 'Next slide',
+                  enabled: _currentIndex < widget.children.length - 1,
+                  onTap: _currentIndex < widget.children.length - 1
+                      ? () => _animateTo(_currentIndex + 1)
+                      : null,
+                ),
+              ),
+            ],
+            if (widget.showIndicators && widget.children.length > 1)
+              Positioned(
+                left: spacing.md,
+                right: spacing.md,
+                bottom: spacing.sm,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children:
+                      List<Widget>.generate(widget.children.length, (index) {
+                    final isActive = index == _currentIndex;
+                    final colors = context.appColors;
+
+                    return AnimatedContainer(
+                      duration: const Duration(milliseconds: 180),
+                      margin: EdgeInsets.symmetric(horizontal: spacing.xxxs),
+                      width: isActive ? spacing.lg : spacing.xs,
+                      height: spacing.xs,
+                      decoration: BoxDecoration(
+                        color: isActive ? colors.primary : colors.surface,
+                        borderRadius:
+                            BorderRadius.circular(context.appRadius.pill),
+                        border: Border.all(
+                          color:
+                              isActive ? colors.primary : colors.borderStrong,
+                          width: spacing.xxxs / 2,
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _animateTo(int index) {
+    return _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 220),
+      curve: Curves.easeOutCubic,
+    );
+  }
+
+  void _handlePageChanged(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+    widget.onChanged?.call(index);
+  }
+}
+
+class _AppCarouselControl extends StatelessWidget {
+  const _AppCarouselControl({
+    required this.icon,
+    required this.semanticLabel,
+    required this.enabled,
+    this.onTap,
+  });
+
+  final IconData icon;
+  final String semanticLabel;
+  final bool enabled;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.appColors;
+    final spacing = context.appSpacing;
+
+    return Center(
+      child: Semantics(
+        button: true,
+        enabled: enabled,
+        label: semanticLabel,
+        child: Material(
+          color: Colors.transparent,
+          child: Ink(
+            width: context.appSizes.controlSm,
+            height: context.appSizes.controlSm,
+            decoration: BoxDecoration(
+              color: enabled ? colors.surface : colors.surfaceMuted,
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: enabled ? colors.borderStrong : colors.disabled,
+                width: spacing.xxxs / 2,
+              ),
+            ),
+            child: InkWell(
+              customBorder: const CircleBorder(),
+              onTap: enabled ? onTap : null,
+              child: Icon(
+                icon,
+                size: context.appSizes.iconMd,
+                color: enabled ? colors.onSurface : colors.disabledForeground,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+''';
+
+const String _checkboxTemplate = r'''
+import 'package:flutter/material.dart';
+import '../../core/flutter_ui.dart';
+import '../layouts/v_stack.dart';
+import '../typography/app_text.dart';
+
+class AppCheckbox extends StatelessWidget {
+  const AppCheckbox({
+    super.key,
+    required this.value,
+    this.onChanged,
+    this.label,
+    this.description,
+    this.tristate = false,
+    this.autofocus = false,
+    this.contentPadding,
+  });
+
+  final bool? value;
+  final ValueChanged<bool?>? onChanged;
+  final String? label;
+  final String? description;
+  final bool tristate;
+  final bool autofocus;
+  final EdgeInsetsGeometry? contentPadding;
+
+  bool get _isEnabled => onChanged != null;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.appColors;
+    final spacing = context.appSpacing;
+    final resolvedPadding = contentPadding ??
+        EdgeInsets.symmetric(
+          horizontal: spacing.none,
+          vertical: spacing.xs,
+        );
+    final checkboxControl = Theme(
+      data: Theme.of(context).copyWith(
+        checkboxTheme: CheckboxThemeData(
+          side: BorderSide(
+            color: _isEnabled ? colors.borderStrong : colors.disabled,
+            width: spacing.xxxs / 2,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(context.appRadius.xs),
+          ),
+          fillColor: WidgetStateProperty.resolveWith<Color>((states) {
+            if (states.contains(WidgetState.disabled)) {
+              return colors.disabled;
+            }
+
+            if (states.contains(WidgetState.selected)) {
+              return colors.primary;
+            }
+
+            return colors.surface;
+          }),
+          checkColor: WidgetStatePropertyAll<Color>(colors.onPrimary),
+        ),
+      ),
+      child: Checkbox(
+        value: value,
+        tristate: tristate,
+        autofocus: autofocus,
+        onChanged: onChanged,
+      ),
+    );
+
+    if (label == null && description == null) {
+      return checkboxControl;
+    }
+
+    return Semantics(
+      container: true,
+      enabled: _isEnabled,
+      checked: value == true,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: _isEnabled ? () => onChanged!(_nextValue()) : null,
+          borderRadius: BorderRadius.circular(context.appRadius.md),
+          child: Padding(
+            padding: resolvedPadding,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                checkboxControl,
+                SizedBox(width: spacing.sm),
+                Expanded(
+                  child: VStack(
+                    spacing: spacing.xxxs,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      if (label != null)
+                        AppText.label(
+                          label!,
+                          color: _isEnabled
+                              ? colors.onSurface
+                              : colors.disabledForeground,
+                        ),
+                      if (description != null)
+                        AppText.body(
+                          description!,
+                          variant: AppTextVariant.bodySmall,
+                          tone: AppTextTone.muted,
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  bool? _nextValue() {
+    if (!tristate) {
+      return !(value ?? false);
+    }
+
+    if (value == null) {
+      return true;
+    }
+
+    if (value == true) {
+      return false;
+    }
+
+    return null;
+  }
+}
+''';
+
+const String _comboboxTemplate = r'''
+import 'package:flutter/material.dart';
+import '../../core/flutter_ui.dart';
+import '../cards/app_card.dart';
+import '../layouts/v_stack.dart';
+import '../typography/app_text.dart';
+import 'app_text_field.dart';
+
+@immutable
+class AppComboboxOption {
+  const AppComboboxOption({
+    required this.value,
+    required this.label,
+    this.description,
+    this.enabled = true,
+  });
+
+  final String value;
+  final String label;
+  final String? description;
+  final bool enabled;
+}
+
+class AppCombobox extends StatelessWidget {
+  const AppCombobox({
+    super.key,
+    required this.options,
+    this.value,
+    this.onChanged,
+    this.labelText,
+    this.hintText = 'Select an option',
+    this.helperText,
+    this.searchHintText = 'Search options',
+    this.emptyStateText = 'No results found.',
+    this.enabled = true,
+  });
+
+  final List<AppComboboxOption> options;
+  final String? value;
+  final ValueChanged<String>? onChanged;
+  final String? labelText;
+  final String hintText;
+  final String? helperText;
+  final String searchHintText;
+  final String emptyStateText;
+  final bool enabled;
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = context.appSpacing;
+    final colors = context.appColors;
+    AppComboboxOption? selectedOption;
+    for (final option in options) {
+      if (option.value == value) {
+        selectedOption = option;
+        break;
+      }
+    }
+    final isInteractive = enabled && onChanged != null;
+    final foreground = isInteractive
+        ? (selectedOption == null ? colors.onSurfaceMuted : colors.onSurface)
+        : colors.disabledForeground;
+    final background = isInteractive ? colors.surface : colors.surfaceMuted;
+    final borderColor = isInteractive ? colors.border : colors.disabled;
+
+    return VStack(
+      spacing: spacing.xs,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        if (labelText != null) AppText.label(labelText!),
+        Material(
+          color: Colors.transparent,
+          child: Ink(
+            decoration: BoxDecoration(
+              color: background,
+              borderRadius: BorderRadius.circular(context.appRadius.md),
+              border: Border.all(
+                color: borderColor,
+                width: spacing.xxxs / 2,
+              ),
+            ),
+            child: InkWell(
+              onTap: isInteractive ? () => _openSheet(context) : null,
+              borderRadius: BorderRadius.circular(context.appRadius.md),
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: spacing.md,
+                  vertical: spacing.sm,
+                ),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: AppText.body(
+                        selectedOption?.label ?? hintText,
+                        color: foreground,
+                      ),
+                    ),
+                    SizedBox(width: spacing.sm),
+                    Icon(
+                      Icons.unfold_more_rounded,
+                      size: context.appSizes.iconMd,
+                      color: foreground,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        if (helperText != null)
+          AppText.body(
+            helperText!,
+            variant: AppTextVariant.bodySmall,
+            tone: AppTextTone.muted,
+          ),
+      ],
+    );
+  }
+
+  Future<void> _openSheet(BuildContext context) async {
+    final nextValue = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return _AppComboboxSheet(
+          options: options,
+          selectedValue: value,
+          title: labelText ?? hintText,
+          searchHintText: searchHintText,
+          emptyStateText: emptyStateText,
+        );
+      },
+    );
+
+    if (nextValue != null && nextValue != value) {
+      onChanged?.call(nextValue);
+    }
+  }
+}
+
+class _AppComboboxSheet extends StatefulWidget {
+  const _AppComboboxSheet({
+    required this.options,
+    required this.selectedValue,
+    required this.title,
+    required this.searchHintText,
+    required this.emptyStateText,
+  });
+
+  final List<AppComboboxOption> options;
+  final String? selectedValue;
+  final String title;
+  final String searchHintText;
+  final String emptyStateText;
+
+  @override
+  State<_AppComboboxSheet> createState() => _AppComboboxSheetState();
+}
+
+class _AppComboboxSheetState extends State<_AppComboboxSheet> {
+  late final TextEditingController _searchController;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController = TextEditingController()..addListener(_handleSearch);
+  }
+
+  @override
+  void dispose() {
+    _searchController
+      ..removeListener(_handleSearch)
+      ..dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = context.appSpacing;
+    final filteredOptions = _filteredOptions();
+
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: EdgeInsets.only(
+          left: spacing.md,
+          right: spacing.md,
+          bottom: spacing.md,
+        ),
+        child: FractionallySizedBox(
+          heightFactor: 0.78,
+          child: AppCard(
+            child: VStack(
+              spacing: spacing.md,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                AppText.title(
+                  widget.title,
+                  variant: AppTextVariant.titleMedium,
+                ),
+                AppTextField.outline(
+                  controller: _searchController,
+                  hintText: widget.searchHintText,
+                  prefixIcon: const Icon(Icons.search_rounded),
+                ),
+                Expanded(
+                  child: filteredOptions.isEmpty
+                      ? Center(
+                          child: AppText.body(
+                            widget.emptyStateText,
+                            tone: AppTextTone.muted,
+                          ),
+                        )
+                      : ListView.separated(
+                          itemCount: filteredOptions.length,
+                          separatorBuilder: (_, __) => Divider(
+                            height: spacing.sm,
+                            thickness: 1,
+                            color: context.appColors.border,
+                          ),
+                          itemBuilder: (context, index) {
+                            final option = filteredOptions[index];
+
+                            return _AppComboboxOptionTile(
+                              option: option,
+                              isSelected: option.value == widget.selectedValue,
+                              onTap: option.enabled
+                                  ? () =>
+                                      Navigator.of(context).pop(option.value)
+                                  : null,
+                            );
+                          },
+                        ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  List<AppComboboxOption> _filteredOptions() {
+    final query = _searchController.text.trim().toLowerCase();
+    if (query.isEmpty) {
+      return widget.options;
+    }
+
+    return widget.options.where((option) {
+      final haystack =
+          '${option.label} ${option.description ?? ''}'.toLowerCase();
+      return haystack.contains(query);
+    }).toList();
+  }
+
+  void _handleSearch() {
+    setState(() {});
+  }
+}
+
+class _AppComboboxOptionTile extends StatelessWidget {
+  const _AppComboboxOptionTile({
+    required this.option,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final AppComboboxOption option;
+  final bool isSelected;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = context.appSpacing;
+    final colors = context.appColors;
+    final foreground = option.enabled
+        ? (isSelected ? colors.primary : colors.onSurface)
+        : colors.disabledForeground;
+
+    return Material(
+      color: Colors.transparent,
+      child: Ink(
+        decoration: BoxDecoration(
+          color: isSelected ? colors.surfaceMuted : colors.surface,
+          borderRadius: BorderRadius.circular(context.appRadius.md),
+        ),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(context.appRadius.md),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: spacing.sm,
+              vertical: spacing.sm,
+            ),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: VStack(
+                    spacing: spacing.xxxs,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      AppText.body(
+                        option.label,
+                        color: foreground,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      if (option.description != null)
+                        AppText.body(
+                          option.description!,
+                          variant: AppTextVariant.bodySmall,
+                          tone: AppTextTone.muted,
+                        ),
+                    ],
+                  ),
+                ),
+                if (isSelected)
+                  Icon(
+                    Icons.check_rounded,
+                    size: context.appSizes.iconSm,
+                    color: colors.primary,
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+''';
+
+const String _navigationMenuTemplate = r'''
+import 'package:flutter/material.dart';
+import '../../core/flutter_ui.dart';
+import '../cards/app_card.dart';
+import '../layouts/v_stack.dart';
+import '../typography/app_text.dart';
+
+@immutable
+class AppNavigationMenuItem {
+  const AppNavigationMenuItem({
+    required this.label,
+    this.icon,
+    this.description,
+    this.badgeLabel,
+    this.child,
+    this.enabled = true,
+  });
+
+  final String label;
+  final IconData? icon;
+  final String? description;
+  final String? badgeLabel;
+  final Widget? child;
+  final bool enabled;
+}
+
+class AppNavigationMenu extends StatelessWidget {
+  const AppNavigationMenu({
+    super.key,
+    required this.items,
+    required this.selectedIndex,
+    this.onChanged,
+  })  : assert(items.length > 0, 'items must not be empty.'),
+        assert(
+          selectedIndex >= 0 && selectedIndex < items.length,
+          'selectedIndex must stay within the item range.',
+        );
+
+  final List<AppNavigationMenuItem> items;
+  final int selectedIndex;
+  final ValueChanged<int>? onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = context.appSpacing;
+    final selectedItem = items[selectedIndex];
+
+    return AppCard.outlined(
+      padding: EdgeInsets.zero,
+      child: VStack(
+        spacing: spacing.none,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: List<Widget>.generate(items.length, (index) {
+                final item = items[index];
+
+                return _AppNavigationMenuTrigger(
+                  item: item,
+                  isSelected: index == selectedIndex,
+                  showDivider: index != items.length - 1,
+                  onTap: item.enabled && onChanged != null
+                      ? () => onChanged!(index)
+                      : null,
+                );
+              }),
+            ),
+          ),
+          Divider(
+            height: 1,
+            thickness: 1,
+            color: context.appColors.border,
+          ),
+          Padding(
+            padding: EdgeInsets.all(spacing.lg),
+            child: selectedItem.child ??
+                _AppNavigationMenuPanel(item: selectedItem),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AppNavigationMenuTrigger extends StatelessWidget {
+  const _AppNavigationMenuTrigger({
+    required this.item,
+    required this.isSelected,
+    required this.showDivider,
+    required this.onTap,
+  });
+
+  final AppNavigationMenuItem item;
+  final bool isSelected;
+  final bool showDivider;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = context.appSpacing;
+    final colors = context.appColors;
+    final foreground = item.enabled
+        ? (isSelected ? colors.primary : colors.onSurface)
+        : colors.disabledForeground;
+
+    return Material(
+      color: Colors.transparent,
+      child: Ink(
+        decoration: BoxDecoration(
+          color: isSelected ? colors.surfaceMuted : colors.surface,
+          border: showDivider
+              ? Border(
+                  right: BorderSide(
+                    color: colors.border,
+                    width: spacing.xxxs / 2,
+                  ),
+                )
+              : null,
+        ),
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: spacing.md,
+              vertical: spacing.md,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                if (item.icon != null) ...[
+                  Icon(item.icon,
+                      size: context.appSizes.iconSm, color: foreground),
+                  SizedBox(width: spacing.xs),
+                ],
+                AppText.label(
+                  item.label,
+                  color: foreground,
+                  style: TextStyle(
+                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                  ),
+                ),
+                if (item.badgeLabel case final String badge) ...[
+                  SizedBox(width: spacing.xs),
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? colors.primaryContainer
+                          : colors.surfaceMuted,
+                      borderRadius:
+                          BorderRadius.circular(context.appRadius.pill),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: spacing.xs,
+                        vertical: spacing.xxxs,
+                      ),
+                      child: AppText.label(
+                        badge,
+                        variant: AppTextVariant.labelSmall,
+                        color: foreground,
+                        style: const TextStyle(fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AppNavigationMenuPanel extends StatelessWidget {
+  const _AppNavigationMenuPanel({
+    required this.item,
+  });
+
+  final AppNavigationMenuItem item;
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = context.appSpacing;
+
+    return VStack(
+      spacing: spacing.xs,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        AppText.title(
+          item.label,
+          variant: AppTextVariant.titleMedium,
+        ),
+        if (item.description != null)
+          AppText.body(
+            item.description!,
+            tone: AppTextTone.muted,
+          ),
+      ],
+    );
+  }
+}
+''';
+
+const String _otpFieldTemplate = r'''
+import 'dart:math' as math;
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import '../../core/flutter_ui.dart';
+
+class AppOtpField extends StatefulWidget {
+  const AppOtpField({
+    super.key,
+    this.length = 6,
+    this.initialValue,
+    this.onChanged,
+    this.onCompleted,
+    this.enabled = true,
+    this.autofocus = false,
+    this.obscureText = false,
+    this.keyboardType = TextInputType.number,
+  }) : assert(length > 0, 'length must be greater than zero.');
+
+  final int length;
+  final String? initialValue;
+  final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onCompleted;
+  final bool enabled;
+  final bool autofocus;
+  final bool obscureText;
+  final TextInputType keyboardType;
+
+  @override
+  State<AppOtpField> createState() => _AppOtpFieldState();
+}
+
+class _AppOtpFieldState extends State<AppOtpField> {
+  late final List<TextEditingController> _controllers;
+  late final List<FocusNode> _focusNodes;
+
+  @override
+  void initState() {
+    super.initState();
+    _controllers = List<TextEditingController>.generate(
+      widget.length,
+      (_) => TextEditingController(),
+    );
+    _focusNodes = List<FocusNode>.generate(widget.length, (_) => FocusNode());
+    _populateFromValue(widget.initialValue ?? '');
+  }
+
+  @override
+  void didUpdateWidget(covariant AppOtpField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.initialValue != widget.initialValue) {
+      _populateFromValue(widget.initialValue ?? '');
+    }
+  }
+
+  @override
+  void dispose() {
+    for (final controller in _controllers) {
+      controller.dispose();
+    }
+
+    for (final focusNode in _focusNodes) {
+      focusNode.dispose();
+    }
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = context.appSpacing;
+    final colors = context.appColors;
+    final borderRadius = BorderRadius.circular(context.appRadius.md);
+    final borderWidth = spacing.xxxs / 2;
+    final inputFormatters = <TextInputFormatter>[
+      LengthLimitingTextInputFormatter(widget.length),
+      FilteringTextInputFormatter.allow(RegExp('[A-Za-z0-9]')),
+    ];
+
+    return Wrap(
+      spacing: spacing.sm,
+      runSpacing: spacing.sm,
+      children: List<Widget>.generate(widget.length, (index) {
+        return Focus(
+          onKeyEvent: (_, event) => _handleKeyEvent(event, index),
+          child: SizedBox(
+            width: context.appSizes.controlLg,
+            child: TextFormField(
+              controller: _controllers[index],
+              focusNode: _focusNodes[index],
+              enabled: widget.enabled,
+              autofocus: widget.autofocus && index == 0,
+              keyboardType: widget.keyboardType,
+              textAlign: TextAlign.center,
+              obscureText: widget.obscureText,
+              inputFormatters: inputFormatters,
+              style: context.appTypography.titleLarge.copyWith(
+                color: colors.onSurface,
+                fontWeight: FontWeight.w700,
+              ),
+              cursorColor: colors.primary,
+              decoration: InputDecoration(
+                counterText: '',
+                isDense: true,
+                filled: true,
+                fillColor: colors.surface,
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: spacing.none,
+                  vertical: spacing.md,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: borderRadius,
+                  borderSide: BorderSide(
+                    color: colors.border,
+                    width: borderWidth,
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: borderRadius,
+                  borderSide: BorderSide(
+                    color: colors.border,
+                    width: borderWidth,
+                  ),
+                ),
+                disabledBorder: OutlineInputBorder(
+                  borderRadius: borderRadius,
+                  borderSide: BorderSide(
+                    color: colors.disabled,
+                    width: borderWidth,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: borderRadius,
+                  borderSide: BorderSide(
+                    color: colors.focus,
+                    width: borderWidth,
+                  ),
+                ),
+              ),
+              onChanged: (value) => _handleChanged(value, index),
+            ),
+          ),
+        );
+      }),
+    );
+  }
+
+  KeyEventResult _handleKeyEvent(KeyEvent event, int index) {
+    if (event is! KeyDownEvent ||
+        event.logicalKey != LogicalKeyboardKey.backspace ||
+        _controllers[index].text.isNotEmpty ||
+        index == 0) {
+      return KeyEventResult.ignored;
+    }
+
+    _controllers[index - 1].clear();
+    _focusNodes[index - 1].requestFocus();
+    _emitValue();
+    return KeyEventResult.handled;
+  }
+
+  void _handleChanged(String rawValue, int index) {
+    final sanitized = rawValue.replaceAll(RegExp(r'\s+'), '');
+
+    if (sanitized.length > 1) {
+      _applyPastedValue(sanitized, index);
+      return;
+    }
+
+    final nextValue =
+        sanitized.isEmpty ? '' : sanitized.substring(sanitized.length - 1);
+    _setControllerValue(index, nextValue);
+
+    if (nextValue.isNotEmpty) {
+      if (index < widget.length - 1) {
+        _focusNodes[index + 1].requestFocus();
+      } else {
+        _focusNodes[index].unfocus();
+      }
+    }
+
+    _emitValue();
+  }
+
+  void _applyPastedValue(String rawValue, int startIndex) {
+    final characters = rawValue.split('');
+
+    for (var index = 0; index < widget.length; index += 1) {
+      final targetIndex = startIndex + index;
+      if (targetIndex >= widget.length) {
+        break;
+      }
+
+      final character = index < characters.length ? characters[index] : '';
+      _setControllerValue(targetIndex, character);
+    }
+
+    final filledCount = math.min(characters.length, widget.length - startIndex);
+    final nextIndex = startIndex + filledCount - 1;
+    if (_isComplete) {
+      _focusNodes.last.unfocus();
+    } else if (nextIndex >= 0 && nextIndex < widget.length - 1) {
+      _focusNodes[nextIndex + 1].requestFocus();
+    }
+
+    _emitValue();
+  }
+
+  void _populateFromValue(String value) {
+    final characters = value.split('');
+
+    for (var index = 0; index < widget.length; index += 1) {
+      _setControllerValue(
+        index,
+        index < characters.length ? characters[index] : '',
+      );
+    }
+  }
+
+  void _setControllerValue(int index, String value) {
+    _controllers[index].value = TextEditingValue(
+      text: value,
+      selection: TextSelection.collapsed(offset: value.length),
+    );
+  }
+
+  void _emitValue() {
+    final value = _controllers.map((controller) => controller.text).join();
+    widget.onChanged?.call(value);
+
+    if (_isComplete) {
+      widget.onCompleted?.call(value);
+    }
+  }
+
+  bool get _isComplete =>
+      _controllers.every((controller) => controller.text.isNotEmpty);
+}
+''';
+
+const String _paginationTemplate = r'''
+import 'dart:math' as math;
+import 'package:flutter/material.dart';
+import '../../core/flutter_ui.dart';
+import '../typography/app_text.dart';
+
+class AppPagination extends StatelessWidget {
+  const AppPagination({
+    super.key,
+    required this.currentPage,
+    required this.totalPages,
+    this.onPageChanged,
+    this.siblingCount = 1,
+  })  : assert(totalPages > 0, 'totalPages must be greater than zero.'),
+        assert(
+          currentPage > 0 && currentPage <= totalPages,
+          'currentPage must stay within the page range.',
+        ),
+        assert(siblingCount >= 0, 'siblingCount must not be negative.');
+
+  final int currentPage;
+  final int totalPages;
+  final ValueChanged<int>? onPageChanged;
+  final int siblingCount;
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = context.appSpacing;
+    final entries = _buildEntries();
+
+    return Wrap(
+      spacing: spacing.xs,
+      runSpacing: spacing.xs,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: <Widget>[
+        _AppPaginationControl(
+          label: 'Previous',
+          icon: Icons.chevron_left_rounded,
+          enabled: currentPage > 1 && onPageChanged != null,
+          onTap: () => onPageChanged?.call(currentPage - 1),
+        ),
+        ...entries.map((entry) {
+          if (entry.isEllipsis) {
+            return Padding(
+              padding: EdgeInsets.symmetric(horizontal: spacing.xs),
+              child: AppText.body(
+                '…',
+                variant: AppTextVariant.bodySmall,
+                tone: AppTextTone.muted,
+              ),
+            );
+          }
+
+          final page = entry.page!;
+
+          return _AppPaginationControl(
+            label: '$page',
+            isCurrent: page == currentPage,
+            enabled: onPageChanged != null && page != currentPage,
+            onTap: () => onPageChanged?.call(page),
+          );
+        }),
+        _AppPaginationControl(
+          label: 'Next',
+          trailingIcon: Icons.chevron_right_rounded,
+          enabled: currentPage < totalPages && onPageChanged != null,
+          onTap: () => onPageChanged?.call(currentPage + 1),
+        ),
+      ],
+    );
+  }
+
+  List<_AppPaginationEntry> _buildEntries() {
+    if (totalPages <= 5 + (siblingCount * 2)) {
+      return List<_AppPaginationEntry>.generate(
+        totalPages,
+        (index) => _AppPaginationEntry.page(index + 1),
+      );
+    }
+
+    final left = math.max(2, currentPage - siblingCount);
+    final right = math.min(totalPages - 1, currentPage + siblingCount);
+    final entries = <_AppPaginationEntry>[
+      const _AppPaginationEntry.page(1),
+    ];
+
+    if (left > 2) {
+      entries.add(const _AppPaginationEntry.ellipsis());
+    }
+
+    for (var page = left; page <= right; page += 1) {
+      entries.add(_AppPaginationEntry.page(page));
+    }
+
+    if (right < totalPages - 1) {
+      entries.add(const _AppPaginationEntry.ellipsis());
+    }
+
+    entries.add(_AppPaginationEntry.page(totalPages));
+    return entries;
+  }
+}
+
+class _AppPaginationEntry {
+  const _AppPaginationEntry.page(this.page) : isEllipsis = false;
+
+  const _AppPaginationEntry.ellipsis()
+      : page = null,
+        isEllipsis = true;
+
+  final int? page;
+  final bool isEllipsis;
+}
+
+class _AppPaginationControl extends StatelessWidget {
+  const _AppPaginationControl({
+    required this.label,
+    this.icon,
+    this.trailingIcon,
+    this.onTap,
+    this.enabled = true,
+    this.isCurrent = false,
+  });
+
+  final String label;
+  final IconData? icon;
+  final IconData? trailingIcon;
+  final VoidCallback? onTap;
+  final bool enabled;
+  final bool isCurrent;
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = context.appSpacing;
+    final colors = context.appColors;
+    final typography = context.appTypography;
+    final radius = BorderRadius.circular(context.appRadius.md);
+    final borderWidth = spacing.xxxs / 2;
+    final resolvedBackground =
+        isCurrent ? colors.primaryContainer : colors.surface;
+    final resolvedForeground = !enabled
+        ? colors.disabledForeground
+        : isCurrent
+            ? colors.primary
+            : colors.onSurface;
+
+    return Material(
+      color: Colors.transparent,
+      child: Ink(
+        decoration: BoxDecoration(
+          color:
+              enabled || isCurrent ? resolvedBackground : colors.surfaceMuted,
+          borderRadius: radius,
+          border: Border.all(
+            color: isCurrent ? colors.primary : colors.borderStrong,
+            width: borderWidth,
+          ),
+        ),
+        child: InkWell(
+          onTap: enabled ? onTap : null,
+          borderRadius: radius,
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: spacing.sm,
+              vertical: spacing.xs,
+            ),
+            child: DefaultTextStyle(
+              style: typography.labelMedium.copyWith(
+                color: resolvedForeground,
+                fontWeight: isCurrent ? FontWeight.w700 : FontWeight.w600,
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  if (icon != null) ...[
+                    Icon(icon,
+                        size: context.appSizes.iconSm,
+                        color: resolvedForeground),
+                    SizedBox(width: spacing.xxxs),
+                  ],
+                  Text(label),
+                  if (trailingIcon != null) ...[
+                    SizedBox(width: spacing.xxxs),
+                    Icon(
+                      trailingIcon,
+                      size: context.appSizes.iconSm,
+                      color: resolvedForeground,
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+''';
+
+const String _progressTemplate = r'''
+import 'package:flutter/material.dart';
+import '../../core/flutter_ui.dart';
+import '../layouts/v_stack.dart';
+import '../typography/app_text.dart';
+
+enum AppProgressVariant {
+  linear,
+  circular,
+}
+
+enum AppProgressSize {
+  sm,
+  md,
+  lg,
+}
+
+class AppProgress extends StatelessWidget {
+  const AppProgress({
+    super.key,
+    this.value,
+    this.label,
+    this.description,
+    this.showValueLabel = true,
+    this.size = AppProgressSize.md,
+  }) : variant = AppProgressVariant.linear;
+
+  const AppProgress.circular({
+    super.key,
+    this.value,
+    this.label,
+    this.description,
+    this.showValueLabel = true,
+    this.size = AppProgressSize.md,
+  }) : variant = AppProgressVariant.circular;
+
+  final AppProgressVariant variant;
+  final double? value;
+  final String? label;
+  final String? description;
+  final bool showValueLabel;
+  final AppProgressSize size;
+
+  @override
+  Widget build(BuildContext context) {
+    final clampedValue =
+        value == null ? null : value!.clamp(0.0, 1.0).toDouble();
+
+    return switch (variant) {
+      AppProgressVariant.linear => _AppLinearProgress(
+          value: clampedValue,
+          label: label,
+          description: description,
+          showValueLabel: showValueLabel,
+          size: size,
+        ),
+      AppProgressVariant.circular => _AppCircularProgress(
+          value: clampedValue,
+          label: label,
+          description: description,
+          showValueLabel: showValueLabel,
+          size: size,
+        ),
+    };
+  }
+}
+
+class _AppLinearProgress extends StatelessWidget {
+  const _AppLinearProgress({
+    required this.value,
+    required this.label,
+    required this.description,
+    required this.showValueLabel,
+    required this.size,
+  });
+
+  final double? value;
+  final String? label;
+  final String? description;
+  final bool showValueLabel;
+  final AppProgressSize size;
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = context.appSpacing;
+    final colors = context.appColors;
+    final style = _AppProgressSizeStyle.resolve(context, size);
+    final percentageLabel = _formatPercent(value);
+
+    return Semantics(
+      label: label,
+      value: percentageLabel ?? 'In progress',
+      child: VStack(
+        spacing: spacing.xs,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          if (label != null || (showValueLabel && percentageLabel != null))
+            Row(
+              children: <Widget>[
+                if (label != null)
+                  Expanded(
+                    child: AppText.label(label!),
+                  ),
+                if (showValueLabel && percentageLabel != null)
+                  AppText.label(
+                    percentageLabel,
+                    tone: AppTextTone.primary,
+                  ),
+              ],
+            ),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(context.appRadius.pill),
+            child: LinearProgressIndicator(
+              value: value,
+              minHeight: style.linearHeight,
+              backgroundColor: colors.surfaceMuted,
+              valueColor: AlwaysStoppedAnimation<Color>(colors.primary),
+            ),
+          ),
+          if (description != null)
+            AppText.body(
+              description!,
+              variant: AppTextVariant.bodySmall,
+              tone: AppTextTone.muted,
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AppCircularProgress extends StatelessWidget {
+  const _AppCircularProgress({
+    required this.value,
+    required this.label,
+    required this.description,
+    required this.showValueLabel,
+    required this.size,
+  });
+
+  final double? value;
+  final String? label;
+  final String? description;
+  final bool showValueLabel;
+  final AppProgressSize size;
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = context.appSpacing;
+    final colors = context.appColors;
+    final style = _AppProgressSizeStyle.resolve(context, size);
+    final percentageLabel = _formatPercent(value);
+
+    final indicator = SizedBox.square(
+      dimension: style.circularSize,
+      child: CircularProgressIndicator(
+        value: value,
+        strokeWidth: style.strokeWidth,
+        backgroundColor: colors.surfaceMuted,
+        valueColor: AlwaysStoppedAnimation<Color>(colors.primary),
+      ),
+    );
+
+    if (label == null && description == null && !showValueLabel) {
+      return indicator;
+    }
+
+    return Semantics(
+      label: label,
+      value: percentageLabel ?? 'In progress',
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          indicator,
+          SizedBox(width: spacing.md),
+          Expanded(
+            child: VStack(
+              spacing: spacing.xxxs,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                if (label != null ||
+                    (showValueLabel && percentageLabel != null))
+                  Row(
+                    children: <Widget>[
+                      if (label != null)
+                        Expanded(
+                          child: AppText.label(label!),
+                        ),
+                      if (showValueLabel && percentageLabel != null)
+                        AppText.label(
+                          percentageLabel,
+                          tone: AppTextTone.primary,
+                        ),
+                    ],
+                  ),
+                if (description != null)
+                  AppText.body(
+                    description!,
+                    variant: AppTextVariant.bodySmall,
+                    tone: AppTextTone.muted,
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AppProgressSizeStyle {
+  const _AppProgressSizeStyle({
+    required this.linearHeight,
+    required this.circularSize,
+    required this.strokeWidth,
+  });
+
+  final double linearHeight;
+  final double circularSize;
+  final double strokeWidth;
+
+  static _AppProgressSizeStyle resolve(
+    BuildContext context,
+    AppProgressSize size,
+  ) {
+    final spacing = context.appSpacing;
+    final sizes = context.appSizes;
+
+    return switch (size) {
+      AppProgressSize.sm => _AppProgressSizeStyle(
+          linearHeight: spacing.xxs + spacing.xxxs,
+          circularSize: sizes.controlSm,
+          strokeWidth: spacing.xxs,
+        ),
+      AppProgressSize.md => _AppProgressSizeStyle(
+          linearHeight: spacing.xs,
+          circularSize: sizes.controlMd,
+          strokeWidth: spacing.xs / 2,
+        ),
+      AppProgressSize.lg => _AppProgressSizeStyle(
+          linearHeight: spacing.sm,
+          circularSize: sizes.controlLg,
+          strokeWidth: spacing.xs,
+        ),
+    };
+  }
+}
+
+String? _formatPercent(double? value) {
+  if (value == null) {
+    return null;
+  }
+
+  return '${(value * 100).round()}%';
+}
+''';
+
+const String _roadmapItemTemplate = r'''
+import 'package:flutter/material.dart';
+import '../../core/flutter_ui.dart';
+import '../typography/app_text.dart';
+
+enum AppRoadmapItemState {
+  planned,
+  active,
+  completed,
+}
+
+class AppRoadmapItem extends StatelessWidget {
+  const AppRoadmapItem({
+    super.key,
+    required this.title,
+    this.kindLabel = 'Task',
+    this.categoryLabel,
+    this.issueNumber,
+    this.owner,
+    this.activityLabel,
+    this.state = AppRoadmapItemState.planned,
+    this.isHighlighted = false,
+    this.showDivider = true,
+    this.onTap,
+    this.padding,
+  });
+
+  final String title;
+  final String kindLabel;
+  final String? categoryLabel;
+  final int? issueNumber;
+  final String? owner;
+  final String? activityLabel;
+  final AppRoadmapItemState state;
+  final bool isHighlighted;
+  final bool showDivider;
+  final VoidCallback? onTap;
+  final EdgeInsetsGeometry? padding;
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = context.appSpacing;
+    final colors = context.appColors;
+    final resolvedPadding = padding ??
+        EdgeInsets.symmetric(
+          horizontal: spacing.md,
+          vertical: spacing.md,
+        );
+    final dividerWidth = spacing.xxxs / 2;
+    final metadata = _buildMetadata();
+
+    return Material(
+      color: Colors.transparent,
+      child: Ink(
+        decoration: BoxDecoration(
+          color: isHighlighted ? colors.surfaceMuted : colors.surface,
+          border: Border(
+            bottom: showDivider
+                ? BorderSide(
+                    color: colors.border,
+                    width: dividerWidth,
+                  )
+                : BorderSide.none,
+          ),
+        ),
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: resolvedPadding,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(top: spacing.xxs),
+                  child: _AppRoadmapStatusIcon(state: state),
+                ),
+                SizedBox(width: spacing.sm),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Expanded(
+                            child: AppText.title(
+                              title,
+                              variant: AppTextVariant.titleMedium,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                          if (categoryLabel case final String category) ...[
+                            SizedBox(width: spacing.xs),
+                            _AppRoadmapBadge(
+                              label: category,
+                              tone: _AppRoadmapBadgeTone.info,
+                            ),
+                          ],
+                        ],
+                      ),
+                      SizedBox(height: spacing.xs),
+                      Wrap(
+                        spacing: spacing.xs,
+                        runSpacing: spacing.xxs,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: <Widget>[
+                          _AppRoadmapBadge(
+                            label: kindLabel,
+                            tone: _AppRoadmapBadgeTone.warning,
+                          ),
+                          if (metadata != null)
+                            AppText.body(
+                              metadata,
+                              variant: AppTextVariant.bodySmall,
+                              tone: AppTextTone.muted,
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  String? _buildMetadata() {
+    final fragments = <String>[
+      if (issueNumber != null) '#$issueNumber',
+      if (owner != null && owner!.isNotEmpty) 'by $owner',
+      if (activityLabel != null && activityLabel!.isNotEmpty) activityLabel!,
+    ];
+
+    if (fragments.isEmpty) {
+      return null;
+    }
+
+    return fragments.join(' • ');
+  }
+}
+
+class _AppRoadmapStatusIcon extends StatelessWidget {
+  const _AppRoadmapStatusIcon({
+    required this.state,
+  });
+
+  final AppRoadmapItemState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.appColors;
+    final sizes = context.appSizes;
+    final spacing = context.appSpacing;
+    final visualStyle = switch (state) {
+      AppRoadmapItemState.planned => (
+          icon: Icons.circle_outlined,
+          color: colors.onSurfaceMuted,
+          background: colors.surface,
+        ),
+      AppRoadmapItemState.active => (
+          icon: Icons.autorenew_rounded,
+          color: colors.info,
+          background: Color.lerp(colors.surface, colors.info, 0.14)!,
+        ),
+      AppRoadmapItemState.completed => (
+          icon: Icons.check_rounded,
+          color: colors.primary,
+          background:
+              Color.lerp(colors.surface, colors.primaryContainer, 0.82)!,
+        ),
+    };
+
+    return Container(
+      width: sizes.iconMd,
+      height: sizes.iconMd,
+      decoration: BoxDecoration(
+        color: visualStyle.background,
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: visualStyle.color,
+          width: spacing.xxxs / 2,
+        ),
+      ),
+      child: Icon(
+        visualStyle.icon,
+        size: sizes.iconXs,
+        color: visualStyle.color,
+      ),
+    );
+  }
+}
+
+enum _AppRoadmapBadgeTone {
+  info,
+  warning,
+}
+
+class _AppRoadmapBadge extends StatelessWidget {
+  const _AppRoadmapBadge({
+    required this.label,
+    required this.tone,
+  });
+
+  final String label;
+  final _AppRoadmapBadgeTone tone;
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = context.appSpacing;
+    final radius = context.appRadius.pill;
+    final colors = context.appColors;
+    final visualStyle = switch (tone) {
+      _AppRoadmapBadgeTone.info => (
+          foreground: colors.primary,
+          background:
+              Color.lerp(colors.surface, colors.primaryContainer, 0.78)!,
+          border: Color.lerp(colors.borderStrong, colors.primary, 0.32)!,
+        ),
+      _AppRoadmapBadgeTone.warning => (
+          foreground: colors.warning,
+          background: Color.lerp(colors.surface, colors.warning, 0.14)!,
+          border: Color.lerp(colors.borderStrong, colors.warning, 0.3)!,
+        ),
+    };
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: visualStyle.background,
+        borderRadius: BorderRadius.circular(radius),
+        border: Border.all(
+          color: visualStyle.border,
+          width: spacing.xxxs / 2,
+        ),
+      ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: spacing.xs,
+          vertical: spacing.xxxs,
+        ),
+        child: AppText.label(
+          label,
+          variant: AppTextVariant.labelSmall,
+          color: visualStyle.foreground,
+          style: const TextStyle(
+            fontWeight: FontWeight.w600,
+            height: 1.1,
+          ),
+        ),
+      ),
+    );
+  }
+}
+''';
+
+const String _switchTemplate = r'''
+import 'package:flutter/material.dart';
+import '../../core/flutter_ui.dart';
+import '../layouts/v_stack.dart';
+import '../typography/app_text.dart';
+
+class AppSwitch extends StatelessWidget {
+  const AppSwitch({
+    super.key,
+    required this.value,
+    this.onChanged,
+    this.label,
+    this.description,
+    this.autofocus = false,
+    this.contentPadding,
+  });
+
+  final bool value;
+  final ValueChanged<bool>? onChanged;
+  final String? label;
+  final String? description;
+  final bool autofocus;
+  final EdgeInsetsGeometry? contentPadding;
+
+  bool get _isEnabled => onChanged != null;
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = context.appSpacing;
+    final resolvedPadding = contentPadding ??
+        EdgeInsets.symmetric(
+          horizontal: spacing.none,
+          vertical: spacing.xs,
+        );
+    final switchControl = Switch(
+      value: value,
+      autofocus: autofocus,
+      onChanged: onChanged,
+      thumbColor: WidgetStateProperty.resolveWith<Color>((states) {
+        if (states.contains(WidgetState.disabled)) {
+          return context.appColors.disabledForeground;
+        }
+
+        if (states.contains(WidgetState.selected)) {
+          return context.appColors.onPrimary;
+        }
+
+        return context.appColors.surface;
+      }),
+      trackColor: WidgetStateProperty.resolveWith<Color>((states) {
+        if (states.contains(WidgetState.disabled)) {
+          return context.appColors.disabled;
+        }
+
+        if (states.contains(WidgetState.selected)) {
+          return context.appColors.primary;
+        }
+
+        return context.appColors.borderStrong;
+      }),
+      trackOutlineColor:
+          const WidgetStatePropertyAll<Color>(Colors.transparent),
+    );
+
+    if (label == null && description == null) {
+      return switchControl;
+    }
+
+    return Semantics(
+      container: true,
+      enabled: _isEnabled,
+      toggled: value,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: _isEnabled ? () => onChanged!(!value) : null,
+          borderRadius: BorderRadius.circular(context.appRadius.md),
+          child: Padding(
+            padding: resolvedPadding,
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: VStack(
+                    spacing: spacing.xxxs,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      if (label != null)
+                        AppText.label(
+                          label!,
+                          color: _isEnabled
+                              ? context.appColors.onSurface
+                              : context.appColors.disabledForeground,
+                        ),
+                      if (description != null)
+                        AppText.body(
+                          description!,
+                          variant: AppTextVariant.bodySmall,
+                          tone: AppTextTone.muted,
+                        ),
+                    ],
+                  ),
+                ),
+                SizedBox(width: spacing.md),
+                switchControl,
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+''';
+
+const String _tabsTemplate = r'''
+import 'package:flutter/material.dart';
+import '../../core/flutter_ui.dart';
+import '../cards/app_card.dart';
+import '../layouts/v_stack.dart';
+import '../typography/app_text.dart';
+
+@immutable
+class AppTabItem {
+  const AppTabItem({
+    required this.label,
+    this.icon,
+    this.description,
+    this.badgeLabel,
+    this.panel,
+    this.enabled = true,
+  });
+
+  final String label;
+  final IconData? icon;
+  final String? description;
+  final String? badgeLabel;
+  final Widget? panel;
+  final bool enabled;
+}
+
+class AppTabs extends StatelessWidget {
+  const AppTabs({
+    super.key,
+    required this.items,
+    required this.selectedIndex,
+    this.onChanged,
+    this.showPanel = false,
+  })  : assert(items.length > 0, 'items must not be empty.'),
+        assert(
+          selectedIndex >= 0 && selectedIndex < items.length,
+          'selectedIndex must stay within the item range.',
+        );
+
+  final List<AppTabItem> items;
+  final int selectedIndex;
+  final ValueChanged<int>? onChanged;
+  final bool showPanel;
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = context.appSpacing;
+    final selectedItem = items[selectedIndex];
+    final shouldShowPanel = showPanel ||
+        items.any((item) => item.panel != null || item.description != null);
+
+    return VStack(
+      spacing: spacing.md,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        AppCard.outlined(
+          padding: EdgeInsets.zero,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: List<Widget>.generate(items.length, (index) {
+                final item = items[index];
+
+                return _AppTabTrigger(
+                  item: item,
+                  isSelected: index == selectedIndex,
+                  showDivider: index != items.length - 1,
+                  onTap: item.enabled && onChanged != null
+                      ? () => onChanged!(index)
+                      : null,
+                );
+              }),
+            ),
+          ),
+        ),
+        if (shouldShowPanel)
+          AppCard.muted(
+            child: selectedItem.panel ?? _AppTabPanel(item: selectedItem),
+          ),
+      ],
+    );
+  }
+}
+
+class _AppTabTrigger extends StatelessWidget {
+  const _AppTabTrigger({
+    required this.item,
+    required this.isSelected,
+    required this.showDivider,
+    required this.onTap,
+  });
+
+  final AppTabItem item;
+  final bool isSelected;
+  final bool showDivider;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = context.appSpacing;
+    final colors = context.appColors;
+    final foreground = item.enabled
+        ? (isSelected ? colors.primary : colors.onSurface)
+        : colors.disabledForeground;
+
+    return Material(
+      color: Colors.transparent,
+      child: Ink(
+        decoration: BoxDecoration(
+          color: isSelected ? colors.surfaceMuted : colors.surface,
+          border: showDivider
+              ? Border(
+                  right: BorderSide(
+                    color: colors.border,
+                    width: spacing.xxxs / 2,
+                  ),
+                )
+              : null,
+        ),
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: spacing.md,
+              vertical: spacing.sm,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                if (item.icon != null) ...[
+                  Icon(item.icon,
+                      size: context.appSizes.iconSm, color: foreground),
+                  SizedBox(width: spacing.xs),
+                ],
+                AppText.label(
+                  item.label,
+                  color: foreground,
+                  style: TextStyle(
+                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                  ),
+                ),
+                if (item.badgeLabel case final String badge) ...[
+                  SizedBox(width: spacing.xs),
+                  _AppTabsBadge(
+                    label: badge,
+                    isSelected: isSelected,
+                    enabled: item.enabled,
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AppTabPanel extends StatelessWidget {
+  const _AppTabPanel({
+    required this.item,
+  });
+
+  final AppTabItem item;
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = context.appSpacing;
+
+    return VStack(
+      spacing: spacing.xs,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        AppText.title(
+          item.label,
+          variant: AppTextVariant.titleMedium,
+        ),
+        if (item.description != null)
+          AppText.body(
+            item.description!,
+            tone: AppTextTone.muted,
+          ),
+      ],
+    );
+  }
+}
+
+class _AppTabsBadge extends StatelessWidget {
+  const _AppTabsBadge({
+    required this.label,
+    required this.isSelected,
+    required this.enabled,
+  });
+
+  final String label;
+  final bool isSelected;
+  final bool enabled;
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = context.appSpacing;
+    final colors = context.appColors;
+    final foreground = !enabled
+        ? colors.disabledForeground
+        : isSelected
+            ? colors.primary
+            : colors.onSurfaceMuted;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: isSelected ? colors.primaryContainer : colors.surfaceMuted,
+        borderRadius: BorderRadius.circular(context.appRadius.pill),
+      ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: spacing.xs,
+          vertical: spacing.xxxs,
+        ),
+        child: AppText.label(
+          label,
+          variant: AppTextVariant.labelSmall,
+          color: foreground,
+          style: const TextStyle(fontWeight: FontWeight.w700),
+        ),
+      ),
     );
   }
 }
