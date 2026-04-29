@@ -6,6 +6,7 @@ on:
     branches:
       - main
       - master
+      - dev
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -42,6 +43,9 @@ jobs:
 
       - name: Bootstrap workspace
         run: dart run melos bootstrap
+
+      - name: Verify architecture structure
+        run: dart run melos run check:architecture
 
       - name: Check formatting
         run: dart run melos run format:check

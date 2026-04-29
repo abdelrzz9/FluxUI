@@ -1,3 +1,3 @@
-library flutter_ui_cli;
+library;
 
 export 'src/flutter_ui_cli.dart';

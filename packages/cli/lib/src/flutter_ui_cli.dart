@@ -104,7 +104,7 @@ ${parser.usage}
 
     if (!_looksLikeFlutterProject(projectDirectory)) {
       stderrSink.writeln(
-        'No `pubspec.yaml` found in `${projectDirectory.path}`. Run `flutter_ui init` inside a Flutter project.',
+        'No `pubspec.yaml` found in `$projectDirectory.path`. Run `flutter_ui init` inside a Flutter project.',
       );
       return 66;
     }
@@ -155,10 +155,10 @@ ${parser.usage}
     config.saveToProject(projectDirectory);
 
     stdoutSink.writeln(
-        'Initialized flutter_ui workspace in `${projectDirectory.path}`.');
-    stdoutSink.writeln('Config: `${FlutterUiConfig.fileName}`');
-    stdoutSink.writeln('Components dir: `${config.componentsDir}`');
-    stdoutSink.writeln('Core bridge: `${config.bridgeFile}`');
+        'Initialized flutter_ui workspace in `$projectDirectory.path`.');
+    stdoutSink.writeln('Config: `$FlutterUiConfig.fileName`');
+    stdoutSink.writeln('Components dir: `$config.componentsDir`');
+    stdoutSink.writeln('Core bridge: `$config.bridgeFile`');
     return 0;
   }
 
@@ -224,11 +224,10 @@ ${parser.usage}
       file.parent.createSync(recursive: true);
 
       if (file.existsSync() && !overwrite) {
-        stdoutSink
-            .writeln('Skipped `${targetPath}` because it already exists.');
+        stdoutSink.writeln('Skipped `$targetPath` because it already exists.');
       } else {
         file.writeAsStringSync(definition.template);
-        stdoutSink.writeln('Added `${targetPath}`');
+        stdoutSink.writeln('Added `$targetPath`');
       }
 
       generated.add(definition.id);
