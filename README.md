@@ -1,40 +1,91 @@
+<div align="center">
+
 # FluxUI
 
-A token-driven Flutter UI system delivered as a Melos monorepo.
+**A token-driven Flutter UI system — 30 components, zero hardcoded values.**
 
-Two consumption models:
-- **Package** — add `flutter_ui` to your `pubspec.yaml` and use widgets directly.
-- **Local ownership** — use the `flux` CLI to copy editable component files into your app (shadcn/ui style).
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Flutter](https://img.shields.io/badge/Flutter-%3E%3D3.24-02569B?logo=flutter)](https://flutter.dev)
+[![Dart](https://img.shields.io/badge/Dart-%3E%3D3.4-0175C2?logo=dart)](https://dart.dev)
+
+</div>
 
 ---
 
-## Repository structure
+## Two ways to use it
 
-```
-FluxUI/
-├── apps/
-│   └── example/          # showcase app (manual review + golden tests)
-├── docs/
-│   ├── cli.md            # CLI command reference
-│   ├── dev_branch_workflow.md
-│   ├── publishing.md
-│   └── roadmap.md
-├── packages/
-│   ├── tokens/           # flutter_ui_tokens — typed design tokens
-│   ├── utils/            # flutter_ui_utils  — extensions & helpers
-│   ├── ui/               # flutter_ui        — theme + 18 widgets
-│   └── cli/              # flutter_ui_cli    — component copy tool
-├── tools/
-│   └── check_architecture.dart
-└── melos.yaml
+| Mode | How | Best for |
+|------|-----|----------|
+| **Package** | `flutter_ui: ^0.1.0` in pubspec | Quick integration |
+| **Local ownership** | `flux add button` copies source into your app | Full customisation (shadcn/ui style) |
+
+---
+
+## Quick start
+
+### Package mode
+
+```yaml
+# pubspec.yaml
+dependencies:
+  flutter_ui: ^0.1.0
 ```
 
-Dependency direction (strict):
+```dart
+import 'package:flutter_ui/index.dart';
 
+void main() => runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: AppTheme.light(),
+      darkTheme: AppTheme.dark(),
+      home: Scaffold(
+        body: Center(
+          child: AppButton(text: 'Get started', onPressed: () {}),
+        ),
+      ),
+    );
+  }
+}
 ```
-tokens  ──►  utils  ──►  ui  ◄──  apps/example
-                              cli  (standalone, no Flutter dep)
+
+### Local ownership mode
+
+```bash
+# 1. Bootstrap once per project
+dart run packages/cli/bin/flutter_ui.dart init
+
+# 2. Copy any components you want to own
+dart run packages/cli/bin/flux.dart add button card alert
 ```
+
+Then import your local copy:
+
+```dart
+import 'package:your_app/ui/index.dart';
+```
+
+---
+
+## Components (30)
+
+| Category | Components |
+|----------|-----------|
+| **Buttons** | `AppButton` — 4 variants · 3 sizes · loading state |
+| **Cards** | `AppCard` — surface · outline · muted |
+| **Display** | `AppCarousel` · `AppAvatar` · `AppBadge` |
+| **Feedback** | `AppAlert` · `AppProgress` · `AppDialog` · `AppBottomSheet` · `AppToast` · `AppSkeleton` |
+| **Inputs** | `AppTextField` · `AppCombobox` · `AppOtpField` · `AppSearchBar` · `AppSlider` |
+| **Layouts** | `Gap` · `HStack` · `VStack` |
+| **Navigation** | `AppNavigationMenu` · `AppPagination` · `AppTabs` · `AppBottomNav` · `AppAppBar` |
+| **Roadmap** | `AppRoadmapItem` |
+| **Selection** | `AppCheckbox` · `AppSwitch` · `AppChip` · `AppRadio` |
+| **Typography** | `AppText` |
 
 ---
 
@@ -42,58 +93,83 @@ tokens  ──►  utils  ──►  ui  ◄──  apps/example
 
 ### `packages/tokens` — `flutter_ui_tokens`
 
-Immutable, strongly typed design tokens with `lerp` support.
+Immutable, strongly typed design tokens with full `lerp` support.
 
 | Token class | Covers |
 |-------------|--------|
-| `AppColorTokens` | Primary, secondary, surface, status, border |
-| `AppSpacingTokens` | Scale `xxxs` → `x5l` |
+| `AppColorTokens` | Primary, secondary, surface, status, border roles |
+| `AppSpacingTokens` | Scale `none` (0) → `x5l` (64 dp) |
 | `AppRadiusTokens` | Corner radius scale |
-| `AppSizeTokens` | Icon and control heights |
+| `AppSizeTokens` | Icon sizes (`12–32`) and control heights (`32–60`) |
 | `AppMotionTokens` | Animation durations |
-| `AppTypographyTokens` | Full Material 3 text scale |
-| `AppDesignTokens` | Aggregate with `.light` and `.dark` constants |
+| `AppTypographyTokens` | Full Material 3 text scale (15 styles) |
+| `AppDesignTokens` | Aggregate — `.light` and `.dark` static constants |
 
 ### `packages/utils` — `flutter_ui_utils`
 
-Shared Flutter helpers: `BuildContext` extensions, widget fluent API, numeric shorthands, `AppBreakpoints`, `AppResponsiveValue<T>`.
+`BuildContext` extensions · widget fluent API · numeric helpers · `AppBreakpoints` · `AppResponsiveValue<T>`
 
 ### `packages/ui` — `flutter_ui`
 
-Theme integration and 18 production-ready widgets:
+Theme API: `AppTheme.light()` / `AppTheme.dark()` / `AppTheme.custom(tokens, brightness)`
 
-| Category | Widgets |
-|----------|---------|
-| Buttons | `AppButton` (4 variants · 3 sizes · loading) |
-| Cards | `AppCard` (surface · outline · muted) |
-| Display | `AppCarousel` |
-| Feedback | `AppAlert` · `AppProgress` |
-| Inputs | `AppTextField` · `AppCombobox` · `AppOtpField` |
-| Layouts | `Gap` · `HStack` · `VStack` |
-| Navigation | `AppNavigationMenu` · `AppPagination` · `AppTabs` |
-| Roadmap | `AppRoadmapItem` |
-| Selection | `AppCheckbox` · `AppSwitch` |
-| Typography | `AppText` |
+Custom branding:
 
-Theme API: `AppTheme.light()` / `AppTheme.dark()` / `AppTheme.custom(tokens, brightness)`.
+```dart
+final myTokens = AppDesignTokens.light.copyWith(
+  colors: AppColorTokens.light.copyWith(primary: const Color(0xFF6366F1)),
+);
+
+MaterialApp(
+  theme: AppTheme.custom(tokens: myTokens, brightness: Brightness.light),
+);
+```
 
 ### `packages/cli` — `flutter_ui_cli`
 
-Two entry points:
-
 | Binary | Commands |
-|--------|---------|
+|--------|----------|
 | `flux` | `add` |
 | `flutter_ui` | `init` · `add` · `list` |
 
-`publish_to: none` — run directly from the monorepo. See [docs/cli.md](docs/cli.md).
+`publish_to: none` — see [docs/cli.md](docs/cli.md) for the full command reference.
+
+---
+
+## Monorepo structure
+
+```
+FluxUI/
+├── apps/
+│   └── example/          # showcase app — manual review + golden tests
+├── docs/
+│   ├── cli.md            # CLI reference
+│   ├── dev_branch_workflow.md
+│   ├── publishing.md
+│   └── roadmap.md
+├── packages/
+│   ├── tokens/           # flutter_ui_tokens
+│   ├── utils/            # flutter_ui_utils
+│   ├── ui/               # flutter_ui
+│   └── cli/              # flutter_ui_cli
+├── tools/
+│   └── check_architecture.dart
+└── melos.yaml
+```
+
+Dependency direction (strict, no cycles):
+
+```
+tokens  ──►  utils  ──►  ui  ◄──  apps/example
+                         cli  (standalone — no Flutter SDK dep)
+```
 
 ---
 
 ## Requirements
 
-| Requirement | Version |
-|-------------|---------|
+| | Version |
+|--|---------|
 | Dart SDK | `>=3.4.0 <4.0.0` |
 | Flutter | `>=3.24.0` |
 
@@ -104,11 +180,10 @@ CI pins Flutter stable `3.41.5`.
 ## Local setup
 
 ```bash
-# 1. Install workspace dependencies
 dart pub get
 dart run melos bootstrap
 
-# 2. Run the example app
+# Run the example app
 cd apps/example && flutter run
 ```
 
@@ -116,7 +191,7 @@ cd apps/example && flutter run
 
 ## Validation
 
-Run before opening or merging any PR:
+Run before every PR:
 
 ```bash
 dart run melos run check:architecture
@@ -130,13 +205,13 @@ dart run melos run build
 
 ---
 
-## Branch workflow
+## Branch strategy
 
 | Branch | Role |
 |--------|------|
-| `main` | Stable · tagged releases |
-| `dev` | Integration · all PRs merge here |
-| `feature/*` | Short-lived · branch from `dev` |
+| `main` | Stable — tagged releases only |
+| `dev` | Integration — all PRs target this branch |
+| `feature/*` | Short-lived — branch from `dev` |
 
 See [docs/dev_branch_workflow.md](docs/dev_branch_workflow.md).
 
@@ -144,13 +219,13 @@ See [docs/dev_branch_workflow.md](docs/dev_branch_workflow.md).
 
 ## Documentation
 
-| File | Contents |
-|------|----------|
-| [docs/cli.md](docs/cli.md) | Full CLI command reference |
+| | |
+|-|-|
+| [docs/cli.md](docs/cli.md) | Full CLI reference (18 installable components) |
 | [docs/publishing.md](docs/publishing.md) | Release checklist |
-| [docs/roadmap.md](docs/roadmap.md) | GitHub issues roadmap |
+| [docs/roadmap.md](docs/roadmap.md) | Issues roadmap |
 | [docs/dev_branch_workflow.md](docs/dev_branch_workflow.md) | Branch strategy |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | Contribution guide |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | How to contribute |
 | [packages/tokens/README.md](packages/tokens/README.md) | Tokens package |
 | [packages/utils/README.md](packages/utils/README.md) | Utils package |
 | [packages/ui/README.md](packages/ui/README.md) | UI package |
