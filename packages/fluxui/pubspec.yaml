@@ -1,0 +1,26 @@
+name: fluxui
+description: >-
+  A token-driven Flutter UI system. 30+ production-ready components with zero
+  hardcoded colors or sizes — everything resolves through typed design tokens.
+version: 0.1.0
+homepage: https://github.com/abdelrzz9/FluxUI
+repository: https://github.com/abdelrzz9/FluxUI
+issue_tracker: https://github.com/abdelrzz9/FluxUI/issues
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+  flutter: '>=3.24.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_ui_tokens: ^0.1.0
+  flutter_ui_utils: ^0.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true

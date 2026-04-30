@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_ui/index.dart';
+import 'package:fluxui/fluxui.dart';
 
 class ExampleHomePage extends StatefulWidget {
   const ExampleHomePage({

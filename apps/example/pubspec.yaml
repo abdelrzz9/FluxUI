@@ -1,17 +1,17 @@
 name: flutter_ui_example
-description: Example application for the Flutter UI ecosystem.
+description: Showcase app for the FluxUI ecosystem.
 publish_to: none
 version: 0.1.0+1
 
 environment:
-  sdk: '>=3.4.0 <4.0.0'
-  flutter: '>=3.24.0'
+  sdk: ">=3.4.0 <4.0.0"
+  flutter: ">=3.24.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  flutter_ui:
-    path: ../../packages/ui
+  fluxui:
+    path: ../../packages/fluxui
 
 dev_dependencies:
   flutter_test:
@@ -20,4 +20,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-

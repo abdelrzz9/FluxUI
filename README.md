@@ -28,29 +28,12 @@
 
 ## Quick start
 
-### Path dependency (local clone)
-
-```bash
-git clone https://github.com/abdelrzz9/FluxUI.git
-```
+### Package mode
 
 ```yaml
 # your_app/pubspec.yaml
 dependencies:
-  flutter_ui:
-    path: ../FluxUI/packages/ui
-```
-
-### Git dependency (no local clone needed)
-
-```yaml
-# your_app/pubspec.yaml
-dependencies:
-  flutter_ui:
-    git:
-      url: https://github.com/abdelrzz9/FluxUI.git
-      path: packages/ui
-      ref: main   # or pin to a specific commit SHA
+  flutter_ui: ^0.1.0
 ```
 
 ```dart
@@ -75,12 +58,6 @@ class MyApp extends StatelessWidget {
   }
 }
 ```
-
-> Once the packages are published to pub.dev, the dependency will simply be:
-> ```yaml
-> dependencies:
->   flutter_ui: ^0.1.0
-> ```
 
 ### Local ownership mode
 

@@ -1,0 +1,8 @@
+# melos_managed_dependency_overrides: flutter_ui_tokens,flutter_ui_utils,fluxui
+dependency_overrides:
+  flutter_ui_tokens:
+    path: ../../tokens
+  flutter_ui_utils:
+    path: ../../utils
+  fluxui:
+    path: ..
