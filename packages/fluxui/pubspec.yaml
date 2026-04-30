@@ -1,4 +1,4 @@
-name: fluxui
+name: fluxui_kit
 description: >-
   A token-driven Flutter UI system. 30+ production-ready components with zero
   hardcoded colors or sizes — everything resolves through typed design tokens.

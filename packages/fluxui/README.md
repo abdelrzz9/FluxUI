@@ -1,6 +1,6 @@
-# fluxui
+# fluxui_kit
 
-[![pub.dev](https://img.shields.io/pub/v/fluxui.svg)](https://pub.dev/packages/fluxui)
+[![pub.dev](https://img.shields.io/pub/v/fluxui_kit.svg)](https://pub.dev/packages/fluxui_kit)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Flutter](https://img.shields.io/badge/Flutter-%3E%3D3.24-02569B?logo=flutter)](https://flutter.dev)
 
@@ -13,22 +13,9 @@ through strongly typed design tokens. Light and dark built in. Fully customisabl
 
 ## Installation
 
-> **Pre-release:** not yet published to pub.dev. Use a git dependency:
-
 ```yaml
 dependencies:
-  fluxui:
-    git:
-      url: https://github.com/abdelrzz9/FluxUI.git
-      path: packages/fluxui
-      ref: main
-```
-
-Once published:
-
-```yaml
-dependencies:
-  fluxui: ^0.1.0
+  fluxui_kit: ^0.1.0
 ```
 
 ---
@@ -36,7 +23,7 @@ dependencies:
 ## Quick start
 
 ```dart
-import 'package:fluxui/fluxui.dart';
+import 'package:fluxui_kit/fluxui_kit.dart';
 
 void main() => runApp(const MyApp());
 
@@ -120,7 +107,7 @@ final typo    = context.appTypography;
 
 ## Design tokens
 
-`fluxui` re-exports `flutter_ui_tokens` which provides:
+`fluxui_kit` re-exports `flutter_ui_tokens` which provides:
 
 | Class | Covers |
 |-------|--------|
@@ -144,7 +131,7 @@ final typo    = context.appTypography;
 ## Repository
 
 [github.com/abdelrzz9/FluxUI](https://github.com/abdelrzz9/FluxUI)
-— monorepo containing `flutter_ui_tokens`, `flutter_ui_utils`, `fluxui`, and the `flux` CLI.
+— monorepo containing `flutter_ui_tokens`, `flutter_ui_utils`, `fluxui_kit`, and the `flux` CLI.
 
 ## License
 
