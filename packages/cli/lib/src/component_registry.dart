@@ -205,6 +205,113 @@ final class ComponentRegistry {
       description: 'Tab bar with optional panel content and badge support.',
       template: _tabsTemplate,
     ),
+    // ── MVP additions ──────────────────────────────────────────────────────
+    'avatar': ComponentDefinition(
+      id: 'avatar',
+      aliases: <String>['app_avatar'],
+      outputPath: 'display/app_avatar.dart',
+      publicSymbols: <String>['AppAvatar', 'AppAvatarSize', 'AppAvatarShape'],
+      description: 'User avatar with image, initials, and icon fallback.',
+      template: _avatarTemplate,
+    ),
+    'badge': ComponentDefinition(
+      id: 'badge',
+      aliases: <String>['app_badge'],
+      outputPath: 'display/app_badge.dart',
+      publicSymbols: <String>['AppBadge', 'AppBadgeVariant'],
+      description: 'Inline label or dot badge with semantic colour variants.',
+      template: _badgeTemplate,
+    ),
+    'chip': ComponentDefinition(
+      id: 'chip',
+      aliases: <String>['app_chip', 'tag', 'filter'],
+      outputPath: 'selection/app_chip.dart',
+      publicSymbols: <String>['AppChip'],
+      description: 'Selectable and removable chip for filters and tags.',
+      template: _chipTemplate,
+    ),
+    'radio': ComponentDefinition(
+      id: 'radio',
+      aliases: <String>['app_radio'],
+      outputPath: 'selection/app_radio.dart',
+      dependencies: <String>['text', 'v-stack'],
+      publicSymbols: <String>[
+        'AppRadio',
+        'AppRadioItem',
+        'AppRadioGroup',
+      ],
+      description: 'Labelled radio button with group and direction support.',
+      template: _radioTemplate,
+    ),
+    'search-bar': ComponentDefinition(
+      id: 'search-bar',
+      aliases: <String>['searchbar', 'app_search_bar', 'search'],
+      outputPath: 'inputs/app_search_bar.dart',
+      publicSymbols: <String>['AppSearchBar'],
+      description: 'Search input with leading icon and auto-clear button.',
+      template: _searchBarTemplate,
+    ),
+    'slider': ComponentDefinition(
+      id: 'slider',
+      aliases: <String>['app_slider', 'range'],
+      outputPath: 'inputs/app_slider.dart',
+      dependencies: <String>['text', 'v-stack'],
+      publicSymbols: <String>['AppSlider'],
+      description: 'Token-driven range slider with optional label and value.',
+      template: _sliderTemplate,
+    ),
+    'dialog': ComponentDefinition(
+      id: 'dialog',
+      aliases: <String>['app_dialog'],
+      outputPath: 'feedback/app_dialog.dart',
+      dependencies: <String>['button', 'text', 'v-stack'],
+      publicSymbols: <String>['AppDialog', 'AppDialogAction'],
+      description: 'Modal dialog with title, description, and action buttons.',
+      template: _dialogTemplate,
+    ),
+    'bottom-sheet': ComponentDefinition(
+      id: 'bottom-sheet',
+      aliases: <String>['app_bottom_sheet', 'sheet'],
+      outputPath: 'feedback/app_bottom_sheet.dart',
+      dependencies: <String>['text', 'v-stack'],
+      publicSymbols: <String>['AppBottomSheet'],
+      description:
+          'Modal bottom sheet with drag handle, title, and static helper.',
+      template: _bottomSheetTemplate,
+    ),
+    'toast': ComponentDefinition(
+      id: 'toast',
+      aliases: <String>['app_toast', 'snackbar'],
+      outputPath: 'feedback/app_toast.dart',
+      publicSymbols: <String>['AppToast', 'AppToastVariant'],
+      description:
+          'ScaffoldMessenger-based toast with info/success/warning/error.',
+      template: _toastTemplate,
+    ),
+    'skeleton': ComponentDefinition(
+      id: 'skeleton',
+      aliases: <String>['app_skeleton', 'shimmer', 'loading'],
+      outputPath: 'feedback/app_skeleton.dart',
+      publicSymbols: <String>['AppSkeleton'],
+      description: 'Animated shimmer placeholder for loading states.',
+      template: _skeletonTemplate,
+    ),
+    'bottom-nav': ComponentDefinition(
+      id: 'bottom-nav',
+      aliases: <String>['app_bottom_nav', 'bottom_navigation'],
+      outputPath: 'navigation/app_bottom_nav.dart',
+      publicSymbols: <String>['AppBottomNav', 'AppBottomNavItem'],
+      description: 'Token-driven bottom navigation bar with badge support.',
+      template: _bottomNavTemplate,
+    ),
+    'app-bar': ComponentDefinition(
+      id: 'app-bar',
+      aliases: <String>['app_app_bar', 'appbar'],
+      outputPath: 'navigation/app_app_bar.dart',
+      publicSymbols: <String>['AppAppBar'],
+      description: 'Token-driven AppBar implementing PreferredSizeWidget.',
+      template: _appBarTemplate,
+    ),
   };
 
   static ComponentDefinition? resolve(String rawName) {
@@ -3800,6 +3907,1066 @@ class _AppTabsBadge extends StatelessWidget {
           style: const TextStyle(fontWeight: FontWeight.w700),
         ),
       ),
+    );
+  }
+}
+''';
+
+const String _avatarTemplate = r'''
+import 'package:flutter/material.dart';
+
+import '../../core/flutter_ui.dart';
+
+enum AppAvatarSize { xs, sm, md, lg, xl }
+
+enum AppAvatarShape { circle, rounded }
+
+class AppAvatar extends StatelessWidget {
+  const AppAvatar({
+    super.key,
+    this.imageUrl,
+    this.initials,
+    this.icon,
+    this.size = AppAvatarSize.md,
+    this.shape = AppAvatarShape.circle,
+    this.borderColor,
+    this.backgroundColor,
+    this.foregroundColor,
+    this.onTap,
+  });
+
+  final String? imageUrl;
+  final String? initials;
+  final IconData? icon;
+  final AppAvatarSize size;
+  final AppAvatarShape shape;
+  final Color? borderColor;
+  final Color? backgroundColor;
+  final Color? foregroundColor;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.appColors;
+    final spacing = context.appSpacing;
+    final sizeStyle = _AppAvatarSizeStyle.resolve(context, size);
+    final resolvedBg = backgroundColor ?? colors.primaryContainer;
+    final resolvedFg = foregroundColor ?? colors.onPrimaryContainer;
+    final radius = shape == AppAvatarShape.circle
+        ? sizeStyle.dimension / 2
+        : context.appRadius.md;
+    final borderWidth = spacing.xxxs;
+
+    final inner = ClipRRect(
+      borderRadius: BorderRadius.circular(radius),
+      child: SizedBox.square(
+        dimension: sizeStyle.dimension,
+        child: imageUrl != null
+            ? Image.network(
+                imageUrl!,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) =>
+                    _buildFallback(resolvedBg, resolvedFg, sizeStyle),
+                loadingBuilder: (_, child, progress) => progress == null
+                    ? child
+                    : ColoredBox(color: colors.surfaceMuted),
+              )
+            : _buildFallback(resolvedBg, resolvedFg, sizeStyle),
+      ),
+    );
+
+    final Widget avatar = borderColor == null
+        ? inner
+        : Container(
+            width: sizeStyle.dimension + borderWidth * 2,
+            height: sizeStyle.dimension + borderWidth * 2,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(radius + borderWidth),
+              border: Border.all(color: borderColor!, width: borderWidth),
+            ),
+            child: inner,
+          );
+
+    if (onTap != null) {
+      return GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: avatar,
+      );
+    }
+    return avatar;
+  }
+
+  Widget _buildFallback(Color bg, Color fg, _AppAvatarSizeStyle style) {
+    final String? label;
+    if (initials != null && initials!.trim().isNotEmpty) {
+      final raw = initials!.trim().toUpperCase();
+      label = raw.length > 2 ? raw.substring(0, 2) : raw;
+    } else {
+      label = null;
+    }
+    return ColoredBox(
+      color: bg,
+      child: Center(
+        child: label != null
+            ? Text(label, style: style.textStyle.copyWith(color: fg, height: 1))
+            : Icon(icon ?? Icons.person_rounded, size: style.iconSize, color: fg),
+      ),
+    );
+  }
+}
+
+class _AppAvatarSizeStyle {
+  const _AppAvatarSizeStyle({
+    required this.dimension,
+    required this.iconSize,
+    required this.textStyle,
+  });
+  final double dimension;
+  final double iconSize;
+  final TextStyle textStyle;
+
+  static _AppAvatarSizeStyle resolve(BuildContext context, AppAvatarSize size) {
+    final sizes = context.appSizes;
+    final t = context.appTypography;
+    return switch (size) {
+      AppAvatarSize.xs => _AppAvatarSizeStyle(dimension: sizes.controlXs, iconSize: sizes.iconXs, textStyle: t.labelSmall),
+      AppAvatarSize.sm => _AppAvatarSizeStyle(dimension: sizes.controlSm, iconSize: sizes.iconSm, textStyle: t.labelMedium),
+      AppAvatarSize.md => _AppAvatarSizeStyle(dimension: sizes.controlMd, iconSize: sizes.iconMd, textStyle: t.labelLarge),
+      AppAvatarSize.lg => _AppAvatarSizeStyle(dimension: sizes.controlLg, iconSize: sizes.iconLg, textStyle: t.titleSmall),
+      AppAvatarSize.xl => _AppAvatarSizeStyle(dimension: sizes.controlXl, iconSize: sizes.iconXl, textStyle: t.titleMedium),
+    };
+  }
+}
+''';
+
+const String _badgeTemplate = r'''
+import 'package:flutter/material.dart';
+
+import '../../core/flutter_ui.dart';
+
+enum AppBadgeVariant { primary, success, warning, danger, neutral }
+
+class AppBadge extends StatelessWidget {
+  const AppBadge({
+    super.key,
+    required this.label,
+    this.variant = AppBadgeVariant.primary,
+    this.child,
+  }) : _dot = false;
+
+  const AppBadge.dot({
+    super.key,
+    this.variant = AppBadgeVariant.danger,
+    this.child,
+  })  : label = null,
+        _dot = true;
+
+  final String? label;
+  final AppBadgeVariant variant;
+  final Widget? child;
+  final bool _dot;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.appColors;
+    final spacing = context.appSpacing;
+    final typography = context.appTypography;
+    final style = _resolveBadgeStyle(context);
+    final borderWidth = spacing.xxxs / 2;
+
+    final badgeWidget = _dot
+        ? Container(
+            width: spacing.xs,
+            height: spacing.xs,
+            decoration: BoxDecoration(
+              color: style.background,
+              shape: BoxShape.circle,
+              border: Border.all(color: colors.surface, width: borderWidth * 2),
+            ),
+          )
+        : DecoratedBox(
+            decoration: BoxDecoration(
+              color: style.background,
+              borderRadius: BorderRadius.circular(context.appRadius.pill),
+              border: Border.all(color: style.border, width: borderWidth),
+            ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: spacing.xs, vertical: spacing.xxxs),
+              child: Text(
+                label!,
+                style: typography.labelSmall.copyWith(
+                  color: style.foreground,
+                  fontWeight: FontWeight.w700,
+                  height: 1.2,
+                ),
+              ),
+            ),
+          );
+
+    if (child == null) return badgeWidget;
+    return Stack(
+      clipBehavior: Clip.none,
+      children: <Widget>[
+        child!,
+        Positioned(
+          top: _dot ? -spacing.xxxs : -spacing.xxs,
+          right: _dot ? -spacing.xxxs : -spacing.xs,
+          child: badgeWidget,
+        ),
+      ],
+    );
+  }
+
+  _BadgeStyle _resolveBadgeStyle(BuildContext context) {
+    final colors = context.appColors;
+    return switch (variant) {
+      AppBadgeVariant.primary => _BadgeStyle(background: colors.primaryContainer, foreground: colors.primary, border: Color.lerp(colors.borderStrong, colors.primary, 0.32)!),
+      AppBadgeVariant.success => _BadgeStyle(background: Color.lerp(colors.surface, colors.success, 0.12)!, foreground: colors.success, border: Color.lerp(colors.borderStrong, colors.success, 0.32)!),
+      AppBadgeVariant.warning => _BadgeStyle(background: Color.lerp(colors.surface, colors.warning, 0.12)!, foreground: colors.warning, border: Color.lerp(colors.borderStrong, colors.warning, 0.32)!),
+      AppBadgeVariant.danger => _BadgeStyle(background: Color.lerp(colors.surface, colors.error, 0.12)!, foreground: colors.error, border: Color.lerp(colors.borderStrong, colors.error, 0.32)!),
+      AppBadgeVariant.neutral => _BadgeStyle(background: colors.surfaceMuted, foreground: colors.onSurfaceMuted, border: colors.borderStrong),
+    };
+  }
+}
+
+class _BadgeStyle {
+  const _BadgeStyle({required this.background, required this.foreground, required this.border});
+  final Color background;
+  final Color foreground;
+  final Color border;
+}
+''';
+
+const String _chipTemplate = r'''
+import 'package:flutter/material.dart';
+
+import '../../core/flutter_ui.dart';
+
+class AppChip extends StatelessWidget {
+  const AppChip({
+    super.key,
+    required this.label,
+    this.selected = false,
+    this.onSelected,
+    this.leading,
+    this.enabled = true,
+  })  : _removable = false,
+        onRemoved = null;
+
+  const AppChip.removable({
+    super.key,
+    required this.label,
+    this.selected = false,
+    this.onSelected,
+    this.onRemoved,
+    this.leading,
+    this.enabled = true,
+  }) : _removable = true;
+
+  final String label;
+  final bool selected;
+  final ValueChanged<bool>? onSelected;
+  final VoidCallback? onRemoved;
+  final Widget? leading;
+  final bool enabled;
+  final bool _removable;
+
+  bool get _isInteractive => enabled && onSelected != null;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.appColors;
+    final spacing = context.appSpacing;
+    final typography = context.appTypography;
+    final radius = BorderRadius.circular(context.appRadius.pill);
+    final borderWidth = spacing.xxxs / 2;
+
+    final Color bg;
+    final Color fg;
+    final Color border;
+    if (!enabled) {
+      bg = colors.surfaceMuted; fg = colors.disabledForeground; border = colors.disabled;
+    } else if (selected) {
+      bg = colors.primaryContainer; fg = colors.primary; border = Color.lerp(colors.borderStrong, colors.primary, 0.4)!;
+    } else {
+      bg = colors.surface; fg = colors.onSurface; border = colors.borderStrong;
+    }
+
+    final content = Padding(
+      padding: EdgeInsets.symmetric(horizontal: spacing.sm, vertical: spacing.xxs),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          if (leading != null) ...[
+            IconTheme.merge(data: IconThemeData(size: context.appSizes.iconSm, color: fg), child: leading!),
+            SizedBox(width: spacing.xxs),
+          ],
+          Text(label, style: typography.labelMedium.copyWith(color: fg, fontWeight: selected ? FontWeight.w700 : FontWeight.w500)),
+          if (_removable && onRemoved != null) ...[
+            SizedBox(width: spacing.xxs),
+            GestureDetector(
+              onTap: enabled ? onRemoved : null,
+              behavior: HitTestBehavior.opaque,
+              child: Icon(Icons.close_rounded, size: context.appSizes.iconXs, color: fg),
+            ),
+          ],
+        ],
+      ),
+    );
+
+    return Semantics(
+      button: _isInteractive,
+      selected: selected,
+      enabled: enabled,
+      child: Material(
+        color: Colors.transparent,
+        child: Ink(
+          decoration: BoxDecoration(color: bg, borderRadius: radius, border: Border.all(color: border, width: borderWidth)),
+          child: InkWell(onTap: _isInteractive ? () => onSelected!(!selected) : null, borderRadius: radius, child: content),
+        ),
+      ),
+    );
+  }
+}
+''';
+
+const String _radioTemplate = r'''
+import 'package:flutter/material.dart';
+
+import '../../core/flutter_ui.dart';
+import '../layouts/v_stack.dart';
+import '../typography/app_text.dart';
+
+class AppRadio<T> extends StatelessWidget {
+  const AppRadio({
+    super.key,
+    required this.value,
+    required this.groupValue,
+    this.onChanged,
+    this.label,
+    this.description,
+    this.contentPadding,
+  });
+
+  final T value;
+  final T? groupValue;
+  final ValueChanged<T?>? onChanged;
+  final String? label;
+  final String? description;
+  final EdgeInsetsGeometry? contentPadding;
+
+  bool get _isSelected => value == groupValue;
+  bool get _isEnabled => onChanged != null;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.appColors;
+    final spacing = context.appSpacing;
+    final resolvedPadding = contentPadding ?? EdgeInsets.symmetric(horizontal: spacing.none, vertical: spacing.xs);
+    final radioControl = _AppRadioControl(selected: _isSelected, enabled: _isEnabled);
+    if (label == null && description == null) return radioControl;
+    return Semantics(
+      container: true,
+      enabled: _isEnabled,
+      checked: _isSelected,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: _isEnabled ? () => onChanged!(value) : null,
+          borderRadius: BorderRadius.circular(context.appRadius.md),
+          child: Padding(
+            padding: resolvedPadding,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(padding: EdgeInsets.only(top: spacing.xxs), child: radioControl),
+                SizedBox(width: spacing.sm),
+                Expanded(
+                  child: VStack(
+                    spacing: spacing.xxxs,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      if (label != null) AppText.label(label!, color: _isEnabled ? colors.onSurface : colors.disabledForeground),
+                      if (description != null) AppText.body(description!, variant: AppTextVariant.bodySmall, tone: AppTextTone.muted),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AppRadioControl extends StatelessWidget {
+  const _AppRadioControl({required this.selected, required this.enabled});
+  final bool selected;
+  final bool enabled;
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.appColors;
+    final spacing = context.appSpacing;
+    const size = 20.0;
+    final borderWidth = spacing.xxxs;
+    final Color borderColor;
+    final Color? fillColor;
+    if (!enabled) { borderColor = colors.disabled; fillColor = null; }
+    else if (selected) { borderColor = colors.primary; fillColor = colors.primary; }
+    else { borderColor = colors.borderStrong; fillColor = null; }
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: borderColor, width: borderWidth),
+        color: Colors.transparent,
+      ),
+      child: fillColor != null
+          ? Center(
+              child: Container(
+                width: size / 2,
+                height: size / 2,
+                decoration: BoxDecoration(shape: BoxShape.circle, color: fillColor),
+              ),
+            )
+          : null,
+    );
+  }
+}
+
+@immutable
+class AppRadioItem<T> {
+  const AppRadioItem({required this.value, required this.label, this.description, this.enabled = true});
+  final T value;
+  final String label;
+  final String? description;
+  final bool enabled;
+}
+
+class AppRadioGroup<T> extends StatelessWidget {
+  const AppRadioGroup({super.key, required this.items, required this.value, this.onChanged, this.direction = Axis.vertical})
+      : assert(items.length > 0, 'items must not be empty.');
+  final List<AppRadioItem<T>> items;
+  final T? value;
+  final ValueChanged<T?>? onChanged;
+  final Axis direction;
+
+  @override
+  Widget build(BuildContext context) {
+    final children = items.map((item) => AppRadio<T>(value: item.value, groupValue: value, onChanged: item.enabled ? onChanged : null, label: item.label, description: item.description)).toList();
+    if (direction == Axis.horizontal) {
+      return Wrap(spacing: context.appSpacing.md, runSpacing: context.appSpacing.none, children: children);
+    }
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: children);
+  }
+}
+''';
+
+const String _searchBarTemplate = r'''
+import 'package:flutter/material.dart';
+
+import '../../core/flutter_ui.dart';
+
+class AppSearchBar extends StatefulWidget {
+  const AppSearchBar({
+    super.key,
+    this.controller,
+    this.hintText = 'Search',
+    this.onChanged,
+    this.onSubmitted,
+    this.onClear,
+    this.enabled = true,
+    this.autofocus = false,
+    this.borderRadius,
+  });
+
+  final TextEditingController? controller;
+  final String hintText;
+  final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onSubmitted;
+  final VoidCallback? onClear;
+  final bool enabled;
+  final bool autofocus;
+  final double? borderRadius;
+
+  @override
+  State<AppSearchBar> createState() => _AppSearchBarState();
+}
+
+class _AppSearchBarState extends State<AppSearchBar> {
+  late final TextEditingController _controller;
+  bool _hasText = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = widget.controller ?? TextEditingController();
+    _hasText = _controller.text.isNotEmpty;
+    _controller.addListener(_onTextChanged);
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_onTextChanged);
+    if (widget.controller == null) _controller.dispose();
+    super.dispose();
+  }
+
+  void _onTextChanged() {
+    final hasText = _controller.text.isNotEmpty;
+    if (hasText != _hasText) setState(() => _hasText = hasText);
+    widget.onChanged?.call(_controller.text);
+  }
+
+  void _handleClear() {
+    _controller.clear();
+    widget.onClear?.call();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.appColors;
+    final spacing = context.appSpacing;
+    final typography = context.appTypography;
+    final radius = BorderRadius.circular(widget.borderRadius ?? context.appRadius.md);
+    final borderWidth = spacing.xxxs / 2;
+    final outline = OutlineInputBorder(borderRadius: radius, borderSide: BorderSide(color: colors.border, width: borderWidth));
+    return TextFormField(
+      controller: _controller,
+      enabled: widget.enabled,
+      autofocus: widget.autofocus,
+      textInputAction: TextInputAction.search,
+      onFieldSubmitted: widget.onSubmitted,
+      style: typography.bodyMedium.copyWith(color: widget.enabled ? colors.onSurface : colors.disabledForeground),
+      cursorColor: colors.primary,
+      decoration: InputDecoration(
+        isDense: true,
+        filled: true,
+        fillColor: widget.enabled ? colors.surface : colors.surfaceMuted,
+        hintText: widget.hintText,
+        hintStyle: typography.bodyMedium.copyWith(color: colors.onSurfaceMuted),
+        prefixIcon: Icon(Icons.search_rounded, size: context.appSizes.iconMd, color: colors.onSurfaceMuted),
+        suffixIcon: _hasText && widget.enabled
+            ? IconButton(icon: Icon(Icons.close_rounded, size: context.appSizes.iconSm, color: colors.onSurfaceMuted), onPressed: _handleClear, splashRadius: context.appSizes.iconMd)
+            : null,
+        contentPadding: EdgeInsets.symmetric(horizontal: spacing.md, vertical: spacing.sm),
+        border: outline,
+        enabledBorder: outline,
+        disabledBorder: outline.copyWith(borderSide: BorderSide(color: colors.disabled, width: borderWidth)),
+        focusedBorder: outline.copyWith(borderSide: BorderSide(color: colors.focus, width: borderWidth)),
+      ),
+    );
+  }
+}
+''';
+
+const String _sliderTemplate = r'''
+import 'package:flutter/material.dart';
+
+import '../../core/flutter_ui.dart';
+import '../layouts/v_stack.dart';
+import '../typography/app_text.dart';
+
+class AppSlider extends StatelessWidget {
+  const AppSlider({
+    super.key,
+    required this.value,
+    required this.onChanged,
+    this.min = 0.0,
+    this.max = 1.0,
+    this.divisions,
+    this.label,
+    this.valueLabel,
+    this.showValueLabel = true,
+    this.enabled = true,
+  }) : assert(min < max, 'min must be less than max.');
+
+  final double value;
+  final ValueChanged<double>? onChanged;
+  final double min;
+  final double max;
+  final int? divisions;
+  final String? label;
+  final String? valueLabel;
+  final bool showValueLabel;
+  final bool enabled;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.appColors;
+    final spacing = context.appSpacing;
+    final resolvedValueLabel = valueLabel ?? (divisions != null ? value.toStringAsFixed(0) : value.toStringAsFixed(1));
+    final slider = SliderTheme(
+      data: SliderTheme.of(context).copyWith(
+        activeTrackColor: enabled ? colors.primary : colors.disabled,
+        inactiveTrackColor: colors.surfaceMuted,
+        thumbColor: enabled ? colors.primary : colors.disabled,
+        overlayColor: Color.lerp(colors.primary, Colors.transparent, 0.88),
+        valueIndicatorColor: colors.primary,
+        valueIndicatorTextStyle: context.appTypography.labelSmall.copyWith(color: colors.onPrimary),
+        trackHeight: spacing.xxs,
+        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
+        overlayShape: const RoundSliderOverlayShape(overlayRadius: 20),
+      ),
+      child: Slider(value: value.clamp(min, max), min: min, max: max, divisions: divisions, label: showValueLabel ? resolvedValueLabel : null, onChanged: enabled ? onChanged : null),
+    );
+    if (label == null && !showValueLabel) return slider;
+    return VStack(
+      spacing: spacing.xxxs,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        if (label != null || showValueLabel)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              if (label != null) AppText.label(label!),
+              if (showValueLabel) AppText.label(resolvedValueLabel, tone: AppTextTone.primary),
+            ],
+          ),
+        slider,
+      ],
+    );
+  }
+}
+''';
+
+const String _dialogTemplate = r'''
+import 'package:flutter/material.dart';
+
+import '../../core/flutter_ui.dart';
+import '../buttons/app_button.dart';
+import '../layouts/v_stack.dart';
+import '../typography/app_text.dart';
+
+@immutable
+class AppDialogAction {
+  const AppDialogAction({required this.label, required this.onPressed, this.isDestructive = false, this.isDefault = false});
+  final String label;
+  final VoidCallback onPressed;
+  final bool isDestructive;
+  final bool isDefault;
+}
+
+class AppDialog extends StatelessWidget {
+  const AppDialog({super.key, required this.title, this.description, this.child, this.actions = const <AppDialogAction>[]});
+
+  final String title;
+  final String? description;
+  final Widget? child;
+  final List<AppDialogAction> actions;
+
+  static Future<T?> show<T>({required BuildContext context, required String title, String? description, Widget? child, List<AppDialogAction> actions = const <AppDialogAction>[], bool barrierDismissible = true}) {
+    return showDialog<T>(
+      context: context,
+      barrierDismissible: barrierDismissible,
+      builder: (_) => AppDialog(title: title, description: description, child: child, actions: actions),
+    );
+  }
+
+  static Future<bool> confirm({required BuildContext context, required String title, String? description, String confirmLabel = 'Confirm', String cancelLabel = 'Cancel', bool isDestructive = false}) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AppDialog(
+        title: title,
+        description: description,
+        actions: <AppDialogAction>[
+          AppDialogAction(label: cancelLabel, onPressed: () => Navigator.of(dialogContext).pop(false)),
+          AppDialogAction(label: confirmLabel, isDestructive: isDestructive, isDefault: !isDestructive, onPressed: () => Navigator.of(dialogContext).pop(true)),
+        ],
+      ),
+    );
+    return result ?? false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.appColors;
+    final spacing = context.appSpacing;
+    return Dialog(
+      backgroundColor: colors.surface,
+      surfaceTintColor: colors.surface,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(context.appRadius.xl)),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: context.appSizes.containerXs),
+        child: Padding(
+          padding: EdgeInsets.all(spacing.x2l),
+          child: VStack(
+            spacing: spacing.lg,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              VStack(spacing: spacing.xs, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                AppText.title(title, variant: AppTextVariant.titleMedium),
+                if (description != null) AppText.body(description!, tone: AppTextTone.muted),
+              ]),
+              if (child != null) child!,
+              if (actions.isNotEmpty)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    for (int i = 0; i < actions.length; i++) ...<Widget>[
+                      if (i > 0) SizedBox(width: spacing.xs),
+                      if (actions[i].isDefault)
+                        AppButton.primary(text: actions[i].label, size: AppButtonSize.sm, onPressed: actions[i].onPressed)
+                      else
+                        AppButton.ghost(text: actions[i].label, size: AppButtonSize.sm, onPressed: actions[i].onPressed),
+                    ],
+                  ],
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+''';
+
+const String _bottomSheetTemplate = r'''
+import 'package:flutter/material.dart';
+
+import '../../core/flutter_ui.dart';
+import '../layouts/v_stack.dart';
+import '../typography/app_text.dart';
+
+class AppBottomSheet extends StatelessWidget {
+  const AppBottomSheet({super.key, required this.child, this.title, this.showDragHandle = true, this.padding});
+
+  final Widget child;
+  final String? title;
+  final bool showDragHandle;
+  final EdgeInsetsGeometry? padding;
+
+  static Future<T?> show<T>({required BuildContext context, required Widget child, String? title, bool showDragHandle = true, bool isDismissible = true, bool enableDrag = true}) {
+    return showModalBottomSheet<T>(
+      context: context,
+      isDismissible: isDismissible,
+      enableDrag: enableDrag,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => AppBottomSheet(title: title, showDragHandle: showDragHandle, child: child),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.appColors;
+    final spacing = context.appSpacing;
+    final radius = Radius.circular(context.appRadius.xl);
+    final resolvedPadding = padding ?? EdgeInsets.only(left: spacing.x2l, right: spacing.x2l, bottom: spacing.x2l + MediaQuery.of(context).viewInsets.bottom, top: showDragHandle ? spacing.xs : spacing.x2l);
+    return SafeArea(
+      top: false,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: colors.surface,
+          borderRadius: BorderRadius.only(topLeft: radius, topRight: radius),
+          border: Border(top: BorderSide(color: colors.border, width: spacing.xxxs / 2)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            if (showDragHandle)
+              Center(
+                child: Padding(
+                  padding: EdgeInsets.only(top: spacing.sm),
+                  child: Container(
+                    width: spacing.x2l,
+                    height: spacing.xxs,
+                    decoration: BoxDecoration(color: colors.borderStrong, borderRadius: BorderRadius.circular(context.appRadius.pill)),
+                  ),
+                ),
+              ),
+            Padding(
+              padding: resolvedPadding,
+              child: VStack(
+                spacing: spacing.lg,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  if (title != null) AppText.title(title!, variant: AppTextVariant.titleMedium),
+                  child,
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+''';
+
+const String _toastTemplate = r'''
+import 'package:flutter/material.dart';
+
+import '../../core/flutter_ui.dart';
+
+enum AppToastVariant { info, success, warning, error, neutral }
+
+abstract final class AppToast {
+  static void show(BuildContext context, {required String message, AppToastVariant variant = AppToastVariant.neutral, Duration duration = const Duration(seconds: 3)}) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(
+        content: _AppToastContent(message: message, variant: variant),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        behavior: SnackBarBehavior.floating,
+        duration: duration,
+        margin: const EdgeInsets.all(16),
+        padding: EdgeInsets.zero,
+      ));
+  }
+}
+
+class _AppToastContent extends StatelessWidget {
+  const _AppToastContent({required this.message, required this.variant});
+  final String message;
+  final AppToastVariant variant;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.appColors;
+    final spacing = context.appSpacing;
+    final typography = context.appTypography;
+    final style = _resolveStyle(context);
+    final borderWidth = spacing.xxxs / 2;
+    return Material(
+      color: Colors.transparent,
+      child: Ink(
+        decoration: BoxDecoration(
+          color: style.background,
+          borderRadius: BorderRadius.circular(context.appRadius.lg),
+          border: Border.all(color: style.border, width: borderWidth),
+          boxShadow: <BoxShadow>[BoxShadow(color: colors.shadow, blurRadius: spacing.md, offset: Offset(0, spacing.xxs))],
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: spacing.md, vertical: spacing.sm),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Icon(style.icon, size: context.appSizes.iconSm, color: style.foreground),
+              SizedBox(width: spacing.sm),
+              Expanded(child: Text(message, style: typography.bodyMedium.copyWith(color: style.textColor, fontWeight: FontWeight.w500))),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  _ToastStyle _resolveStyle(BuildContext context) {
+    final colors = context.appColors;
+    return switch (variant) {
+      AppToastVariant.info => _ToastStyle(background: Color.lerp(colors.surface, colors.info, 0.08)!, foreground: colors.info, textColor: colors.onSurface, border: Color.lerp(colors.borderStrong, colors.info, 0.32)!, icon: Icons.info_outline_rounded),
+      AppToastVariant.success => _ToastStyle(background: Color.lerp(colors.surface, colors.success, 0.08)!, foreground: colors.success, textColor: colors.onSurface, border: Color.lerp(colors.borderStrong, colors.success, 0.32)!, icon: Icons.check_circle_outline_rounded),
+      AppToastVariant.warning => _ToastStyle(background: Color.lerp(colors.surface, colors.warning, 0.08)!, foreground: colors.warning, textColor: colors.onSurface, border: Color.lerp(colors.borderStrong, colors.warning, 0.32)!, icon: Icons.warning_amber_rounded),
+      AppToastVariant.error => _ToastStyle(background: Color.lerp(colors.surface, colors.error, 0.08)!, foreground: colors.error, textColor: colors.onSurface, border: Color.lerp(colors.borderStrong, colors.error, 0.32)!, icon: Icons.error_outline_rounded),
+      AppToastVariant.neutral => _ToastStyle(background: colors.surfaceInverse, foreground: colors.surface, textColor: colors.surface, border: colors.surfaceInverse, icon: Icons.notifications_none_rounded),
+    };
+  }
+}
+
+class _ToastStyle {
+  const _ToastStyle({required this.background, required this.foreground, required this.textColor, required this.border, required this.icon});
+  final Color background;
+  final Color foreground;
+  final Color textColor;
+  final Color border;
+  final IconData icon;
+}
+''';
+
+const String _skeletonTemplate = r'''
+import 'package:flutter/material.dart';
+
+import '../../core/flutter_ui.dart';
+
+class AppSkeleton extends StatefulWidget {
+  const AppSkeleton({super.key, this.width, this.height = 16, this.borderRadius});
+  const AppSkeleton.text({super.key, this.width, this.borderRadius}) : height = 14;
+  const AppSkeleton.circular({super.key, double? size, this.borderRadius}) : width = size, height = size ?? 44;
+
+  final double? width;
+  final double height;
+  final double? borderRadius;
+
+  @override
+  State<AppSkeleton> createState() => _AppSkeletonState();
+}
+
+class _AppSkeletonState extends State<AppSkeleton> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 1400))..repeat();
+    _animation = Tween<double>(begin: -1.5, end: 2.5).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.appColors;
+    final baseColor = colors.surfaceMuted;
+    final highlightColor = Color.lerp(baseColor, colors.surface, 0.6) ?? baseColor;
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (_, __) => Container(
+        width: widget.width,
+        height: widget.height,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(widget.borderRadius ?? context.appRadius.sm),
+          gradient: LinearGradient(
+            begin: Alignment(_animation.value - 1, 0),
+            end: Alignment(_animation.value, 0),
+            colors: <Color>[baseColor, highlightColor, baseColor],
+            stops: const <double>[0.0, 0.5, 1.0],
+          ),
+        ),
+      ),
+    );
+  }
+}
+''';
+
+const String _bottomNavTemplate = r'''
+import 'package:flutter/material.dart';
+
+import '../../core/flutter_ui.dart';
+
+@immutable
+class AppBottomNavItem {
+  const AppBottomNavItem({required this.icon, required this.label, this.activeIcon, this.badgeLabel});
+  final IconData icon;
+  final IconData? activeIcon;
+  final String label;
+  final String? badgeLabel;
+}
+
+class AppBottomNav extends StatelessWidget {
+  const AppBottomNav({super.key, required this.items, required this.currentIndex, this.onChanged})
+      : assert(items.length >= 2, 'At least 2 items are required.'),
+        assert(currentIndex >= 0 && currentIndex < items.length, 'currentIndex must be within the item range.');
+
+  final List<AppBottomNavItem> items;
+  final int currentIndex;
+  final ValueChanged<int>? onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.appColors;
+    final spacing = context.appSpacing;
+    final typography = context.appTypography;
+    return DecoratedBox(
+      decoration: BoxDecoration(color: colors.surface, border: Border(top: BorderSide(color: colors.border, width: spacing.xxxs / 2))),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: spacing.xs),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: List<Widget>.generate(items.length, (index) {
+              final item = items[index];
+              final isActive = index == currentIndex;
+              final fg = isActive ? colors.primary : colors.onSurfaceMuted;
+              return Expanded(
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: onChanged != null ? () => onChanged!(index) : null,
+                    borderRadius: BorderRadius.circular(context.appRadius.md),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: spacing.xs),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Stack(
+                            clipBehavior: Clip.none,
+                            children: <Widget>[
+                              Icon(isActive ? (item.activeIcon ?? item.icon) : item.icon, size: context.appSizes.iconMd, color: fg),
+                              if (item.badgeLabel != null)
+                                Positioned(
+                                  top: -spacing.xxs,
+                                  right: -spacing.xs,
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(horizontal: spacing.xxxs + 1, vertical: spacing.xxxs / 2),
+                                    decoration: BoxDecoration(color: colors.error, borderRadius: BorderRadius.circular(context.appRadius.pill), border: Border.all(color: colors.surface, width: spacing.xxxs / 2)),
+                                    child: Text(item.badgeLabel!, style: typography.labelSmall.copyWith(color: colors.onPrimary, fontSize: 9, height: 1, fontWeight: FontWeight.w700)),
+                                  ),
+                                ),
+                            ],
+                          ),
+                          SizedBox(height: spacing.xxs),
+                          Text(item.label, style: typography.labelSmall.copyWith(color: fg, fontWeight: isActive ? FontWeight.w700 : FontWeight.w500), overflow: TextOverflow.ellipsis),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }),
+          ),
+        ),
+      ),
+    );
+  }
+}
+''';
+
+const String _appBarTemplate = r'''
+import 'package:flutter/material.dart';
+
+import '../../core/flutter_ui.dart';
+
+class AppAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const AppAppBar({super.key, required this.title, this.leading, this.actions, this.bottom, this.centerTitle = false, this.backgroundColor, this.foregroundColor, this.showDivider = true});
+
+  final String title;
+  final Widget? leading;
+  final List<Widget>? actions;
+  final PreferredSizeWidget? bottom;
+  final bool centerTitle;
+  final Color? backgroundColor;
+  final Color? foregroundColor;
+  final bool showDivider;
+
+  @override
+  Size get preferredSize => Size.fromHeight(kToolbarHeight + (bottom?.preferredSize.height ?? 0));
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.appColors;
+    final spacing = context.appSpacing;
+    final typography = context.appTypography;
+    final resolvedBg = backgroundColor ?? colors.background;
+    final resolvedFg = foregroundColor ?? colors.onBackground;
+    final appBar = AppBar(
+      title: Text(title, style: typography.titleLarge.copyWith(color: resolvedFg, fontWeight: FontWeight.w600)),
+      leading: leading,
+      actions: actions,
+      bottom: bottom,
+      centerTitle: centerTitle,
+      backgroundColor: resolvedBg,
+      foregroundColor: resolvedFg,
+      surfaceTintColor: resolvedBg,
+      scrolledUnderElevation: 0,
+      elevation: 0,
+      iconTheme: IconThemeData(color: resolvedFg, size: context.appSizes.iconMd),
+    );
+    if (!showDivider) return appBar;
+    return DecoratedBox(
+      decoration: BoxDecoration(border: Border(bottom: BorderSide(color: colors.border, width: spacing.xxxs / 2))),
+      child: appBar,
     );
   }
 }

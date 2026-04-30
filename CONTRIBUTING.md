@@ -1,17 +1,22 @@
-# Contributing
+# Contributing to FluxUI
 
-## Local Workflow
+---
 
-1. Bootstrap the workspace:
+## Setup
 
 ```bash
 dart pub get
 dart run melos bootstrap
 ```
 
-2. Run the full validation set:
+---
+
+## Validation
+
+Run the full suite before pushing:
 
 ```bash
+dart run melos run check:architecture
 dart run melos run format:check
 dart run melos run analyze
 dart run melos run typecheck
@@ -19,49 +24,69 @@ dart run melos run test
 dart run melos run build
 ```
 
-3. Update goldens when a visual change is intentional:
+Update golden snapshots when a visual change is intentional:
 
 ```bash
 dart run melos run test:update-goldens
 ```
 
-## Package Boundaries
+---
 
-- `flutter_ui_tokens` contains immutable design tokens only.
-- `flutter_ui_utils` contains generic extensions and responsive helpers.
-- `flutter_ui` contains theme integration and UI components.
-- `flutter_ui_cli` contains the copy-paste workflow, templates, and local
-  generation logic.
+## Branch strategy
 
-Keep business logic out of all of these packages.
+- Branch from `dev`: `git checkout -b feature/my-topic`
+- Open a PR into `dev`
+- Merge only after CI is green
 
-## CLI Status
+See [docs/dev_branch_workflow.md](docs/dev_branch_workflow.md).
 
-The current CLI surface is hybrid:
+---
 
-- `flux add ...` is the preferred component installation command
-- `flutter_ui init` and `flutter_ui list` still own workspace bootstrapping
-- `flutter_ui add ...` remains available for compatibility
+## Package boundaries
 
-Document the command surface accurately when you change it.
+| Package | Contains |
+|---------|---------|
+| `flutter_ui_tokens` | Immutable design tokens only. No widgets. |
+| `flutter_ui_utils` | Generic Flutter extensions and responsive helpers. No business logic. |
+| `flutter_ui` | Theme integration and UI components. No business logic. |
+| `flutter_ui_cli` | Copy-paste workflow, component registry, file generation. No Flutter SDK dependency. |
 
-## Component Contribution Rules
+The dependency direction is strict: `tokens → utils → ui`. The CLI is isolated.
 
-- Prefer readable, copy-paste-friendly code over deep abstraction.
-- Keep components stateless unless Flutter itself requires state.
-- Pull all styling from theme tokens and theme extensions.
-- Add widget tests for behavior and golden tests for stable visual surfaces when
-  a component materially affects rendering.
-- If a component is meant for CLI generation, keep the generated file readable
-  without depending on package-private helpers.
+---
 
-## Pull Request Checklist
+## Component rules
 
-- Formatting passes
-- Flutter linting passes
-- Dart analysis passes
-- Tests pass
-- Build passes
-- Goldens updated if visuals changed
-- Public exports remain intentional
-- Docs updated if the package surface changed
+- Keep components **stateless** unless Flutter itself requires state.
+- All styling comes from **`AppThemeTokens`** via `BuildContext` extensions — no hardcoded colors or sizes.
+- Prefer **readable code** over deep abstraction — components are meant to be copy-paste-friendly.
+- Add a **widget test** for every behavioral path.
+- Add a **golden test** when a component materially affects rendering.
+- If a component is added to `packages/ui`, add a matching **CLI registry entry** in `packages/cli/lib/src/component_registry.dart`.
+
+---
+
+## CLI registry entries
+
+Every component entry in `ComponentRegistry` requires:
+- `id` — kebab-case unique identifier
+- `aliases` — alternative names for fuzzy matching
+- `outputPath` — relative path inside `lib/ui/components/`
+- `publicSymbols` — all public class/enum names (used to build the `hide` list)
+- `dependencies` — other component IDs this component needs
+- `description` — one-sentence summary
+- `template` — complete, self-contained Dart source using `../../core/flutter_ui.dart` for token access
+
+---
+
+## Pull request checklist
+
+- [ ] Formatting passes (`format:check`)
+- [ ] Flutter analyze passes
+- [ ] Dart analyze passes
+- [ ] All tests pass
+- [ ] Build passes
+- [ ] Goldens updated if visuals changed
+- [ ] Public exports are intentional
+- [ ] Docs updated if the package surface or CLI commands changed
+- [ ] CLI registry updated if a new component was added

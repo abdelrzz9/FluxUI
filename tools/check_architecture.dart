@@ -2,12 +2,12 @@ import 'dart:io';
 
 void main() {
   final requiredPaths = <String>[
-    'packages/cli',
-    'packages/ui/content/docs',
     'packages/tokens',
     'packages/utils',
     'packages/ui',
+    'packages/cli',
     'apps/example',
+    'docs',
   ];
 
   final missing = <String>[];
@@ -20,7 +20,7 @@ void main() {
   if (missing.isNotEmpty) {
     stderr.writeln('Architecture check failed. Missing required paths:');
     for (final path in missing) {
-      stderr.writeln('- $path');
+      stderr.writeln('  - $path');
     }
     exitCode = 1;
     return;

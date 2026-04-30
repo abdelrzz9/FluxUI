@@ -1,85 +1,90 @@
 # flutter_ui_cli
 
-[![Flutter](https://img.shields.io/badge/Flutter-%3E%3D3.24-blue)](https://flutter.dev)
+shadcn-style CLI for copying editable FluxUI components into your Flutter project. Part of the [FluxUI](https://github.com/abdelrzz9/FluxUI) monorepo.
 
-shadcn-style CLI for copying editable FluxUI components into your Flutter app. Part of the [FluxUI](https://github.com/abdelrzz9/FluxUI) ecosystem.
-
-> **Note:** This package is `publish_to: none`. Run it directly from the monorepo with `dart run`.
+> **Note:** `publish_to: none` — run directly from the monorepo with `dart run`.
 
 ## How it works
 
-Components are copied as plain `.dart` files into your project — you own the code. There is no runtime dependency on this CLI after the copy step.
+Components are copied as plain `.dart` files into your project under `lib/ui/components/`. You own the code. There is no runtime dependency on this package after the copy.
 
-Two entry points are provided:
+## Entry points
 
-| Binary | Purpose |
-|---|---|
-| `flux` | Day-to-day `add` command |
-| `flutter_ui` | Workspace initialisation (`init`, `add`, `list`) |
+| Binary | Commands |
+|--------|---------|
+| `flux` | `add` |
+| `flutter_ui` | `init` · `add` · `list` |
 
 ## Getting started
 
-**1. Initialise the workspace** (once per project):
-
-```FluxUI/packages/cli/lib/src/flutter_ui_cli.dart#L1-3
+```bash
+# 1. Initialise the workspace (once per project)
 dart run packages/cli/bin/flutter_ui.dart init
-```
 
-This creates `lib/ui/components/`, `lib/ui/core/`, and `lib/ui/index.dart` in your project, along with a `flutter_ui.json` config file.
-
-**2. Copy components:**
-
-```FluxUI/packages/cli/bin/flux.dart#L1-3
-# preferred shorthand
+# 2. Copy components
 dart run packages/cli/bin/flux.dart add button
-
-# multiple at once
-dart run packages/cli/bin/flux.dart add button card text-field
+dart run packages/cli/bin/flux.dart add button card alert
 ```
 
-Files land in `lib/ui/components/` and are immediately editable.
+Import the local workspace surface in your app:
+
+```dart
+import 'package:your_app/ui/index.dart';
+```
 
 ## Commands
 
 ### `flutter_ui init`
 
-Bootstraps the workspace scaffold. Safe to re-run; use `--force` to overwrite existing files.
+Creates the workspace scaffold in your Flutter project.
 
-```FluxUI/packages/cli/lib/src/flutter_ui_cli.dart#L1-3
+```bash
 dart run packages/cli/bin/flutter_ui.dart init
-dart run packages/cli/bin/flutter_ui.dart init --force
+dart run packages/cli/bin/flutter_ui.dart init --force   # overwrite existing files
 ```
 
-### `flux add <components...>`
+Generates:
+- `flutter_ui.json` — config
+- `lib/ui/core/flutter_ui.dart` — bridge (hides package symbols for copied components)
+- `lib/ui/components/index.dart` — local components barrel
+- `lib/ui/index.dart` — unified export
 
-Copies one or more components (and their dependencies) into your project.
+### `flux add`
 
-```FluxUI/packages/cli/bin/flux.dart#L1-3
-dart run packages/cli/bin/flux.dart add button card
-dart run packages/cli/bin/flux.dart add button --overwrite
+```bash
+dart run packages/cli/bin/flux.dart add <component> [<component>...] [--overwrite]
 ```
+
+Features: alias resolution, fuzzy typo correction (Levenshtein ≤ 2), automatic dependency installation.
 
 ### `flutter_ui list`
 
-Prints all available components.
-
-```FluxUI/packages/cli/lib/src/flutter_ui_cli.dart#L1-3
+```bash
 dart run packages/cli/bin/flutter_ui.dart list
 ```
 
-## Available components
+## Available components (18)
 
-| ID | Aliases | Description |
-|---|---|---|
-| `button` | `app_button` | Primary action button with variants, sizes, and loading state |
-| `card` | `app_card` | Surface container with outline and muted variants |
-| `gap` | — | Axis-aware spacer primitive |
-| `h-stack` | `hstack` | Horizontal stack that inserts gaps between children |
-| `text` | `app_text`, `typography` | Token-driven text widget with semantic tone and type scale |
-| `text-field` | `textfield`, `input`, `app_text_field` | Form field with outline and filled variants |
-| `v-stack` | `vstack` | Vertical stack that inserts gaps between children |
-
-> More components are registered in the registry as the ecosystem grows. Run `flutter_ui list` to see the latest.
+| ID | Aliases | Dependencies |
+|----|---------|-------------|
+| `alert` | `app_alert` | `text`, `v-stack` |
+| `button` | `app_button` | — |
+| `card` | `app_card` | — |
+| `carousel` | `app_carousel`, `slider` | `card` |
+| `checkbox` | `app_checkbox` | `text`, `v-stack` |
+| `combobox` | `app_combobox`, `select`, `dropdown` | `card`, `text`, `text-field`, `v-stack` |
+| `gap` | — | — |
+| `h-stack` | `hstack` | `gap` |
+| `navigation-menu` | `nav-menu`, `app_navigation_menu` | `card`, `text`, `v-stack` |
+| `otp-field` | `otp`, `app_otp_field` | — |
+| `pagination` | `app_pagination`, `pages` | `text` |
+| `progress` | `app_progress`, `progressbar` | `text`, `v-stack` |
+| `roadmap-item` | `roadmap`, `app_roadmap_item` | `text` |
+| `switch` | `app_switch`, `toggle` | `text`, `v-stack` |
+| `tabs` | `app_tabs` | `card`, `text`, `v-stack` |
+| `text` | `app_text`, `typography` | — |
+| `text-field` | `textfield`, `input`, `app_text_field` | — |
+| `v-stack` | `vstack` | `gap` |
 
 ## Requirements
 
@@ -88,6 +93,5 @@ dart run packages/cli/bin/flutter_ui.dart list
 ## Links
 
 - [Repository](https://github.com/abdelrzz9/FluxUI)
-- [Issue tracker](https://github.com/abdelrzz9/FluxUI/issues)
-- [`flutter_ui` — UI component library](https://pub.dev/packages/flutter_ui)
-- [`flutter_ui_tokens` — design tokens](https://pub.dev/packages/flutter_ui_tokens)
+- [CLI guide](../../docs/cli.md)
+- [flutter_ui](https://pub.dev/packages/flutter_ui) — UI component library
