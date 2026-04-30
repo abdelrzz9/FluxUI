@@ -2,7 +2,7 @@
 
 ## 0.1.0
 
-Initial release of `fluxui`.
+Initial release of `fluxui_kit`.
 
 ### Added
 

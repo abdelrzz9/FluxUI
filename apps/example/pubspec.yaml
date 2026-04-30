@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  fluxui:
+  fluxui_kit:
     path: ../../packages/fluxui
 
 dev_dependencies:

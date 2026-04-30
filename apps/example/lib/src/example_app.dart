@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluxui/fluxui.dart';
+import 'package:fluxui_kit/fluxui_kit.dart';
 
 import 'example_home_page.dart';
 

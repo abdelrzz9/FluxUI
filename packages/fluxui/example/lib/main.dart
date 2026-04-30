@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluxui/fluxui.dart';
+import 'package:fluxui_kit/fluxui_kit.dart';
 
 void main() => runApp(const FluxUIExampleApp());
 

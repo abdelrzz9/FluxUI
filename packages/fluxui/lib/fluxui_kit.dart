@@ -7,7 +7,7 @@
 /// ## Quick start
 ///
 /// ```dart
-/// import 'package:fluxui/fluxui.dart';
+/// import 'package:fluxui_kit/fluxui_kit.dart';
 ///
 /// void main() => runApp(const MyApp());
 ///
@@ -40,7 +40,7 @@
 ///   theme: AppTheme.custom(tokens: myTokens, brightness: Brightness.light),
 /// );
 /// ```
-library fluxui;
+library fluxui_kit;
 
 // ── Design system foundation ───────────────────────────────────────────────
 export 'src/tokens/index.dart';

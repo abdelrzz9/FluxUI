@@ -28,7 +28,7 @@ void main() {
       expect(
         File(p.join(project.path, 'lib/ui/core/flutter_ui.dart'))
             .readAsStringSync(),
-        contains("export 'package:fluxui/fluxui.dart';"),
+        contains("export 'package:fluxui_kit/fluxui_kit.dart';"),
       );
       expect(
         File(p.join(project.path, 'lib/ui/index.dart')).readAsStringSync(),

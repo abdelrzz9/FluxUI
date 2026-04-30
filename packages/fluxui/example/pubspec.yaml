@@ -1,5 +1,5 @@
-name: fluxui_example
-description: Example app for the fluxui package.
+name: fluxui_kit_example
+description: Example app for the fluxui_kit package.
 publish_to: none
 version: 1.0.0+1
 
@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  fluxui:
+  fluxui_kit:
     path: ../
 
 dev_dependencies:
