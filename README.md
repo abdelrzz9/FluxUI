@@ -12,23 +12,45 @@
 
 ---
 
+> **Status:** Pre-release — packages are not yet published to pub.dev.
+> Use a path dependency (local clone) or a git dependency until v1.0.0 is tagged.
+
+---
+
 ## Two ways to use it
 
 | Mode | How | Best for |
 |------|-----|----------|
-| **Package** | `flutter_ui: ^0.1.0` in pubspec | Quick integration |
+| **Path / Git dependency** | Point pubspec at this repo | Standard Flutter package usage |
 | **Local ownership** | `flux add button` copies source into your app | Full customisation (shadcn/ui style) |
 
 ---
 
 ## Quick start
 
-### Package mode
+### Path dependency (local clone)
+
+```bash
+git clone https://github.com/abdelrzz9/FluxUI.git
+```
 
 ```yaml
-# pubspec.yaml
+# your_app/pubspec.yaml
 dependencies:
-  flutter_ui: ^0.1.0
+  flutter_ui:
+    path: ../FluxUI/packages/ui
+```
+
+### Git dependency (no local clone needed)
+
+```yaml
+# your_app/pubspec.yaml
+dependencies:
+  flutter_ui:
+    git:
+      url: https://github.com/abdelrzz9/FluxUI.git
+      path: packages/ui
+      ref: main   # or pin to a specific commit SHA
 ```
 
 ```dart
@@ -53,6 +75,12 @@ class MyApp extends StatelessWidget {
   }
 }
 ```
+
+> Once the packages are published to pub.dev, the dependency will simply be:
+> ```yaml
+> dependencies:
+>   flutter_ui: ^0.1.0
+> ```
 
 ### Local ownership mode
 
