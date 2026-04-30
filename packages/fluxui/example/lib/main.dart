@@ -216,10 +216,13 @@ class _ExamplePageState extends State<ExamplePage> {
                   runSpacing: spacing.sm,
                   children: const [
                     AppBadge(label: 'Primary'),
-                    AppBadge(label: 'Success', variant: AppBadgeVariant.success),
-                    AppBadge(label: 'Warning', variant: AppBadgeVariant.warning),
+                    AppBadge(
+                        label: 'Success', variant: AppBadgeVariant.success),
+                    AppBadge(
+                        label: 'Warning', variant: AppBadgeVariant.warning),
                     AppBadge(label: 'Danger', variant: AppBadgeVariant.danger),
-                    AppBadge(label: 'Neutral', variant: AppBadgeVariant.neutral),
+                    AppBadge(
+                        label: 'Neutral', variant: AppBadgeVariant.neutral),
                   ],
                 ),
               ],
