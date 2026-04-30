@@ -12,11 +12,16 @@
 
 ---
 
+> **Status:** Pre-release — packages are not yet published to pub.dev.
+> Use a path dependency (local clone) or a git dependency until v1.0.0 is tagged.
+
+---
+
 ## Two ways to use it
 
 | Mode | How | Best for |
 |------|-----|----------|
-| **Package** | `flutter_ui: ^0.1.0` in pubspec | Quick integration |
+| **Path / Git dependency** | Point pubspec at this repo | Standard Flutter package usage |
 | **Local ownership** | `flux add button` copies source into your app | Full customisation (shadcn/ui style) |
 
 ---
@@ -26,7 +31,7 @@
 ### Package mode
 
 ```yaml
-# pubspec.yaml
+# your_app/pubspec.yaml
 dependencies:
   flutter_ui: ^0.1.0
 ```

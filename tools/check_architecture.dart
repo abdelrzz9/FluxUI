@@ -4,7 +4,7 @@ void main() {
   final requiredPaths = <String>[
     'packages/tokens',
     'packages/utils',
-    'packages/ui',
+    'packages/fluxui',
     'packages/cli',
     'apps/example',
     'docs',
