@@ -33,7 +33,7 @@
 ```yaml
 # your_app/pubspec.yaml
 dependencies:
-  flutter_ui: ^0.1.0
+   fluxui_kit: ^0.1.0
 ```
 
 ```dart
