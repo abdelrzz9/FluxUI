@@ -41,7 +41,7 @@ It ships with **light and dark** token presets out of the box and is fully custo
 ```yaml
 # your_app/pubspec.yaml
 dependencies:
-  fluxui_kit: ^0.1.0
+   fluxui_kit: ^0.1.0
 ```
 
 ```dart
