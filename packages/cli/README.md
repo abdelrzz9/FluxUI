@@ -4,16 +4,22 @@ shadcn-style CLI for copying editable FluxUI components into your Flutter projec
 
 > **Note:** `publish_to: none` — run directly from the monorepo with `dart run`.
 
+---
+
 ## How it works
 
 Components are copied as plain `.dart` files into your project under `lib/ui/components/`. You own the code. There is no runtime dependency on this package after the copy.
 
+---
+
 ## Entry points
 
 | Binary | Commands |
-|--------|---------|
+|--------|----------|
 | `flux` | `add` |
 | `flutter_ui` | `init` · `add` · `list` |
+
+---
 
 ## Getting started
 
@@ -32,6 +38,8 @@ Import the local workspace surface in your app:
 import 'package:your_app/ui/index.dart';
 ```
 
+---
+
 ## Commands
 
 ### `flutter_ui init`
@@ -44,6 +52,7 @@ dart run packages/cli/bin/flutter_ui.dart init --force   # overwrite existing fi
 ```
 
 Generates:
+
 - `flutter_ui.json` — config
 - `lib/ui/core/flutter_ui.dart` — bridge (hides package symbols for copied components)
 - `lib/ui/components/index.dart` — local components barrel
@@ -62,6 +71,8 @@ Features: alias resolution, fuzzy typo correction (Levenshtein ≤ 2), automatic
 ```bash
 dart run packages/cli/bin/flutter_ui.dart list
 ```
+
+---
 
 ## Available components (18)
 
@@ -86,12 +97,16 @@ dart run packages/cli/bin/flutter_ui.dart list
 | `text-field` | `textfield`, `input`, `app_text_field` | — |
 | `v-stack` | `vstack` | `gap` |
 
+---
+
 ## Requirements
 
 - Dart SDK `>=3.4.0 <4.0.0`
+
+---
 
 ## Links
 
 - [Repository](https://github.com/abdelrzz9/FluxUI)
 - [CLI guide](../../docs/cli.md)
-- [flutter_ui](https://pub.dev/packages/flutter_ui) — UI component library
+- [fluxui_kit](../fluxui/README.md) — primary UI component package
