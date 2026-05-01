@@ -14,7 +14,7 @@ Developer-first composable Flutter UI system built on typed tokens. Part of the 
 
 ```yaml
 dependencies:
-  flutter_ui: ^0.1.0
+   fluxui_kit: ^0.1.0
 ```
 
 ## Quick start
