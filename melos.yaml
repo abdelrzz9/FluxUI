@@ -14,7 +14,8 @@ command:
 scripts:
   get: dart run melos bootstrap
   check:architecture: dart run tools/check_architecture.dart
-  analyze: dart run melos exec -- flutter analyze
+  analyze: dart run melos exec --ignore=flutter_ui_cli -- flutter analyze
+  analyze:cli: dart run melos exec --scope=flutter_ui_cli -- dart analyze
   typecheck: dart run melos exec -- dart analyze
   test: dart run melos exec --dir-exists=test -- flutter test
   test:goldens: dart run melos exec --scope=fluxui_kit -- flutter test test/goldens
