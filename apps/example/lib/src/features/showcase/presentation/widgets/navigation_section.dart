@@ -4,6 +4,7 @@ import 'package:fluxui_kit/fluxui_kit.dart';
 import '../../domain/models/release_tab_content.dart';
 import '../../domain/models/showcase_navigation_item.dart';
 import '../controllers/showcase_controller.dart';
+import '../mappers/showcase_icon_mapper.dart';
 
 class NavigationSection extends StatelessWidget {
   const NavigationSection({
@@ -30,7 +31,7 @@ class NavigationSection extends StatelessWidget {
               .map(
                 (tab) => AppTabItem(
                   label: tab.label,
-                  icon: tab.icon,
+                  icon: tab.icon.iconData,
                   badgeLabel: tab.badgeLabel,
                   description: tab.description,
                 ),
@@ -45,7 +46,7 @@ class NavigationSection extends StatelessWidget {
               .map(
                 (item) => AppNavigationMenuItem(
                   label: item.label,
-                  icon: item.icon,
+                  icon: item.icon.iconData,
                   badgeLabel: item.badgeLabel,
                   description: item.description,
                 ),

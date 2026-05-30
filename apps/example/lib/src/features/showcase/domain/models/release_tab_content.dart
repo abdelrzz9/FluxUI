@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'showcase_icon.dart';
 
 class ReleaseTabContent {
   const ReleaseTabContent({
@@ -9,7 +9,7 @@ class ReleaseTabContent {
   });
 
   final String label;
-  final IconData icon;
+  final ShowcaseIcon icon;
   final String description;
   final String? badgeLabel;
 }

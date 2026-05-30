@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'showcase_icon.dart';
 
 class ShowcaseNavigationItem {
   const ShowcaseNavigationItem({
@@ -9,7 +9,7 @@ class ShowcaseNavigationItem {
   });
 
   final String label;
-  final IconData icon;
+  final ShowcaseIcon icon;
   final String description;
   final String? badgeLabel;
 }

@@ -1,9 +1,8 @@
-import 'package:flutter/material.dart';
-
 import '../domain/models/carousel_slide_content.dart';
 import '../domain/models/registry_option.dart';
 import '../domain/models/release_tab_content.dart';
 import '../domain/models/roadmap_entry.dart';
+import '../domain/models/showcase_icon.dart';
 import '../domain/models/showcase_navigation_item.dart';
 
 class ShowcaseCatalog {
@@ -37,20 +36,20 @@ const List<RegistryOption> _registryOptions = <RegistryOption>[
 const List<ReleaseTabContent> _releaseTabs = <ReleaseTabContent>[
   ReleaseTabContent(
     label: 'Overview',
-    icon: Icons.dashboard_customize_outlined,
+    icon: ShowcaseIcon.dashboard,
     description:
         'Track the package surface, example coverage, and release status from a single control.',
   ),
   ReleaseTabContent(
     label: 'Components',
-    icon: Icons.widgets_outlined,
+    icon: ShowcaseIcon.widgets,
     badgeLabel: '7',
     description:
         'Pagination, tabs, navigation menu, switch, combobox, OTP, and checkbox now ship together.',
   ),
   ReleaseTabContent(
     label: 'CLI',
-    icon: Icons.terminal_rounded,
+    icon: ShowcaseIcon.terminal,
     description:
         'Keep package APIs and generated templates aligned as the component surface grows.',
   ),
@@ -59,20 +58,20 @@ const List<ReleaseTabContent> _releaseTabs = <ReleaseTabContent>[
 const List<ShowcaseNavigationItem> _navigationItems = <ShowcaseNavigationItem>[
   ShowcaseNavigationItem(
     label: 'Docs',
-    icon: Icons.menu_book_outlined,
+    icon: ShowcaseIcon.docs,
     description:
         'Read installation, theming, and package usage guidance before adding components.',
   ),
   ShowcaseNavigationItem(
     label: 'Registry',
-    icon: Icons.inventory_2_outlined,
+    icon: ShowcaseIcon.registry,
     badgeLabel: 'new',
     description:
         'Review package-backed and CLI-backed component entries before generating code.',
   ),
   ShowcaseNavigationItem(
     label: 'Releases',
-    icon: Icons.rocket_launch_outlined,
+    icon: ShowcaseIcon.releases,
     description:
         'Check recent component additions and upcoming migration notes for FluxUI updates.',
   ),

@@ -28,6 +28,8 @@ lib/main.dart
         -> ShowcaseController                     presentation state + actions
         -> ShowcaseCatalog                        data/content source
           -> domain models                        UI-independent content shapes
+          -> ShowcaseIcon enum                    no Flutter dependency in domain/data
+        -> presentation/mappers                   maps domain values to Flutter types
         -> presentation/widgets                   reusable section widgets
 ```
 
@@ -50,10 +52,13 @@ apps/example/lib/src/
         │       ├── registry_option.dart
         │       ├── release_tab_content.dart
         │       ├── roadmap_entry.dart
+        │       ├── showcase_icon.dart
         │       └── showcase_navigation_item.dart
         └── presentation/
             ├── controllers/
             │   └── showcase_controller.dart
+            ├── mappers/
+            │   └── showcase_icon_mapper.dart
             ├── pages/
             │   └── showcase_page.dart
             └── widgets/
@@ -82,10 +87,18 @@ apps/example/lib/src/
 | `apps/example/lib/src/app/example_app.dart` | Compose `MaterialApp`, theme configuration, and feature entry page. | New app layer file. |
 | `apps/example/lib/src/app/theme_controller.dart` | Own app-level theme mode state and actions. | New app state file. |
 | `apps/example/lib/src/features/showcase/data/showcase_catalog.dart` | Provide showcase content currently backed by static data. | New data layer boundary. |
-| `apps/example/lib/src/features/showcase/domain/models/*` | Define feature content shapes independent from section widgets. | New domain layer models. |
+| `apps/example/lib/src/features/showcase/domain/models/*` | Define feature content shapes independent from section widgets and Flutter UI types. | New domain layer models. |
 | `apps/example/lib/src/features/showcase/presentation/controllers/showcase_controller.dart` | Own mutable showcase UI state, controller lifecycle, and state transitions. | New presentation state boundary. |
+| `apps/example/lib/src/features/showcase/presentation/mappers/showcase_icon_mapper.dart` | Convert domain icon identifiers to Flutter `IconData`. | Keeps Flutter dependencies out of data/domain layers. |
 | `apps/example/lib/src/features/showcase/presentation/pages/showcase_page.dart` | Assemble the showcase screen from sections. | New page-level composition file. |
 | `apps/example/lib/src/features/showcase/presentation/widgets/*` | Render one reusable section or primitive per file. | New reusable presentation components. |
+
+## CI/CD architecture
+
+- CI now uses one deterministic verification job that installs Flutter once, bootstraps Melos once, and then runs architecture checks, formatting, Flutter analysis, CLI analysis, Flutter tests, CLI tests, and the CLI build in order.
+- Melos scripts are split by runtime so the pure Dart CLI package never runs `flutter test`, while Flutter packages still use Flutter tooling.
+- Publish dry-runs reuse the same Flutter setup and architecture checks before validating Flutter packages and the Dart CLI package separately.
+- The architecture checker now enforces feature boundaries, expected workflow scripts, and no Flutter/FluxUI imports in showcase domain or data layers.
 
 ## Migration steps
 
@@ -93,14 +106,15 @@ apps/example/lib/src/
 2. Extract theme state into `ThemeController`.
 3. Replace `ExampleHomePage` implementation with `ShowcasePage` under a feature-first module.
 4. Move static content lists into `ShowcaseCatalog` and typed domain models.
-5. Move mutable showcase state and text controller lifecycle into `ShowcaseController`.
-6. Split each showcase area into a focused widget file.
-7. Keep legacy barrels so existing imports continue to compile.
+5. Keep data/domain Flutter-free by storing icon identifiers as `ShowcaseIcon` values and mapping them in presentation.
+6. Move mutable showcase state and text controller lifecycle into `ShowcaseController`.
+7. Split each showcase area into a focused widget file.
+8. Keep legacy barrels so existing imports continue to compile.
 
 ## Future scalability recommendations
 
 - Replace `ShowcaseCatalog` with repository abstractions if showcase data becomes remote or generated.
 - Add widget tests around each section now that sections are isolated.
-- Introduce a dependency injection boundary before adding persistence, analytics, or multiple app environments.
+- Introduce repository interfaces and dependency injection before adding persistence, analytics, or multiple app environments.
 - Keep feature modules vertical: domain/data/presentation files for one feature should not depend on another feature's presentation code.
 - Continue publishing package components from `packages/fluxui` and keep the example app as a consumer, not an owner, of design-system primitives.
