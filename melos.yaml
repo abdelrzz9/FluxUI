@@ -3,7 +3,6 @@ name: flutter_ui_system
 packages:
   - packages/**
   - apps/**
-  - tools/**
 
 command:
   bootstrap:
@@ -14,15 +13,20 @@ command:
 scripts:
   get: dart run melos bootstrap
   check:architecture: dart run tools/check_architecture.dart
-  analyze: dart run melos exec --ignore=flutter_ui_cli -- flutter analyze
+  format: dart format .
+  format:check: dart format --output=none --set-exit-if-changed .
+  analyze:flutter: dart run melos exec --ignore=flutter_ui_cli -- flutter analyze
   analyze:cli: dart run melos exec --scope=flutter_ui_cli -- dart analyze
-  typecheck: dart run melos exec -- dart analyze
-  test: dart run melos exec --dir-exists=test -- flutter test
+  analyze: dart run melos run analyze:flutter && dart run melos run analyze:cli
+  typecheck: dart run melos run analyze
+  test:flutter: dart run melos exec --dir-exists=test --ignore=flutter_ui_cli -- flutter test
+  test:cli: dart run melos exec --scope=flutter_ui_cli -- dart test
+  test: dart run melos run test:flutter && dart run melos run test:cli
   test:goldens: dart run melos exec --scope=fluxui_kit -- flutter test test/goldens
   test:update-goldens: dart run melos exec --scope=fluxui_kit -- flutter test test/goldens --update-goldens
   build: dart run melos exec --scope=flutter_ui_cli -- dart run tool/build.dart
-  format: dart run melos exec -- dart format .
-  format:check: dart run melos exec -- dart format --output=none --set-exit-if-changed .
+  build:example: dart run melos exec --scope=flutter_ui_example -- flutter build web --release
   clean: dart run melos exec -- flutter clean
   publish:dry-run:flutter: dart run melos exec --scope=flutter_ui_tokens --scope=flutter_ui_utils --scope=fluxui_kit -- flutter pub publish --dry-run
   publish:dry-run:cli: dart run melos exec --scope=flutter_ui_cli -- dart pub publish --dry-run
+  publish:dry-run: dart run melos run publish:dry-run:flutter && dart run melos run publish:dry-run:cli
