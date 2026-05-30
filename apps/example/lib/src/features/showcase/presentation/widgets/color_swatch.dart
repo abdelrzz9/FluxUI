@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluxui_kit/fluxui_kit.dart';
 
-class ColorSwatch extends StatelessWidget {
-  const ColorSwatch({
+class ShowcaseColorSwatch extends StatelessWidget {
+  const ShowcaseColorSwatch({
     super.key,
     required this.color,
     required this.label,

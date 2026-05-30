@@ -19,12 +19,12 @@ class LayoutsSection extends StatelessWidget {
           HStack(
             spacing: spacing.sm,
             children: <Widget>[
-              ColorSwatch(color: colors.primary, label: 'Primary'),
-              ColorSwatch(
+              ShowcaseColorSwatch(color: colors.primary, label: 'Primary'),
+              ShowcaseColorSwatch(
                 color: colors.secondaryContainer,
                 label: 'Secondary',
               ),
-              ColorSwatch(
+              ShowcaseColorSwatch(
                 color: colors.surfaceMuted,
                 label: 'Muted',
               ),
