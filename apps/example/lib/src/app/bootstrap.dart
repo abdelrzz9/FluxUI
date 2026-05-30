@@ -5,5 +5,7 @@ import 'example_app.dart';
 
 Future<void> bootstrapExampleApp({AppDependencies? dependencies}) async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(ExampleApp(dependencies: dependencies ?? AppDependencies.production()));
+  runApp(
+    ExampleApp(dependencies: dependencies ?? AppDependencies.production()),
+  );
 }

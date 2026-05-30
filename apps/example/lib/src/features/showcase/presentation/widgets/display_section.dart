@@ -32,7 +32,7 @@ class DisplaySection extends StatelessWidget {
         ),
         AppText.body(
           'Current slide: ${controller.carouselIndex + 1} '
-              'of ${carouselSlides.length}',
+          'of ${carouselSlides.length}',
           variant: AppTextVariant.bodySmall,
           tone: AppTextTone.muted,
         ),

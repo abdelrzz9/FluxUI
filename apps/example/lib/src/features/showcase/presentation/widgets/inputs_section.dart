@@ -37,7 +37,8 @@ class InputsSection extends StatelessWidget {
         AppCombobox(
           labelText: 'Registry',
           value: controller.selectedRegistry,
-          helperText: 'Choose where FluxUI components should be generated from.',
+          helperText:
+              'Choose where FluxUI components should be generated from.',
           options: registryOptions
               .map(
                 (option) => AppComboboxOption(
