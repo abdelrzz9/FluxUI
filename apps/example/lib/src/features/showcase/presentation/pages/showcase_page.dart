@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluxui_kit/fluxui_kit.dart';
 
-import '../../data/showcase_catalog.dart';
+import '../../domain/repositories/showcase_repository.dart';
 import '../controllers/showcase_controller.dart';
 import '../widgets/buttons_section.dart';
 import '../widgets/display_section.dart';
@@ -20,12 +20,12 @@ class ShowcasePage extends StatefulWidget {
     super.key,
     required this.isDarkMode,
     required this.onToggleTheme,
-    this.catalog = const ShowcaseCatalog(),
+    required this.repository,
   });
 
   final bool isDarkMode;
   final VoidCallback onToggleTheme;
-  final ShowcaseCatalog catalog;
+  final ShowcaseRepository repository;
 
   @override
   State<ShowcasePage> createState() => _ShowcasePageState();
@@ -53,7 +53,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
       builder: (context, _) {
         return _ShowcaseView(
           controller: _controller,
-          catalog: widget.catalog,
+          repository: widget.repository,
           isDarkMode: widget.isDarkMode,
           onToggleTheme: widget.onToggleTheme,
         );
@@ -65,13 +65,13 @@ class _ShowcasePageState extends State<ShowcasePage> {
 class _ShowcaseView extends StatelessWidget {
   const _ShowcaseView({
     required this.controller,
-    required this.catalog,
+    required this.repository,
     required this.isDarkMode,
     required this.onToggleTheme,
   });
 
   final ShowcaseController controller;
-  final ShowcaseCatalog catalog;
+  final ShowcaseRepository repository;
   final bool isDarkMode;
   final VoidCallback onToggleTheme;
 
@@ -112,7 +112,7 @@ class _ShowcaseView extends StatelessWidget {
                     'Text fields, comboboxes, and OTP entry all pull spacing, radius, and color from the same token source.',
                 child: InputsSection(
                   controller: controller,
-                  registryOptions: catalog.registryOptions,
+                  registryOptions: repository.getRegistryOptions(),
                 ),
               ),
               ShowcaseSection(
@@ -121,8 +121,8 @@ class _ShowcaseView extends StatelessWidget {
                     'Tabs, navigation menus, and pagination all stay controlled from app state while sharing the same FluxUI tokens.',
                 child: NavigationSection(
                   controller: controller,
-                  releaseTabs: catalog.releaseTabs,
-                  navigationItems: catalog.navigationItems,
+                  releaseTabs: repository.getReleaseTabs(),
+                  navigationItems: repository.getNavigationItems(),
                 ),
               ),
               const ShowcaseSection(
@@ -137,7 +137,7 @@ class _ShowcaseView extends StatelessWidget {
                     'AppCarousel gives FluxUI a reusable hero-style content surface with built-in paging, controls, and indicators.',
                 child: DisplaySection(
                   controller: controller,
-                  carouselSlides: catalog.carouselSlides,
+                  carouselSlides: repository.getCarouselSlides(),
                 ),
               ),
               ShowcaseSection(
@@ -156,7 +156,7 @@ class _ShowcaseView extends StatelessWidget {
                 title: 'Roadmap',
                 description:
                     'GitHub-inspired roadmap items keep FluxUI planning views readable while staying fully theme-driven.',
-                child: RoadmapList(entries: catalog.roadmapEntries),
+                child: RoadmapList(entries: repository.getRoadmapEntries()),
               ),
             ],
           ).center(),

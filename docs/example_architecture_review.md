@@ -1,36 +1,48 @@
 # Example App Architecture Review
 
-## Current architecture issues
+## Current architecture issues addressed
 
 1. **Feature state was owned by a large page widget.**
-   The former `ExampleHomePage` mixed `TextEditingController` lifecycle, tab/page selections, carousel state, form values, and the full widget tree in one state object. This made unrelated concerns rebuild together and made future state changes risky.
+   The showcase state now lives behind `ShowcaseController` and an immutable
+   `ShowcaseState`, instead of being stored as many unrelated mutable fields on
+   the page.
 
-2. **Static showcase data was embedded in the UI file.**
-   Registry options, release tabs, navigation menu items, carousel content, and roadmap content lived beside rendering code. That coupled copy/content changes to page layout changes and prevented reuse in tests or future data-backed sources.
+2. **Static showcase data was embedded in UI code.**
+   Static content now lives in `ShowcaseCatalog`, behind the
+   `ShowcaseRepository` domain contract. Presentation depends on the contract,
+   not directly on the concrete data source.
 
-3. **Reusable UI fragments were private to a monolithic page.**
-   Hero, section shell, color swatch, carousel slide, and roadmap rendering were all private classes in one file. This made the page difficult to scan and prevented feature-level composition.
+3. **The app lacked composition boundaries.**
+   Startup now flows through an app bootstrap, dependency container, and router
+   layer, so future APIs, persistence, auth, feature flags, and repositories can
+   be registered outside widgets.
 
-4. **Theme mode logic lived in the app widget state.**
-   The root app owned `setState`-based theme toggling. A dedicated controller better separates app state from app composition and can later be persisted or injected.
+4. **Routing was hardcoded through `MaterialApp.home`.**
+   The app now uses an `AppRouter` and route constants. The current router is
+   intentionally small, but the seam is ready for guarded routes, deep links,
+   and nested navigation.
 
-5. **Legacy file names described implementation details instead of feature intent.**
-   `example_home_page.dart` did not describe the showcase feature boundary. The refactor keeps compatibility through exports while moving implementation to a feature-first `showcase` module.
+5. **Architecture drift was too easy.**
+   CI runs an architecture checker that enforces required app/feature folders,
+   expected CI/Melos commands, example tests, and clean showcase data/domain
+   dependencies.
 
 ## Proposed architecture diagram
 
 ```text
 lib/main.dart
-  -> src/example_app.dart                         compatibility barrel
-    -> src/app/example_app.dart                   app composition
-      -> ThemeController                          app-level state
-      -> ShowcasePage                             feature entry point
-        -> ShowcaseController                     presentation state + actions
-        -> ShowcaseCatalog                        data/content source
-          -> domain models                        UI-independent content shapes
-          -> ShowcaseIcon enum                    no Flutter dependency in domain/data
-        -> presentation/mappers                   maps domain values to Flutter types
-        -> presentation/widgets                   reusable section widgets
+  -> app/bootstrap.dart                         startup/composition entry
+    -> AppDependencies                          dependency container
+      -> ThemeController                        app-level state
+      -> ShowcaseRepository                     domain contract
+        -> ShowcaseCatalog                      static data implementation
+    -> ExampleApp                               app shell/theme/router host
+      -> AppRouter                              route composition
+        -> ShowcasePage                         feature page
+          -> ShowcaseController                 presentation actions
+          -> ShowcaseState                      immutable presentation state
+          -> presentation/widgets               reusable section widgets
+          -> presentation/mappers               Flutter/FluxUI mapping only
 ```
 
 ## Folder structure
@@ -38,8 +50,14 @@ lib/main.dart
 ```text
 apps/example/lib/src/
 ├── app/
+│   ├── bootstrap.dart
 │   ├── example_app.dart
-│   └── theme_controller.dart
+│   ├── theme_controller.dart
+│   ├── di/
+│   │   └── app_dependencies.dart
+│   └── router/
+│       ├── app_router.dart
+│       └── app_routes.dart
 ├── example_app.dart
 ├── example_home_page.dart
 └── features/
@@ -47,13 +65,15 @@ apps/example/lib/src/
         ├── data/
         │   └── showcase_catalog.dart
         ├── domain/
-        │   └── models/
-        │       ├── carousel_slide_content.dart
-        │       ├── registry_option.dart
-        │       ├── release_tab_content.dart
-        │       ├── roadmap_entry.dart
-        │       ├── showcase_icon.dart
-        │       └── showcase_navigation_item.dart
+        │   ├── models/
+        │   │   ├── carousel_slide_content.dart
+        │   │   ├── registry_option.dart
+        │   │   ├── release_tab_content.dart
+        │   │   ├── roadmap_entry.dart
+        │   │   ├── showcase_icon.dart
+        │   │   └── showcase_navigation_item.dart
+        │   └── repositories/
+        │       └── showcase_repository.dart
         └── presentation/
             ├── controllers/
             │   └── showcase_controller.dart
@@ -61,6 +81,8 @@ apps/example/lib/src/
             │   └── showcase_icon_mapper.dart
             ├── pages/
             │   └── showcase_page.dart
+            ├── state/
+            │   └── showcase_state.dart
             └── widgets/
                 ├── buttons_section.dart
                 ├── carousel_slide.dart
@@ -81,40 +103,49 @@ apps/example/lib/src/
 
 | File | Responsibility | Decision |
 | --- | --- | --- |
-| `apps/example/lib/main.dart` | Starts the example app through the public app runner. | Stay unchanged. |
-| `apps/example/lib/src/example_app.dart` | Compatibility barrel for existing imports. | Keep as an export; implementation moved. |
-| `apps/example/lib/src/example_home_page.dart` | Compatibility barrel for existing page imports. | Keep as an export; implementation moved to `ShowcasePage`. |
-| `apps/example/lib/src/app/example_app.dart` | Compose `MaterialApp`, theme configuration, and feature entry page. | New app layer file. |
-| `apps/example/lib/src/app/theme_controller.dart` | Own app-level theme mode state and actions. | New app state file. |
-| `apps/example/lib/src/features/showcase/data/showcase_catalog.dart` | Provide showcase content currently backed by static data. | New data layer boundary. |
-| `apps/example/lib/src/features/showcase/domain/models/*` | Define feature content shapes independent from section widgets and Flutter UI types. | New domain layer models. |
-| `apps/example/lib/src/features/showcase/presentation/controllers/showcase_controller.dart` | Own mutable showcase UI state, controller lifecycle, and state transitions. | New presentation state boundary. |
-| `apps/example/lib/src/features/showcase/presentation/mappers/showcase_icon_mapper.dart` | Convert domain icon identifiers to Flutter `IconData`. | Keeps Flutter dependencies out of data/domain layers. |
-| `apps/example/lib/src/features/showcase/presentation/pages/showcase_page.dart` | Assemble the showcase screen from sections. | New page-level composition file. |
-| `apps/example/lib/src/features/showcase/presentation/widgets/*` | Render one reusable section or primitive per file. | New reusable presentation components. |
+| `apps/example/lib/main.dart` | Starts the app through bootstrap. | Keep as the only executable entry point. |
+| `apps/example/lib/src/app/bootstrap.dart` | Initializes Flutter bindings and injects app dependencies. | New composition-root seam. |
+| `apps/example/lib/src/app/di/app_dependencies.dart` | Owns app-scoped dependencies and disposal. | New dependency container. |
+| `apps/example/lib/src/app/router/*` | Owns route names and page construction. | New navigation boundary. |
+| `apps/example/lib/src/app/example_app.dart` | Hosts `MaterialApp`, theme, and router. | Keep app shell only. |
+| `apps/example/lib/src/app/theme_controller.dart` | Owns app-level theme mode state. | Keep app state file. |
+| `apps/example/lib/src/example_app.dart` | Compatibility barrel for existing imports. | Keep as export. |
+| `apps/example/lib/src/example_home_page.dart` | Compatibility wrapper for old page name. | Keep temporarily, remove in a breaking cleanup. |
+| `features/showcase/domain/repositories/showcase_repository.dart` | Defines data access contract for the feature. | New domain boundary. |
+| `features/showcase/data/showcase_catalog.dart` | Static repository implementation for showcase content. | Keep until remote/local sources exist. |
+| `features/showcase/presentation/state/showcase_state.dart` | Immutable presentation state snapshot. | New state model. |
+| `features/showcase/presentation/controllers/showcase_controller.dart` | Mutates `ShowcaseState` and owns text controller lifecycle. | Keep, but split if state grows. |
+| `features/showcase/presentation/widgets/*` | Render one section/component each. | Keep focused and UI-only. |
 
 ## CI/CD architecture
 
-- CI now uses one deterministic verification job that installs Flutter once, bootstraps Melos once, and then runs architecture checks, formatting, Flutter analysis, CLI analysis, Flutter tests, CLI tests, and the CLI build in order.
-- Melos scripts are split by runtime so the pure Dart CLI package never runs `flutter test`, while Flutter packages still use Flutter tooling.
-- Publish dry-runs reuse the same Flutter setup and architecture checks before validating Flutter packages and the Dart CLI package separately.
-- The architecture checker now enforces feature boundaries, expected workflow scripts, and no Flutter/FluxUI imports in showcase domain or data layers.
+- CI installs one pinned Flutter SDK, bootstraps Melos, validates architecture,
+  checks formatting, analyzes Flutter packages, analyzes the pure Dart CLI,
+  tests Flutter packages, tests the CLI package, builds the CLI executable, and
+  builds the example web app.
+- Melos scripts are split by runtime so Flutter packages never share the CLI's
+  Dart-only path accidentally.
+- Publish dry-runs validate Flutter packages and the Dart CLI separately.
+- `tools/check_architecture.dart` now enforces DI/router/repository/state/test
+  seams in addition to forbidden data/domain imports.
 
 ## Migration steps
 
-1. Move app composition from `src/example_app.dart` to `src/app/example_app.dart`.
-2. Extract theme state into `ThemeController`.
-3. Replace `ExampleHomePage` implementation with `ShowcasePage` under a feature-first module.
-4. Move static content lists into `ShowcaseCatalog` and typed domain models.
-5. Keep data/domain Flutter-free by storing icon identifiers as `ShowcaseIcon` values and mapping them in presentation.
-6. Move mutable showcase state and text controller lifecycle into `ShowcaseController`.
-7. Split each showcase area into a focused widget file.
-8. Keep legacy barrels so existing imports continue to compile.
+1. Move app startup into `app/bootstrap.dart`.
+2. Register app-scoped dependencies in `AppDependencies`.
+3. Replace `MaterialApp.home` with `AppRouter` and route constants.
+4. Introduce `ShowcaseRepository` in domain and make `ShowcaseCatalog` implement it.
+5. Replace many mutable controller fields with immutable `ShowcaseState`.
+6. Keep data/domain Flutter-free by storing icon identifiers as `ShowcaseIcon`.
+7. Keep presentation mapping inside `presentation/mappers` and widgets.
+8. Add controller/catalog/app smoke tests for the example app.
 
 ## Future scalability recommendations
 
-- Replace `ShowcaseCatalog` with repository abstractions if showcase data becomes remote or generated.
-- Add widget tests around each section now that sections are isolated.
-- Introduce repository interfaces and dependency injection before adding persistence, analytics, or multiple app environments.
-- Keep feature modules vertical: domain/data/presentation files for one feature should not depend on another feature's presentation code.
-- Continue publishing package components from `packages/fluxui` and keep the example app as a consumer, not an owner, of design-system primitives.
+- Replace `ShowcaseCatalog` with remote/local data sources and a repository
+  implementation when the app gains APIs or persistence.
+- Introduce route guards before adding authentication.
+- Move to fine-grained state selectors if `ShowcaseController` grows further.
+- Consolidate duplicated package surfaces between `packages/ui` and
+  `packages/fluxui` before the component set grows.
+- Upgrade the architecture checker from string matching to import graph parsing.

@@ -25,6 +25,7 @@ scripts:
   test:goldens: dart run melos exec --scope=fluxui_kit -- flutter test test/goldens
   test:update-goldens: dart run melos exec --scope=fluxui_kit -- flutter test test/goldens --update-goldens
   build: dart run melos exec --scope=flutter_ui_cli -- dart run tool/build.dart
+  build:example: dart run melos exec --scope=flutter_ui_example -- flutter build web --release
   clean: dart run melos exec -- flutter clean
   publish:dry-run:flutter: dart run melos exec --scope=flutter_ui_tokens --scope=flutter_ui_utils --scope=fluxui_kit -- flutter pub publish --dry-run
   publish:dry-run:cli: dart run melos exec --scope=flutter_ui_cli -- dart pub publish --dry-run

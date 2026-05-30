@@ -62,3 +62,6 @@ jobs:
 
       - name: Build CLI executable
         run: dart run melos run build
+
+      - name: Build example web app
+        run: dart run melos run build:example

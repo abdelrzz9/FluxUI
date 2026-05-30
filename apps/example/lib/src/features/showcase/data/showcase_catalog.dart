@@ -4,15 +4,25 @@ import '../domain/models/release_tab_content.dart';
 import '../domain/models/roadmap_entry.dart';
 import '../domain/models/showcase_icon.dart';
 import '../domain/models/showcase_navigation_item.dart';
+import '../domain/repositories/showcase_repository.dart';
 
-class ShowcaseCatalog {
+class ShowcaseCatalog implements ShowcaseRepository {
   const ShowcaseCatalog();
 
-  List<RegistryOption> get registryOptions => _registryOptions;
-  List<ReleaseTabContent> get releaseTabs => _releaseTabs;
-  List<ShowcaseNavigationItem> get navigationItems => _navigationItems;
-  List<CarouselSlideContent> get carouselSlides => _carouselSlides;
-  List<RoadmapEntry> get roadmapEntries => _roadmapEntries;
+  @override
+  List<RegistryOption> getRegistryOptions() => _registryOptions;
+
+  @override
+  List<ReleaseTabContent> getReleaseTabs() => _releaseTabs;
+
+  @override
+  List<ShowcaseNavigationItem> getNavigationItems() => _navigationItems;
+
+  @override
+  List<CarouselSlideContent> getCarouselSlides() => _carouselSlides;
+
+  @override
+  List<RoadmapEntry> getRoadmapEntries() => _roadmapEntries;
 }
 
 const List<RegistryOption> _registryOptions = <RegistryOption>[

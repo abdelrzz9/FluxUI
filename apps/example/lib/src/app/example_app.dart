@@ -1,49 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:fluxui_kit/fluxui_kit.dart';
 
-import '../features/showcase/presentation/pages/showcase_page.dart';
-import 'theme_controller.dart';
+import 'di/app_dependencies.dart';
+import 'router/app_router.dart';
+import 'router/app_routes.dart';
 
 void runExampleApp() {
-  runApp(const ExampleApp());
+  runApp(ExampleApp(dependencies: AppDependencies.production()));
 }
 
 class ExampleApp extends StatefulWidget {
   const ExampleApp({
     super.key,
-    this.themeController,
+    required this.dependencies,
   });
 
-  final ThemeController? themeController;
+  final AppDependencies dependencies;
 
   @override
   State<ExampleApp> createState() => _ExampleAppState();
 }
 
 class _ExampleAppState extends State<ExampleApp> {
-  late final ThemeController _ownedThemeController;
-
-  ThemeController get _themeController =>
-      widget.themeController ?? _ownedThemeController;
+  late final AppRouter _router;
 
   @override
   void initState() {
     super.initState();
-    _ownedThemeController = ThemeController();
+    _router = AppRouter(dependencies: widget.dependencies);
   }
 
   @override
   void dispose() {
-    if (widget.themeController == null) {
-      _ownedThemeController.dispose();
-    }
+    widget.dependencies.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ThemeMode>(
-      valueListenable: _themeController,
+      valueListenable: widget.dependencies.themeController,
       builder: (context, themeMode, _) {
         return MaterialApp(
           title: 'FluxUI example',
@@ -51,10 +47,8 @@ class _ExampleAppState extends State<ExampleApp> {
           theme: AppTheme.light(),
           darkTheme: AppTheme.dark(),
           themeMode: themeMode,
-          home: ShowcasePage(
-            isDarkMode: _themeController.isDarkMode,
-            onToggleTheme: _themeController.toggleTheme,
-          ),
+          initialRoute: AppRoutes.showcase,
+          onGenerateRoute: _router.onGenerateRoute,
         );
       },
     );

@@ -1,89 +1,79 @@
 import 'package:flutter/material.dart';
 
+import '../state/showcase_state.dart';
+
 class ShowcaseController extends ChangeNotifier {
   ShowcaseController({
     String initialEmail = 'design@flutter-ui.dev',
-    String initialRegistry = 'core',
-    int initialReleasePage = 6,
+    ShowcaseState initialState = const ShowcaseState(),
   })  : emailController = TextEditingController(text: initialEmail),
         searchController = TextEditingController(),
-        _selectedRegistry = initialRegistry,
-        _selectedPage = initialReleasePage;
+        _state = initialState;
 
   final TextEditingController emailController;
   final TextEditingController searchController;
 
-  int _carouselIndex = 0;
-  int _selectedTabIndex = 0;
-  int _selectedNavigationIndex = 0;
-  int _selectedPage;
-  bool _notificationsEnabled = true;
-  bool _includeCliTemplates = true;
-  String _selectedRegistry;
-  String _otpValue = '';
+  ShowcaseState _state;
 
-  int get carouselIndex => _carouselIndex;
-  int get selectedTabIndex => _selectedTabIndex;
-  int get selectedNavigationIndex => _selectedNavigationIndex;
-  int get selectedPage => _selectedPage;
-  bool get notificationsEnabled => _notificationsEnabled;
-  bool get includeCliTemplates => _includeCliTemplates;
-  String get selectedRegistry => _selectedRegistry;
-  String get otpValue => _otpValue;
-
-  String get otpHelperText => _otpValue.isEmpty
-      ? 'Paste a 6-character code to verify your workspace.'
-      : 'Current code: $_otpValue';
-
-  String get currentReleasePageLabel => 'Current release page: $_selectedPage';
+  ShowcaseState get state => _state;
+  int get carouselIndex => _state.carouselIndex;
+  int get selectedTabIndex => _state.selectedTabIndex;
+  int get selectedNavigationIndex => _state.selectedNavigationIndex;
+  int get selectedPage => _state.selectedPage;
+  bool get notificationsEnabled => _state.notificationsEnabled;
+  bool get includeCliTemplates => _state.includeCliTemplates;
+  String get selectedRegistry => _state.selectedRegistry;
+  String get otpValue => _state.otpValue;
+  String get otpHelperText => _state.otpHelperText;
+  String get currentReleasePageLabel => _state.currentReleasePageLabel;
 
   void updateCarouselIndex(int value) {
-    if (_carouselIndex == value) return;
-    _carouselIndex = value;
-    notifyListeners();
+    _updateState(_state.copyWith(carouselIndex: value));
   }
 
   void updateSelectedTabIndex(int value) {
-    if (_selectedTabIndex == value) return;
-    _selectedTabIndex = value;
-    notifyListeners();
+    _updateState(_state.copyWith(selectedTabIndex: value));
   }
 
   void updateSelectedNavigationIndex(int value) {
-    if (_selectedNavigationIndex == value) return;
-    _selectedNavigationIndex = value;
-    notifyListeners();
+    _updateState(_state.copyWith(selectedNavigationIndex: value));
   }
 
   void updateSelectedPage(int value) {
-    if (_selectedPage == value) return;
-    _selectedPage = value;
-    notifyListeners();
+    _updateState(_state.copyWith(selectedPage: value));
   }
 
   void updateNotificationsEnabled(bool value) {
-    if (_notificationsEnabled == value) return;
-    _notificationsEnabled = value;
-    notifyListeners();
+    _updateState(_state.copyWith(notificationsEnabled: value));
   }
 
   void updateIncludeCliTemplates(bool? value) {
-    final nextValue = value ?? false;
-    if (_includeCliTemplates == nextValue) return;
-    _includeCliTemplates = nextValue;
-    notifyListeners();
+    _updateState(_state.copyWith(includeCliTemplates: value ?? false));
   }
 
   void updateSelectedRegistry(String value) {
-    if (_selectedRegistry == value) return;
-    _selectedRegistry = value;
-    notifyListeners();
+    _updateState(_state.copyWith(selectedRegistry: value));
   }
 
   void updateOtpValue(String value) {
-    if (_otpValue == value) return;
-    _otpValue = value;
+    _updateState(_state.copyWith(otpValue: value));
+  }
+
+  void _updateState(ShowcaseState nextState) {
+    if (_hasSameValues(nextState, _state)) return;
+    _state = nextState;
     notifyListeners();
+  }
+
+  bool _hasSameValues(ShowcaseState a, ShowcaseState b) {
+    return a.carouselIndex == b.carouselIndex &&
+        a.selectedTabIndex == b.selectedTabIndex &&
+        a.selectedNavigationIndex == b.selectedNavigationIndex &&
+        a.selectedPage == b.selectedPage &&
+        a.notificationsEnabled == b.notificationsEnabled &&
+        a.includeCliTemplates == b.includeCliTemplates &&
+        a.selectedRegistry == b.selectedRegistry &&
+        a.otpValue == b.otpValue;
   }
 
   @override
