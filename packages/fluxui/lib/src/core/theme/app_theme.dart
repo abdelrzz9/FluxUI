@@ -6,57 +6,73 @@ import 'app_theme_tokens.dart';
 abstract final class AppTheme {
   static ThemeData light({
     AppDesignTokens tokens = AppDesignTokens.light,
+    Color? seedColor,
+    AppDesignTokens Function(AppDesignTokens)? overrides,
     String? fontFamily,
-    bool useMaterial3 = true,
   }) {
     return custom(
       tokens: tokens,
       brightness: Brightness.light,
+      seedColor: seedColor,
+      overrides: overrides,
       fontFamily: fontFamily,
-      useMaterial3: useMaterial3,
     );
   }
 
   static ThemeData dark({
     AppDesignTokens tokens = AppDesignTokens.dark,
+    Color? seedColor,
+    AppDesignTokens Function(AppDesignTokens)? overrides,
     String? fontFamily,
-    bool useMaterial3 = true,
   }) {
     return custom(
       tokens: tokens,
       brightness: Brightness.dark,
+      seedColor: seedColor,
+      overrides: overrides,
       fontFamily: fontFamily,
-      useMaterial3: useMaterial3,
     );
   }
 
   static ThemeData custom({
     required AppDesignTokens tokens,
     required Brightness brightness,
+    Color? seedColor,
+    AppDesignTokens Function(AppDesignTokens)? overrides,
     String? fontFamily,
-    bool useMaterial3 = true,
   }) {
-    final colors = tokens.colors;
+    var resolved = tokens;
+    if (overrides != null) {
+      resolved = overrides(resolved);
+    }
+
+    final colors = resolved.colors;
     final textTheme = _buildTextTheme(
-      typography: tokens.typography,
+      typography: resolved.typography,
       foreground: colors.onSurface,
       fontFamily: fontFamily,
     );
     final primaryTextTheme = _buildTextTheme(
-      typography: tokens.typography,
+      typography: resolved.typography,
       foreground: colors.onPrimary,
       fontFamily: fontFamily,
     );
-    final colorScheme = _buildColorScheme(
-      brightness: brightness,
-      colors: colors,
-      inverseForeground: colors.background,
-      statusForeground:
-          brightness == Brightness.dark ? colors.background : colors.surface,
-    );
+    final colorScheme = seedColor != null
+        ? ColorScheme.fromSeed(
+            seedColor: seedColor,
+            brightness: brightness,
+          )
+        : _buildColorScheme(
+            brightness: brightness,
+            colors: colors,
+            inverseForeground: colors.background,
+            statusForeground: brightness == Brightness.dark
+                ? colors.background
+                : colors.surface,
+          );
 
     return ThemeData(
-      useMaterial3: useMaterial3,
+      useMaterial3: true,
       brightness: brightness,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: colors.background,
@@ -69,11 +85,11 @@ abstract final class AppTheme {
       primaryTextTheme: primaryTextTheme,
       iconTheme: IconThemeData(
         color: colors.onSurface,
-        size: tokens.sizes.iconMd,
+        size: resolved.sizes.iconMd,
       ),
       primaryIconTheme: IconThemeData(
         color: colors.onPrimary,
-        size: tokens.sizes.iconMd,
+        size: resolved.sizes.iconMd,
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: colors.background,
@@ -84,17 +100,17 @@ abstract final class AppTheme {
         surfaceTintColor: colors.background,
         iconTheme: IconThemeData(
           color: colors.onBackground,
-          size: tokens.sizes.iconMd,
+          size: resolved.sizes.iconMd,
         ),
         titleTextStyle: textTheme.titleLarge,
       ),
       dividerTheme: DividerThemeData(
         color: colors.border,
         thickness: 1,
-        space: tokens.spacing.lg,
+        space: resolved.spacing.lg,
       ),
       extensions: <ThemeExtension<dynamic>>[
-        AppThemeTokens.fromDesignTokens(tokens),
+        AppThemeTokens.fromDesignTokens(resolved),
       ],
     );
   }

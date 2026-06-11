@@ -4,8 +4,9 @@ Each package is released independently in this order:
 
 1. `flutter_ui_tokens`
 2. `flutter_ui_utils`
-3. `flutter_ui` (depends on tokens + utils)
-4. `flutter_ui_cli` — currently `publish_to: none`; decide per release
+3. `fluxui_kit` (primary package, depends on tokens + utils)
+4. `flutter_ui` (compatibility re-export of `fluxui_kit`, optional)
+5. `flutter_ui_cli` — currently `publish_to: none`; decide per release
 
 ---
 

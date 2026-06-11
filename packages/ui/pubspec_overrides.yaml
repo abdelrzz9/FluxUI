@@ -1,4 +1,6 @@
 dependency_overrides:
+  fluxui_kit:
+    path: ../fluxui
   flutter_ui_tokens:
     path: ../tokens
   flutter_ui_utils:

@@ -21,7 +21,7 @@
 
 FluxUI is a design-token-driven Flutter UI system. Every color, spacing value, typography style, radius, size, and animation duration resolves through strongly typed **design tokens** — there are zero hardcoded values in any component.
 
-It ships with **light and dark** token presets out of the box and is fully customisable via `copyWith` or the optional `FluxThemeData` theme extension.
+It ships with **light and dark** token presets out of the box and is fully customisable via `copyWith`, `overrides`, or `seedColor` for Material You dynamic colour.
 
 ---
 
@@ -29,7 +29,7 @@ It ships with **light and dark** token presets out of the box and is fully custo
 
 | Mode | How | Best for |
 |------|-----|----------|
-| **Package dependency** | Add `fluxui_kit` (or `flutter_ui`) to your pubspec | Standard Flutter package usage |
+| **Package dependency** | Add `fluxui_kit` to your pubspec | Standard Flutter package usage |
 | **Local ownership** | `flux add button` copies source into your app | Full customisation (shadcn/ui style) |
 
 ---
@@ -90,24 +90,26 @@ import 'package:your_app/ui/index.dart';
 FluxUI is split into focused, layered packages:
 
 ```
-┌──────────────────────────────────────────────────┐
-│  fluxui_kit  (or flutter_ui)                     │
-│  Theme API + 30+ components + context extensions │
-├──────────────────────────────────────────────────┤
-│  flutter_ui_utils                                │
-│  Widget extensions, responsive helpers           │
-├──────────────────────────────────────────────────┤
-│  flutter_ui_tokens                               │
-│  Immutable, typed design tokens with lerp        │
-└──────────────────────────────────────────────────┘
+┌──────────────────────────────────────┐
+│  fluxui_kit                          │
+│  Theme API + 30+ components          │
+├──────────────────────────────────────┤
+│  flutter_ui_utils                    │
+│  Widget extensions, responsive       │
+├──────────────────────────────────────┤
+│  flutter_ui_tokens                   │
+│  Immutable, typed design tokens      │
+└──────────────────────────────────────┘
 ```
 
 **Dependency direction** (strict, no cycles):
 
 ```
-tokens  →  utils  →  ui / fluxui_kit  ←  apps/example
+tokens  →  utils  →  fluxui_kit  ←  apps/example
                      cli  (standalone — no Flutter SDK dep)
 ```
+
+The `flutter_ui` package is a thin re-export of `fluxui_kit` for backward compatibility.
 
 ---
 
@@ -121,39 +123,45 @@ tokens  →  utils  →  ui / fluxui_kit  ←  apps/example
 | `AppTheme.dark()` | Material 3 dark theme using `AppDesignTokens.dark` |
 | `AppTheme.custom(tokens, brightness)` | Fully custom theme from any `AppDesignTokens` |
 
-All methods accept optional `fontFamily` and `useMaterial3` parameters.
+All methods accept optional `fontFamily`, `seedColor`, and `overrides` parameters.
 
 ### Custom branding
 
 ```dart
-final myTokens = AppDesignTokens.light.copyWith(
-  colors: AppColorTokens.light.copyWith(primary: const Color(0xFF6366F1)),
-);
-
-MaterialApp(
-  theme: AppTheme.custom(tokens: myTokens, brightness: Brightness.light),
+final myTheme = AppTheme.custom(
+  tokens: AppDesignTokens.light.copyWith(
+    colors: AppColorTokens.light.copyWith(primary: const Color(0xFF6366F1)),
+  ),
+  brightness: Brightness.light,
 );
 ```
 
-### Optional theme override with `FluxThemeData`
+### Dynamic colour with `seedColor`
 
-You can optionally override tokens via the standard Flutter `ThemeExtension` mechanism using `FluxThemeData`. All fields are optional — only override what you need:
+Generate a complete Material You colour scheme from a single seed colour:
 
 ```dart
 MaterialApp(
-  theme: AppTheme.light().copyWith(
-    extensions: <ThemeExtension<dynamic>>[
-      ...AppTheme.light().extensions.values,
-      FluxThemeData(
-        colors: AppColorTokens.light.copyWith(primary: Color(0xFF6366F1)),
-        spacing: AppSpacingTokens.regular.copyWith(md: 20),
-      ),
-    ],
-  ),
+  theme: AppTheme.light(seedColor: const Color(0xFF6366F1)),
 );
 ```
 
-If no `FluxThemeData` is provided, the system behaves exactly as before — existing `AppThemeTokens` or brightness-based defaults are used.
+When `seedColor` is set, `ColorScheme.fromSeed()` is used instead of the token-based colour mapping.
+
+### Partial overrides with the `overrides` callback
+
+Override specific tokens inline without building a full `AppDesignTokens`:
+
+```dart
+MaterialApp(
+  theme: AppTheme.light(
+    overrides: (tokens) => tokens.copyWith(
+      colors: tokens.colors.copyWith(primary: Color(0xFF6366F1)),
+      spacing: tokens.spacing.copyWith(md: 20),
+    ),
+  ),
+);
+```
 
 ### Accessing tokens in widgets
 
@@ -164,9 +172,6 @@ final radius     = context.appRadius;
 final sizes      = context.appSizes;
 final motion     = context.appMotion;
 final typography = context.appTypography;
-
-// Check if FluxThemeData overrides are present
-final flux = context.fluxTheme; // FluxThemeData?
 ```
 
 ---
@@ -208,13 +213,13 @@ Immutable, strongly typed design tokens with full `lerp` support for smooth them
 
 `BuildContext` extensions · widget fluent API · numeric helpers · `AppBreakpoints` · `AppResponsiveValue<T>`
 
-### `packages/ui` — `flutter_ui`
-
-Mirrored component library with `AppTheme`, `AppThemeTokens`, `FluxThemeData`, context extensions, and all widgets.
-
 ### `packages/fluxui` — `fluxui_kit`
 
-The primary consumer-facing package. Re-exports tokens, utils, and provides the full component set with theme integration.
+The primary consumer-facing package. Re-exports tokens and utils, provides the full component set with theme integration.
+
+### `packages/ui` — `flutter_ui`
+
+Compatibility re-export of `fluxui_kit`. New projects should use `fluxui_kit` directly.
 
 ### `packages/cli` — `flutter_ui_cli`
 
@@ -237,13 +242,14 @@ FluxUI/
 │   └── example/          # showcase app
 ├── docs/
 │   ├── cli.md            # CLI reference
-│   ├── dev_branch_workflow.md
 │   ├── publishing.md
-│   └── roadmap.md
+│   ├── dev_branch_workflow.md
+│   ├── production_readiness_roadmap.md
+│   └── issues/           # Issue templates
 ├── packages/
 │   ├── tokens/           # flutter_ui_tokens
 │   ├── utils/            # flutter_ui_utils
-│   ├── ui/               # flutter_ui
+│   ├── ui/               # flutter_ui (re-exports fluxui_kit)
 │   ├── fluxui/           # fluxui_kit (primary package)
 │   └── cli/              # flutter_ui_cli
 ├── tools/
@@ -308,12 +314,11 @@ See [docs/dev_branch_workflow.md](docs/dev_branch_workflow.md).
 |-|-|
 | [docs/cli.md](docs/cli.md) | Full CLI reference |
 | [docs/publishing.md](docs/publishing.md) | Release checklist |
-| [docs/roadmap.md](docs/roadmap.md) | Issues roadmap |
+| [docs/production_readiness_roadmap.md](docs/production_readiness_roadmap.md) | Production-readiness roadmap |
 | [docs/dev_branch_workflow.md](docs/dev_branch_workflow.md) | Branch strategy |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | How to contribute |
 | [packages/tokens/README.md](packages/tokens/README.md) | Tokens package |
 | [packages/utils/README.md](packages/utils/README.md) | Utils package |
-| [packages/ui/README.md](packages/ui/README.md) | UI package |
 | [packages/fluxui/README.md](packages/fluxui/README.md) | FluxUI Kit package |
 | [packages/cli/README.md](packages/cli/README.md) | CLI package |
 

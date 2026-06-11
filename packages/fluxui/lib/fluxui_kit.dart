@@ -46,7 +46,6 @@ library fluxui_kit;
 export 'src/tokens/index.dart';
 export 'src/core/theme/app_theme.dart';
 export 'src/core/theme/app_theme_tokens.dart';
-export 'src/core/theme/flux_theme_data.dart';
 export 'src/core/extensions/app_theme_context_extensions.dart';
 
 // ── Utilities (re-exported from flutter_ui_utils) ─────────────────────────

@@ -64,7 +64,7 @@ class MyApp extends StatelessWidget {
 | `AppTheme.dark()` | Material 3 dark theme using `AppDesignTokens.dark` |
 | `AppTheme.custom(tokens, brightness)` | Fully custom theme from any `AppDesignTokens` |
 
-All methods accept optional `fontFamily` and `useMaterial3` parameters.
+All methods accept optional `fontFamily`, `seedColor`, and `overrides` parameters.
 
 ### Custom branding
 
@@ -77,42 +77,44 @@ final myTheme = AppTheme.custom(
 );
 ```
 
-### Optional theme override with `FluxThemeData`
+### Dynamic colour with `seedColor`
 
-Override only the tokens you need via the standard Flutter `ThemeExtension` mechanism. All fields are optional — unset fields fall back to existing tokens:
+Generate a complete Material You colour scheme from a single seed colour:
 
 ```dart
 MaterialApp(
-  theme: AppTheme.light().copyWith(
-    extensions: <ThemeExtension<dynamic>>[
-      ...AppTheme.light().extensions.values,
-      FluxThemeData(
-        colors: AppColorTokens.light.copyWith(
-          primary: Color(0xFF6366F1),
-        ),
-      ),
-    ],
-  ),
+  theme: AppTheme.light(seedColor: Color(0xFF6366F1)),
 );
 ```
 
-If no `FluxThemeData` is provided, the system behaves identically to the default setup.
+When `seedColor` is set, `ColorScheme.fromSeed()` is used instead of the token-based colour mapping.
+
+### Partial overrides with the `overrides` callback
+
+Override specific tokens inline without building a full `AppDesignTokens`:
+
+```dart
+MaterialApp(
+  theme: AppTheme.light(
+    overrides: (tokens) => tokens.copyWith(
+      colors: tokens.colors.copyWith(primary: Color(0xFF6366F1)),
+      spacing: tokens.spacing.copyWith(md: 20),
+    ),
+  ),
+);
+```
 
 ---
 
 ## Accessing tokens in widgets
 
 ```dart
-// Inside any build method:
 final colors     = context.appColors;
 final spacing    = context.appSpacing;
 final radius     = context.appRadius;
 final sizes      = context.appSizes;
 final motion     = context.appMotion;
 final typography = context.appTypography;
-
-// Check for optional FluxThemeData overrides:
-final flux = context.fluxTheme; // FluxThemeData?
 ```
 
 ---
@@ -154,11 +156,8 @@ final flux = context.fluxTheme; // FluxThemeData?
 
 When a component reads tokens (e.g. `context.appColors`), the resolution is:
 
-1. **`FluxThemeData`** (if present in the theme) — partial overrides take priority
-2. **`AppThemeTokens`** (injected by `AppTheme.light()`/`.dark()`/`.custom()`)
-3. **Brightness-based defaults** (`AppDesignTokens.light` or `.dark`)
-
-This means existing apps work without changes. Providing `FluxThemeData` is entirely optional.
+1. **`AppThemeTokens`** (injected by `AppTheme.light()`/`.dark()`/`.custom()`)
+2. **Brightness-based defaults** (`AppDesignTokens.light` or `.dark`) if no `AppTheme` is applied
 
 ---
 
@@ -172,7 +171,7 @@ This means existing apps work without changes. Providing `FluxThemeData` is enti
 ## Repository
 
 [github.com/abdelrzz9/FluxUI](https://github.com/abdelrzz9/FluxUI)
-— monorepo containing `flutter_ui_tokens`, `flutter_ui_utils`, `fluxui_kit`, `flutter_ui`, and the `flux` CLI.
+— monorepo containing `flutter_ui_tokens`, `flutter_ui_utils`, `fluxui_kit`, and the `flux` CLI.
 
 ## License
 

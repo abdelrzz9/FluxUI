@@ -1,7 +1,7 @@
 @Tags(<String>['golden'])
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_ui/index.dart';
+import 'package:fluxui_kit/fluxui_kit.dart';
 
 void main() {
   testWidgets('light component showcase matches golden', (tester) async {
