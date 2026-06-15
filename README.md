@@ -30,7 +30,7 @@ It ships with **light and dark** token presets out of the box and is fully custo
 | Mode | How | Best for |
 |------|-----|----------|
 | **Package dependency** | Add `fluxui_kit` to your pubspec | Standard Flutter package usage |
-| **Local ownership** | `flux add button` copies source into your app | Full customisation (shadcn/ui style) |
+| **Local ownership** | `flux add button` copies source into your app | Full customisation (shadcn/ui style) with no package dependency |
 
 ---
 
@@ -41,7 +41,7 @@ It ships with **light and dark** token presets out of the box and is fully custo
 ```yaml
 # your_app/pubspec.yaml
 dependencies:
-   fluxui_kit: ^0.1.0
+  fluxui_kit: ^0.2.0
 ```
 
 ```dart
@@ -195,7 +195,7 @@ final typography = context.appTypography;
 
 ## Packages
 
-### `packages/tokens` — `flutter_ui_tokens`
+### `packages/tokens` — `flutter_ui_tokens` (v0.1.0)
 
 Immutable, strongly typed design tokens with full `lerp` support for smooth theme animations.
 
@@ -209,21 +209,21 @@ Immutable, strongly typed design tokens with full `lerp` support for smooth them
 | `AppTypographyTokens` | Full Material 3 text scale (15 styles) |
 | `AppDesignTokens` | Aggregate — `.light` and `.dark` static constants |
 
-### `packages/utils` — `flutter_ui_utils`
+### `packages/utils` — `flutter_ui_utils` (v0.1.0)
 
 `BuildContext` extensions · widget fluent API · numeric helpers · `AppBreakpoints` · `AppResponsiveValue<T>`
 
-### `packages/fluxui` — `fluxui_kit`
+### `packages/fluxui` — `fluxui_kit` (v0.2.0)
 
-The primary consumer-facing package. Re-exports tokens and utils, provides the full component set with theme integration.
+The primary consumer-facing package. Re-exports tokens and utils, provides the full component set with theme integration (`AppTheme`, 30+ widgets, `BuildContext` token extensions).
 
-### `packages/ui` — `flutter_ui`
+### `packages/ui` — `flutter_ui` (v0.1.0)
 
-Compatibility re-export of `fluxui_kit`. New projects should use `fluxui_kit` directly.
+Thin compatibility re-export of `fluxui_kit` for projects using the legacy `flutter_ui` import. No additional logic.
 
-### `packages/cli` — `flutter_ui_cli`
+### `packages/cli` — `flutter_ui_cli` (v0.1.0)
 
-shadcn-style CLI for copying components into your project. `publish_to: none`.
+Pure Dart CLI (no Flutter SDK dependency) for copying components into your project. `publish_to: none`.
 
 | Binary | Commands |
 |--------|----------|
@@ -287,11 +287,11 @@ Run before every PR:
 ```bash
 dart run melos run check:architecture
 dart run melos run format:check
-dart run melos run analyze
-dart run melos run typecheck
+dart run melos run analyze          # Flutter analyze (skips CLI)
+dart run melos run analyze:cli      # Dart analyze (CLI only)
 dart run melos run test
 dart run melos run test:goldens
-dart run melos run build
+dart run melos run build            # Builds CLI executable
 ```
 
 ---

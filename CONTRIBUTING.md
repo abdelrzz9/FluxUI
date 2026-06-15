@@ -18,10 +18,11 @@ Run the full suite before pushing:
 ```bash
 dart run melos run check:architecture
 dart run melos run format:check
-dart run melos run analyze
-dart run melos run typecheck
+dart run melos run analyze          # Flutter analyze (skips CLI)
+dart run melos run analyze:cli      # Dart analyze (CLI only)
 dart run melos run test
-dart run melos run build
+dart run melos run test:goldens     # Update with test:update-goldens if visual change
+dart run melos run build            # Builds CLI executable
 ```
 
 Update golden snapshots when a visual change is intentional:

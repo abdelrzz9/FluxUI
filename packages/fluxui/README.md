@@ -17,7 +17,7 @@ Part of the [FluxUI](https://github.com/abdelrzz9/FluxUI) monorepo.
 
 ```yaml
 dependencies:
-  fluxui_kit: ^0.1.0
+  fluxui_kit: ^0.2.0
 ```
 
 ---

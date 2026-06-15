@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.2.0
+
+### Changed
+
+- `AppTheme` — merged `FluxThemeData` into `AppTheme`, simplified API, removed `toMaterialTheme`.
+- Theme resolution — hard-coded Material 3 as the default `ThemeData` factory.
+- `BuildContext` extensions — simplified to direct delegation: `context.appColors`, `context.appSpacing`, etc.
+- `flutter_ui` package — made a thin re-export of `fluxui_kit` (removed all duplicate source files).
+
+### Added
+
+- `AppTheme.light(seedColor:)` / `AppTheme.dark(seedColor:)` — Material You dynamic colour generation from a single seed colour.
+- `AppTheme.light(overrides:)` / `AppTheme.dark(overrides:)` — inline partial token overrides via callback.
+- `AppTheme.custom(tokens, brightness, seedColor, fontFamily, overrides)` — fully custom theme with all optional parameters.
+
 ## 0.1.0
 
 Initial release of `fluxui_kit`.

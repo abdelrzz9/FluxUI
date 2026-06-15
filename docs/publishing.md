@@ -2,11 +2,11 @@
 
 Each package is released independently in this order:
 
-1. `flutter_ui_tokens`
-2. `flutter_ui_utils`
-3. `fluxui_kit` (primary package, depends on tokens + utils)
-4. `flutter_ui` (compatibility re-export of `fluxui_kit`, optional)
-5. `flutter_ui_cli` — currently `publish_to: none`; decide per release
+1. `flutter_ui_tokens` (v0.1.0)
+2. `flutter_ui_utils` (v0.1.0, depends on tokens)
+3. `fluxui_kit` (v0.2.0, primary package, depends on tokens + utils)
+4. `flutter_ui` (v0.1.0, thin re-export of `fluxui_kit`, optional — may be deprecated)
+5. `flutter_ui_cli` (v0.1.0, `publish_to: none`; keep as repo-only tooling)
 
 ---
 
@@ -48,4 +48,6 @@ Before running dry-run checks, verify each package has:
 | `ci.yml` | Every PR; push to `main`, `master`, `dev` |
 | `publish_dry_run.yml` | Manual (`workflow_dispatch`) |
 
-CI jobs: **format → lint → analyze → test → build**. Build requires all other jobs to pass.
+CI jobs (in order): **format → lint → analyze → test → build**. Build requires all prior jobs to pass.
+
+The `analyze` job runs `flutter analyze` (ignoring CLI). The `analyze:cli` job runs `dart analyze` on the CLI package. Both must pass before `build`.

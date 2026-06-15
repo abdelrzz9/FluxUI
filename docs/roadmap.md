@@ -1,111 +1,60 @@
-# GitHub Issues Roadmap
+# FluxUI Roadmap
 
-## Issue 1: Bootstrap the monorepo
+## Completed
 
-**Goal**
+### Monorepo foundation
 
-Establish a maintainable workspace with Melos, package boundaries, conventions,
-and shared tooling.
+- Melos workspace with `packages/tokens`, `packages/utils`, `packages/fluxui`, `packages/ui`, `packages/cli`, `apps/example`, and `tools/`.
+- Strict dependency direction: `tokens → utils → fluxui_kit`. CLI is isolated (pure Dart, no Flutter SDK).
+- CI workflows (format, analyze, test, build) run on every PR and push to `dev`/`main`.
 
-**Implementation details**
+### Design tokens (`flutter_ui_tokens` v0.1.0)
 
-- Create `packages/ui`, `packages/tokens`, `packages/utils`, `apps/example`,
-  and a package-level CLI entrypoint under `packages/cli`.
-- Add `melos.yaml` with bootstrap, format, lint, analyze, typecheck, test, and
-  build workflows.
-- Define package naming strategy and dependency direction:
-  `tokens -> utils -> ui`, while `example` depends on `ui` and `cli` stays
-  isolated.
-- Add repository standards: branching strategy, CI, linting, and contribution
-  guidelines.
+- Strongly typed, immutable token classes: `AppColorTokens`, `AppSpacingTokens`, `AppRadiusTokens`, `AppSizeTokens`, `AppMotionTokens`, `AppTypographyTokens`.
+- Aggregate `AppDesignTokens` with `.light` and `.dark` presets.
+- Full `copyWith` and `lerp` support on all classes.
 
-## Issue 2: Build the tokens package
+### UI components (`fluxui_kit` v0.2.0)
 
-**Goal**
+- 30+ token-driven widgets across buttons, cards, display, feedback, inputs, layouts, navigation, selection, and typography.
+- `AppTheme.light()` / `.dark()` / `.custom()` with `seedColor` for Material You and `overrides` for partial token overrides.
+- `BuildContext` extensions (`context.appColors`, `context.appSpacing`, etc.) for direct token access.
+- Golden tests for visual regression coverage.
 
-Create a strongly typed token system that is portable across apps and safe to
-evolve.
+### CLI (`flutter_ui_cli` v0.1.0)
 
-**Implementation details**
+- Two entry points: `flux` (component installer) and `flutter_ui` (workspace bootstrap).
+- `flux add` with fuzzy typo correction (Levenshtein ≤ 2), automatic dependency resolution, and file generation.
+- `flutter_ui init` / `flutter_ui list` / `flutter_ui add` commands.
+- 18 registered components in `ComponentRegistry` with templates, aliases, and dependency metadata.
 
-- Implement token primitives for spacing, radius, color roles, typography
-  scale, and motion durations.
-- Keep tokens immutable and documented.
-- Separate raw palette tokens from semantic roles where appropriate.
-- Expose stable public APIs from a single barrel file.
+### Example app
 
-## Issue 3: Build the UI package
+- `apps/example` showcases every component with light/dark theme toggle.
+- Depends on `fluxui_kit` via local path.
 
-**Goal**
+### Documentation
 
-Deliver a complete set of token-driven Flutter widgets that cover the most common app UI needs.
+- Per-package README files for all publishable packages.
+- Root README with quick start, architecture overview, validation commands, and branch strategy.
+- CLI guide, publishing guide, production readiness roadmap, and v1.0.0 production checklist.
 
-**Implementation details**
+## Up next
 
-- Implement `AppTheme` (light/dark/custom) and `AppThemeTokens` as a `ThemeExtension`.
-- Build 19 widgets: `AppButton`, `AppCard`, `AppCarousel`, `AppAlert`, `AppProgress`, `AppTextField`, `AppCombobox`, `AppOtpField`, `Gap`, `HStack`, `VStack`, `AppNavigationMenu`, `AppPagination`, `AppTabs`, `AppRoadmapItem`, `AppCheckbox`, `AppSwitch`, `AppText`.
-- All widgets pull styling exclusively from `AppThemeTokens` via `BuildContext` extensions.
-- Expose a single barrel file `lib/index.dart`.
+### Pre-v1.0.0
 
-## Issue 4: Build the CLI package
+1. **Publish `flutter_ui_tokens`, `flutter_ui_utils`, `fluxui_kit` to pub.dev** — complete pub.dev production-readiness checklist, verify metadata, run publish dry-runs.
+2. **API stability policy** — document SemVer, deprecation, and migration rules.
+3. **Accessibility** — add accessibility tests and semantic labels for all interactive components.
+4. **Expand golden tests** — cover states, themes, breakpoints, and RTL layouts.
+5. **Dartdoc coverage** — document all public APIs.
+6. **GitHub templates** — add issue templates, PR template, CODEOWNERS, and Dependabot.
+7. **CLI expansion** — add `doctor`, `diff`, and `update` commands.
+8. **Documentation site** — build a docs site with live component examples.
 
-**Goal**
+### v1.0.0
 
-Provide a shadcn-style copy-paste workflow so developers can own editable component files locally.
-
-**Implementation details**
-
-- Implement `flux add <component>` using `AddCommand` with fuzzy typo correction (Levenshtein ≤ 2).
-- Implement `flutter_ui init` / `flutter_ui list` / `flutter_ui add` via `FlutterUiCli`.
-- Build `ComponentRegistry` with all 18 registered components, each with inline template, aliases, dependencies, and public symbols.
-- Generate `flutter_ui.json`, bridge file with `hide` list, `components/index.dart`, and `lib/ui/index.dart`.
-- Write integration tests in `test/flutter_ui_cli_test.dart` and `test/cli_entrypoints_test.dart`.
-
-## Issue 5: Add example app
-
-**Goal**
-
-Provide a working showcase app that validates all components visually and serves as a usage reference.
-
-**Implementation details**
-
-- Create `apps/example` depending on `packages/ui`.
-- Implement `ExampleHomePage` exercising every public widget.
-- Support light/dark theme toggle.
-
-## Issue 6: Complete CLI component registry
-
-**Goal**
-
-Ensure all 18 UI package widgets are installable via `flux add`.
-
-**Implementation details**
-
-- Add registry entries for the 11 components missing from the initial CLI release: `alert`, `carousel`, `checkbox`, `combobox`, `navigation-menu`, `otp-field`, `pagination`, `progress`, `roadmap-item`, `switch`, `tabs`.
-- Each entry includes correct aliases, dependency list, public symbols, and a copy-paste-ready template.
-- Templates use `../../core/flutter_ui.dart` for token access and relative imports for inter-component dependencies.
-
-## Issue 7: Write per-package README files
-
-**Goal**
-
-Each publishable package must have a `README.md` for pub.dev discoverability and first-use documentation.
-
-**Implementation details**
-
-- Add `README.md` to `packages/tokens`, `packages/utils`, `packages/ui`, `packages/cli`.
-- Cover: description, installation, basic usage example, and links to the monorepo.
-
-## Issue 8: Publishing preparation
-
-**Goal**
-
-Prepare all packages for a first pub.dev release.
-
-**Implementation details**
-
-- Verify and update package versions and inter-package constraints.
-- Add changelogs (`CHANGELOG.md`) per package.
-- Run dry-run publishing checks: `dart run melos run publish:dry-run:flutter`.
-- Decide whether `flutter_ui_cli` should be published or kept as repository-only tooling.
-- Ensure all packages pass the full validation suite before tagging.
+- Stable API surface.
+- All packages published to pub.dev.
+- Migration guide available.
+- Release automation (tagging, release notes, changelog discipline).
