@@ -1,0 +1,101 @@
+name: Component Proposal
+description: Propose a new component for Flux UI
+labels: ["status:needs-design", "status:needs-discussion"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Component Proposal
+        Use this template to propose a new component for Flux UI.
+  - type: input
+    id: name
+    attributes:
+      label: Component Name
+      description: The proposed name (e.g., FluxSlider)
+      placeholder: "FluxSlider"
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - Inputs
+        - Buttons
+        - Navigation
+        - Surfaces
+        - Feedback
+        - Overlay
+        - Data Display
+        - Layout
+    validations:
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: Why does Flux UI need this component?
+    validations:
+      required: true
+  - type: textarea
+    id: api
+    attributes:
+      label: Proposed API
+      description: |
+        Sketch the full API including all parameters, variants, sizes.
+        ```dart
+        class FluxSlider extends StatelessWidget {
+          const FluxSlider({
+            super.key,
+            this.variant = FluxSliderVariant.continuous,
+            this.size = FluxSliderSize.md,
+            this.min = 0.0,
+            this.max = 100.0,
+            this.value,
+            this.onChanged,
+            ...
+          });
+        }
+        ```
+      render: dart
+    validations:
+      required: true
+  - type: textarea
+    id: variants
+    attributes:
+      label: Variants & States
+      description: List all visual variants and interactive states.
+    validations:
+      required: true
+  - type: textarea
+    id: theme
+    attributes:
+      label: Theme Extension
+      description: What theme properties should this component have?
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: What primitives or other components does this depend on?
+    validations:
+      required: true
+  - type: textarea
+    id: accessibility
+    attributes:
+      label: Accessibility Notes
+      description: What Semantics roles, keyboard interactions, and RTL considerations apply?
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: This component is not already listed in COMPONENTS.md
+          required: true
+        - label: I have searched existing issues for duplicate proposals
+          required: true
+        - label: I have read CODING_STANDARDS.md
+          required: true

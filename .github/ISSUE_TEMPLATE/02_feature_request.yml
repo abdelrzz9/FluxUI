@@ -1,0 +1,55 @@
+name: Feature Request
+description: Suggest a new component or enhancement for Flux UI
+labels: ["status:needs-discussion"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a feature for Flux UI!
+  - type: dropdown
+    id: type
+    attributes:
+      label: Feature Type
+      options:
+        - New Component
+        - New Variant
+        - Enhancement to Existing Component
+        - Theme Enhancement
+        - Tooling / CLI
+        - Documentation
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: Is your feature request related to a problem? Please describe.
+      placeholder: "I'm always frustrated when [...]"
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: A clear and concise description of what you want to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: What alternatives have you considered?
+  - type: textarea
+    id: api
+    attributes:
+      label: Proposed API
+      description: If proposing a new component, sketch the API.
+      render: dart
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I have searched existing issues for duplicates
+          required: true
+        - label: I have considered the API design carefully
+        - label: I am willing to contribute this feature

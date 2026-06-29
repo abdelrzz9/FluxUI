@@ -90,16 +90,16 @@ import 'package:your_app/ui/index.dart';
 FluxUI is split into focused, layered packages:
 
 ```
-┌──────────────────────────────────────┐
-│  fluxui_kit                          │
-│  Theme API + 30+ components          │
-├──────────────────────────────────────┤
-│  flutter_ui_utils                    │
-│  Widget extensions, responsive       │
-├──────────────────────────────────────┤
-│  flutter_ui_tokens                   │
-│  Immutable, typed design tokens      │
-└──────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────┐
+│  fluxui_kit  (or flutter_ui)                             │
+│  Theme API + 50+ components + primitives + context ext.  │
+├──────────────────────────────────────────────────────────┤
+│  flutter_ui_utils                                        │
+│  Widget extensions, responsive helpers, color utilities  │
+├──────────────────────────────────────────────────────────┤
+│  flutter_ui_tokens                                       │
+│  Immutable, typed design tokens with lerp                │
+└──────────────────────────────────────────────────────────┘
 ```
 
 **Dependency direction** (strict, no cycles):
@@ -108,6 +108,14 @@ FluxUI is split into focused, layered packages:
 tokens  →  utils  →  fluxui_kit  ←  apps/example
                      cli  (standalone — no Flutter SDK dep)
 ```
+
+### Key Architecture Decisions
+
+- **No `copyWith` on widgets** — widgets are immutable configuration objects. Use `styleFrom()` static factories and `WidgetStateProperty` for overrides.
+- **Focused `ThemeExtension` subclasses** — one per domain (colors, typography, button, card, etc.). Components read only what they need.
+- **Primitives before components** — `FluxPressable`, `FluxFocusRing`, `FluxAnimatedVisibility`, `FluxPortal`, `FluxProvider` form the foundation.
+- **Flutter idioms, not React patterns** — `OverlayEntry` instead of `createPortal`, `WidgetStateProperty` instead of `cva()`, `AnimatedContainer` instead of CSS transitions.
+- **RTL everywhere** — `EdgeInsetsDirectional`, `Directionality`, `TextDirection` in all widgets.
 
 The `flutter_ui` package is a thin re-export of `fluxui_kit` for backward compatibility.
 
@@ -310,13 +318,49 @@ See [docs/dev_branch_workflow.md](docs/dev_branch_workflow.md).
 
 ## Documentation
 
+### Engineering Standards
+| | |
+|-|-|
+| [docs/engineering/README.md](docs/engineering/README.md) | **Engineering standards index** — start here |
+| [docs/engineering/CODING_STANDARDS.md](docs/engineering/CODING_STANDARDS.md) | Code style, naming, public API, performance, a11y rules |
+| [docs/engineering/CONTRIBUTING.md](docs/engineering/CONTRIBUTING.md) | How to contribute, setup, PR checklist, commit conventions |
+| [docs/engineering/TESTING.md](docs/engineering/TESTING.md) | Testing strategy: unit, widget, golden, integration, a11y, perf |
+| [docs/engineering/PERFORMANCE.md](docs/engineering/PERFORMANCE.md) | Performance targets, frame budget, benchmark requirements |
+| [docs/engineering/ACCESSIBILITY.md](docs/engineering/ACCESSIBILITY.md) | Mandatory a11y requirements: Semantics, keyboard, RTL, contrast |
+| [docs/engineering/DESIGN_SYSTEM_RULES.md](docs/engineering/DESIGN_SYSTEM_RULES.md) | Immutable spacing, radius, typography, color, motion tokens |
+| [docs/engineering/VERSIONING.md](docs/engineering/VERSIONING.md) | SemVer, API stability levels, deprecation timeline |
+| [docs/engineering/RELEASE.md](docs/engineering/RELEASE.md) | Release process, packaging order, CI automation |
+| [docs/engineering/API_STABILITY.md](docs/engineering/API_STABILITY.md) | Maturity levels: Experimental → Preview → Stable → Deprecated |
+| [docs/engineering/REPOSITORY_STRUCTURE.md](docs/engineering/REPOSITORY_STRUCTURE.md) | Ideal directory layout with explanations |
+| [docs/engineering/GITHUB_LABELS.md](docs/engineering/GITHUB_LABELS.md) | Complete label taxonomy |
+| [docs/engineering/GITHUB_MILESTONES.md](docs/engineering/GITHUB_MILESTONES.md) | 14 milestones with timeline |
+| [docs/engineering/FINAL_READINESS_REPORT.md](docs/engineering/FINAL_READINESS_REPORT.md) | Complete pre-implementation review |
+
+### Architecture & Components
+| | |
+|-|-|
+| [docs/architecture/ARCHITECTURE_REVIEW.md](docs/architecture/ARCHITECTURE_REVIEW.md) | Comprehensive architecture review & recommendations |
+| [docs/architecture/ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md) | Architecture reference |
+| [docs/themes/THEMES.md](docs/themes/THEMES.md) | Theme system reference |
+| [docs/roadmap/IMPLEMENTATION_ROADMAP.md](docs/roadmap/IMPLEMENTATION_ROADMAP.md) | Implementation roadmap (~206 hrs) |
+| [docs/roadmap/COMPONENTS.md](docs/roadmap/COMPONENTS.md) | Component migration tracking |
+| [docs/components/*.md](docs/components/) | Per-component documentation |
+| [docs/github_issues.md](docs/github_issues.md) | All 88 GitHub issues ready for import |
+
+### Templates
+| | |
+|-|-|
+| [.github/PULL_REQUEST_TEMPLATE.md](.github/PULL_REQUEST_TEMPLATE.md) | PR template with component/testing/docs checklist |
+| [.github/RFC_TEMPLATE.md](.github/RFC_TEMPLATE.md) | RFC template for significant changes |
+| [.github/ISSUE_TEMPLATE/](.github/ISSUE_TEMPLATE/) | 7 issue templates (bug, feature, component, theme, perf, a11y, question) |
+
+### Other
 | | |
 |-|-|
 | [docs/cli.md](docs/cli.md) | Full CLI reference |
 | [docs/publishing.md](docs/publishing.md) | Release checklist |
 | [docs/production_readiness_roadmap.md](docs/production_readiness_roadmap.md) | Production-readiness roadmap |
 | [docs/dev_branch_workflow.md](docs/dev_branch_workflow.md) | Branch strategy |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | How to contribute |
 | [packages/tokens/README.md](packages/tokens/README.md) | Tokens package |
 | [packages/utils/README.md](packages/utils/README.md) | Utils package |
 | [packages/fluxui/README.md](packages/fluxui/README.md) | FluxUI Kit package |

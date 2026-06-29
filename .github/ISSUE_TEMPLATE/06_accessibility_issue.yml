@@ -1,0 +1,74 @@
+name: Accessibility Issue
+description: Report an accessibility problem with Flux UI
+labels: ["accessibility"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Accessibility Issue Report
+  - type: input
+    id: component
+    attributes:
+      label: Component
+      placeholder: "FluxButton"
+    validations:
+      required: true
+  - type: dropdown
+    id: a11y-category
+    attributes:
+      label: Accessibility Category
+      options:
+        - Screen Reader / Semantics
+        - Keyboard Navigation
+        - Color Contrast
+        - Touch Target Size
+        - Focus Order
+        - Reduced Motion
+        - RTL / Layout
+        - Text Scaling
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Issue Description
+      description: What accessibility issue did you encounter?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      placeholder: |
+        1. Turn on TalkBack/VoiceOver
+        2. Navigate to FluxButton
+        3. Attempt to activate
+        4. No announcement is heard
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - Critical (completely blocks use)
+        - Major (significant barrier)
+        - Minor (annoyance)
+        - Enhancement (not a bug but improvement)
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What should happen for an accessible experience?
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What currently happens?
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I have tested with a screen reader (TalkBack/VoiceOver/NVDA)
+        - label: I have checked contrast using a contrast checker
+        - label: I have tested keyboard navigation

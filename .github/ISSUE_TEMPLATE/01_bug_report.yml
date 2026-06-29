@@ -1,0 +1,85 @@
+name: Bug Report
+description: Report a reproducible bug in Flux UI
+labels: ["status:needs-discussion"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: input
+    id: version
+    attributes:
+      label: Flux UI Version
+      description: What version of Flux UI are you using?
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: input
+    id: flutter-version
+    attributes:
+      label: Flutter Version
+      description: Output of `flutter --version`
+      placeholder: "3.24.0"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior.
+      placeholder: |
+        1. Create FluxButton with variant 'primary'
+        2. Set 'onPressed' callback
+        3. Tap the button
+        4. See error
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+    validations:
+      required: true
+  - type: textarea
+    id: code
+    attributes:
+      label: Minimal Reproduction Code
+      description: Please provide a minimal code sample that reproduces the issue.
+      render: dart
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      multiple: true
+      options:
+        - Android
+        - iOS
+        - Web
+        - macOS
+        - Windows
+        - Linux
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I have searched existing issues for duplicates
+          required: true
+        - label: I have provided a minimal reproduction
+          required: true
+        - label: I have included all relevant logs/screenshots

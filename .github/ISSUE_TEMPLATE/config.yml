@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Flux UI Documentation
+    url: https://github.com/your-org/flux_ui/tree/main/docs
+    about: Check the documentation before opening an issue.
+  - name: Flux UI Discussions
+    url: https://github.com/your-org/flux_ui/discussions
+    about: For questions, ideas, and general discussion.
+  - name: Flux UI Security Policy
+    url: https://github.com/your-org/flux_ui/security/policy
+    about: Report security vulnerabilities here.

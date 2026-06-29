@@ -1,0 +1,61 @@
+name: Theme Proposal
+description: Propose a new theme, brand theme, or theme system change
+labels: ["theme:core", "status:needs-discussion"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Theme Proposal
+  - type: dropdown
+    id: type
+    attributes:
+      label: Theme Change Type
+      options:
+        - New Brand Theme
+        - New Token
+        - Theme Extension Change
+        - High Contrast Improvement
+        - Dynamic Color Enhancement
+        - Bug Fix
+    validations:
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: Why is this theme change needed?
+    validations:
+      required: true
+  - type: textarea
+    id: design
+    attributes:
+      label: Design Tokens
+      description: |
+        List the token changes:
+        - New tokens to add
+        - Existing tokens to modify
+        - Tokens to deprecate
+    validations:
+      required: true
+  - type: textarea
+    id: color-values
+    attributes:
+      label: Color Values (if applicable)
+      render: yaml
+      placeholder: |
+        primary: "#6366F1"
+        secondary: "#8B5CF6"
+  - type: textarea
+    id: migration
+    attributes:
+      label: Migration Path
+      description: How should consumers migrate from the old tokens to the new ones?
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I have verified this change does not duplicate existing tokens
+          required: true
+        - label: I have considered backward compatibility
+          required: true
