@@ -37,9 +37,9 @@ git push origin feature/my-topic
 
 ## CI gates
 
-Every PR and every push to `main`, `master`, and `dev` runs:
+Every PR and every push to `main`, `master`, and `dev` runs (in order):
 - format check
-- Flutter analyze
-- Dart analyze
-- tests
-- build (CLI executable)
+- Flutter analyze (`melos run analyze` — skips CLI)
+- Dart analyze (`melos run analyze:cli` — CLI only)
+- tests (`melos run test`)
+- build (`melos run build` — CLI executable, requires all prior jobs to pass)

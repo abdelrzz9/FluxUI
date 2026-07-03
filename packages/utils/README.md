@@ -25,6 +25,8 @@ dependencies:
   flutter_ui_utils: ^0.1.0
 ```
 
+> **Note:** `flutter_ui_utils` is bundled with `fluxui_kit` — you only need this package directly if you want the helpers without the full UI component set.
+
 ---
 
 ## Usage

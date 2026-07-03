@@ -12,6 +12,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  fluxui_kit: ^0.2.0
   flutter_ui_tokens: ^0.1.0
   flutter_ui_utils: ^0.1.0
 

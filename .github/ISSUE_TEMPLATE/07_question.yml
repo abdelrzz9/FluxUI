@@ -1,0 +1,32 @@
+name: Question
+description: Ask a question about Flux UI
+labels: ["documentation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Question
+        Before asking, please check:
+        - [Documentation](https://github.com/your-org/flux_ui/tree/main/docs)
+        - [Existing issues](https://github.com/your-org/flux_ui/issues)
+  - type: textarea
+    id: question
+    attributes:
+      label: Your Question
+      description: What would you like to know?
+    validations:
+      required: true
+  - type: input
+    id: context
+    attributes:
+      label: Context
+      description: What are you trying to achieve?
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I have searched the documentation for an answer
+          required: true
+        - label: I have searched existing issues
+          required: true

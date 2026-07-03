@@ -1,0 +1,59 @@
+name: Performance Issue
+description: Report a performance issue with a Flux UI component
+labels: ["performance"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Performance Issue Report
+  - type: input
+    id: component
+    attributes:
+      label: Component
+      placeholder: "FluxButton"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Performance Issue
+      description: What performance issue are you experiencing?
+    validations:
+      required: true
+  - type: textarea
+    id: metrics
+    attributes:
+      label: Metrics
+      description: |
+        Please include relevant metrics (from Flutter DevTools):
+        - Build time
+        - Layout time
+        - Paint time
+        - Frame rate
+        - Memory usage
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction Code
+      render: dart
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: |
+        - Flutter version:
+        - Device/emulator:
+        - OS version:
+        - Profile or Debug:
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I have profiled with Flutter DevTools
+          required: true
+        - label: I have tested in profile mode (not debug)
+          required: true
+        - label: I am comparing against a baseline (Material widget or similar)

@@ -31,6 +31,8 @@ dependencies:
   flutter_ui_tokens: ^0.1.0
 ```
 
+> **Note:** `flutter_ui_tokens` is bundled with `fluxui_kit` — you only need this package directly if you want tokens without the UI components.
+
 ---
 
 ## Usage

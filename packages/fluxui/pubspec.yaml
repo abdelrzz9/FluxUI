@@ -2,7 +2,7 @@ name: fluxui_kit
 description: >-
   A token-driven Flutter UI system. 30+ production-ready components with zero
   hardcoded colors or sizes — everything resolves through typed design tokens.
-version: 0.1.0
+version: 0.2.0
 homepage: https://github.com/abdelrzz9/FluxUI
 repository: https://github.com/abdelrzz9/FluxUI
 issue_tracker: https://github.com/abdelrzz9/FluxUI/issues

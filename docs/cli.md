@@ -20,7 +20,7 @@ dart run packages/cli/bin/flux.dart add button --overwrite
 ```
 
 `flux add` will:
-- resolve aliases (`buttom` → `button` via fuzzy match)
+- resolve aliases (`buttom` → `button` via fuzzy match, Levenshtein ≤ 2)
 - auto-install declared dependencies (e.g. `h-stack` pulls in `gap`)
 - create target directories if needed
 - write component `.dart` files into `lib/ui/components/`
@@ -28,6 +28,11 @@ dart run packages/cli/bin/flux.dart add button --overwrite
 - regenerate `lib/ui/components/index.dart`
 - regenerate `lib/ui/index.dart`
 - prompt before overwriting if `--overwrite` is not set
+
+After copying, import the local surface instead of the package:
+```dart
+import 'package:your_app/ui/index.dart';
+```
 
 ---
 

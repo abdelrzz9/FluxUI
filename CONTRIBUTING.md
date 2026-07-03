@@ -18,10 +18,11 @@ Run the full suite before pushing:
 ```bash
 dart run melos run check:architecture
 dart run melos run format:check
-dart run melos run analyze
-dart run melos run typecheck
+dart run melos run analyze          # Flutter analyze (skips CLI)
+dart run melos run analyze:cli      # Dart analyze (CLI only)
 dart run melos run test
-dart run melos run build
+dart run melos run test:goldens     # Update with test:update-goldens if visual change
+dart run melos run build            # Builds CLI executable
 ```
 
 Update golden snapshots when a visual change is intentional:
@@ -48,10 +49,11 @@ See [docs/dev_branch_workflow.md](docs/dev_branch_workflow.md).
 |---------|---------|
 | `flutter_ui_tokens` | Immutable design tokens only. No widgets. |
 | `flutter_ui_utils` | Generic Flutter extensions and responsive helpers. No business logic. |
-| `flutter_ui` | Theme integration and UI components. No business logic. |
+| `fluxui_kit` | Theme integration and UI components. No business logic. |
+| `flutter_ui` | Thin re-export of `fluxui_kit` for backward compatibility. |
 | `flutter_ui_cli` | Copy-paste workflow, component registry, file generation. No Flutter SDK dependency. |
 
-The dependency direction is strict: `tokens → utils → ui`. The CLI is isolated.
+The dependency direction is strict: `tokens → utils → fluxui_kit`. The CLI is isolated.
 
 ---
 
@@ -62,7 +64,7 @@ The dependency direction is strict: `tokens → utils → ui`. The CLI is isolat
 - Prefer **readable code** over deep abstraction — components are meant to be copy-paste-friendly.
 - Add a **widget test** for every behavioral path.
 - Add a **golden test** when a component materially affects rendering.
-- If a component is added to `packages/ui`, add a matching **CLI registry entry** in `packages/cli/lib/src/component_registry.dart`.
+- If a component is added to `fluxui_kit`, add a matching **CLI registry entry** in `packages/cli/lib/src/component_registry.dart`.
 
 ---
 
