@@ -1,5 +1,5 @@
-import 'src/example_app.dart';
+import 'src/app/bootstrap.dart';
 
-void main() {
-  runExampleApp();
+Future<void> main() async {
+  await bootstrapExampleApp();
 }

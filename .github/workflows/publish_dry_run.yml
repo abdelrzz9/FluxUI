@@ -2,10 +2,30 @@ name: publish-dry-run
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - packages/**
+      - melos.yaml
+      - pubspec.yaml
+      - pubspec.lock
+      - .github/workflows/publish_dry_run.yml
+
+concurrency:
+  group: publish-dry-run-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  FLUTTER_CHANNEL: stable
+  FLUTTER_VERSION: 3.24.5
 
 jobs:
   dry-run:
+    name: Publish dry run
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
       - name: Checkout
@@ -14,8 +34,8 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: 3.41.5
-          channel: stable
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
 
       - name: Install workspace dependencies
@@ -23,6 +43,9 @@ jobs:
 
       - name: Bootstrap workspace
         run: dart run melos bootstrap
+
+      - name: Verify architecture boundaries
+        run: dart run melos run check:architecture
 
       - name: Flutter package dry-run publish
         run: dart run melos run publish:dry-run:flutter
